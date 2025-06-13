@@ -1,0 +1,14 @@
+.profile-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+  }
+  
+  .profile-card {
+    width: 350px;
+    text-align: center;
+    padding: 20px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    background: linear-gradient(135deg, #f3f4f6, #ffffff);
+  }

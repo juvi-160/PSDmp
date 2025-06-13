@@ -1,0 +1,46 @@
+<div class="edit-dialog">
+  <h2 mat-dialog-title>Edit User</h2>
+  
+  <mat-dialog-content>
+    <div class="user-info">
+      <p><strong>Name:</strong> {{ data.user.name }}</p>
+      <p><strong>Email:</strong> {{ data.user.email }}</p>
+      <p><strong>ID:</strong> {{ data.user.id }}</p>
+    </div>
+
+    <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Role</mat-label>
+        <mat-select formControlName="role">
+          <mat-option *ngFor="let role of roles" [value]="role.value">
+            {{ role.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="checkbox-group">
+        <mat-checkbox formControlName="isEmailVerified">
+          Email Verified
+        </mat-checkbox>
+        
+        <mat-checkbox formControlName="isPhoneVerified">
+          Phone Verified
+        </mat-checkbox>
+        
+        <mat-checkbox formControlName="hasPaid">
+          Payment Completed
+        </mat-checkbox>
+      </div>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()" [disabled]="loading">
+      Cancel
+    </button>
+    <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="loading || !editForm.valid">
+      <mat-spinner diameter="20" *ngIf="loading"></mat-spinner>
+      <span *ngIf="!loading">Update User</span>
+    </button>
+  </mat-dialog-actions>
+</div>

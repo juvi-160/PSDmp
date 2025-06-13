@@ -1,0 +1,278 @@
+.ticket-management-container {
+  padding: 24px;
+}
+
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-header h2 {
+  margin: 0 0 8px 0;
+  color: #333;
+  font-weight: 500;
+}
+
+.subtitle {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.stats-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 8px;
+  transition: transform 0.2s;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+}
+
+.stat-card mat-card-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px !important;
+}
+
+.stat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: #e3f2fd;
+}
+
+.stat-icon mat-icon {
+  color: #1976d2;
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+}
+
+.stat-card.open .stat-icon {
+  background-color: #e3f2fd;
+}
+
+.stat-card.open .stat-icon mat-icon {
+  color: #1976d2;
+}
+
+.stat-card.in-progress .stat-icon {
+  background-color: #fff8e1;
+}
+
+.stat-card.in-progress .stat-icon mat-icon {
+  color: #f57f17;
+}
+
+.stat-card.recent .stat-icon {
+  background-color: #f3e5f5;
+}
+
+.stat-card.recent .stat-icon mat-icon {
+  color: #7b1fa2;
+}
+
+.stat-details {
+  flex: 1;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #666;
+}
+
+.filter-card {
+  margin-bottom: 24px;
+}
+
+.filter-form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 16px;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+.error-container {
+  text-align: center;
+  padding: 40px;
+}
+
+.error-message {
+  color: #f44336;
+  margin-bottom: 16px;
+}
+
+.table-container {
+  background: white;
+  border-radius: 8px;
+}
+
+.tickets-table {
+  width: 100%;
+}
+
+.subject-cell {
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.category-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background-color: #e3f2fd;
+  border-radius: 12px;
+  font-size: 12px;
+  color: #1976d2;
+}
+
+.category-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.priority-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.priority-urgent {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.priority-high {
+  background-color: #fff3e0;
+  color: #ef6c00;
+}
+
+.priority-medium {
+  background-color: #fff8e1;
+  color: #f57f17;
+}
+
+.priority-low {
+  background-color: #e8f5e8;
+  color: #2e7d32;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.status-open {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.status-in-progress {
+  background-color: #fff8e1;
+  color: #f57f17;
+}
+
+.status-resolved {
+  background-color: #e8f5e8;
+  color: #2e7d32;
+}
+
+.status-closed {
+  background-color: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.ticket-row {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.ticket-row:hover {
+  background-color: #f5f5f5;
+}
+
+.no-data-cell {
+  text-align: center;
+  padding: 40px !important;
+}
+
+.no-data-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.no-data-content mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: #ccc;
+}
+
+.no-data-content p {
+  margin: 0;
+  color: #666;
+  font-size: 16px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .ticket-management-container {
+    padding: 16px;
+  }
+
+  .stats-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-buttons {
+    flex-direction: column;
+  }
+
+  .subject-cell {
+    max-width: 150px;
+  }
+}

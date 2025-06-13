@@ -1,0 +1,151 @@
+<div class="my-events-container">
+    <div class="stats-section">
+      <h2>My Event Statistics</h2>
+      
+      <div class="stats-cards" *ngIf="!statsLoading">
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-value">{{ stats.upcoming_events }}</div>
+            <div class="stat-label">Upcoming Events</div>
+          </mat-card-content>
+        </mat-card>
+        
+        <mat-card class="stat-card attended">
+          <mat-card-content>
+            <div class="stat-value">{{ stats.attended_events }}</div>
+            <div class="stat-label">Attended Events</div>
+          </mat-card-content>
+        </mat-card>
+        
+        <mat-card class="stat-card cancelled">
+          <mat-card-content>
+            <div class="stat-value">{{ stats.cancelled_events }}</div>
+            <div class="stat-label">Cancelled RSVPs</div>
+          </mat-card-content>
+        </mat-card>
+        
+        <mat-card class="stat-card missed">
+          <mat-card-content>
+            <div class="stat-value">{{ stats.missed_events }}</div>
+            <div class="stat-label">Missed Events</div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      
+      <div class="loading-container" *ngIf="statsLoading">
+        <mat-spinner diameter="30"></mat-spinner>
+      </div>
+    </div>
+    
+    <mat-divider></mat-divider>
+    
+    <div class="events-section">
+      <h2>My Events</h2>
+      
+      <mat-tab-group [(selectedIndex)]="activeTab" animationDuration="300ms">
+        <mat-tab label="Upcoming Events ({{ upcomingEvents.length }})">
+          <div class="tab-content">
+            <div class="loading-container" *ngIf="loading">
+              <mat-spinner diameter="40"></mat-spinner>
+            </div>
+            
+            <div class="error-message" *ngIf="error && !loading">
+              <p>{{ error }}</p>
+              <button mat-raised-button color="primary" (click)="loadRsvps()">Try Again</button>
+            </div>
+            
+            <div class="no-events-message" *ngIf="!loading && !error && upcomingEvents.length === 0">
+              <mat-icon>event_busy</mat-icon>
+              <p>You don't have any upcoming events</p>
+              <a mat-raised-button color="primary" routerLink="/dashboard/events">Find Events</a>
+            </div>
+            
+            <div class="events-list" *ngIf="!loading && !error && upcomingEvents.length > 0">
+              <mat-card *ngFor="let rsvp of upcomingEvents" class="event-card">
+                <div class="event-image" *ngIf="rsvp.event.image">
+                  <img [src]="rsvp.event.image" [alt]="rsvp.event.name">
+                </div>
+                
+                <div class="event-content">
+                  <mat-card-header>
+                    <mat-card-title>{{ rsvp.event.name }}</mat-card-title>
+                    <mat-card-subtitle>{{ formatDate(rsvp.event.date) }}</mat-card-subtitle>
+                  </mat-card-header>
+                  
+                  <mat-card-content>
+                    <p class="event-description">{{ rsvp.event.description }}</p>
+                    <div class="rsvp-info">
+                      <span class="rsvp-date">RSVP'd on {{ formatDate(rsvp.rsvpDate) }}</span>
+                      <span [class]="'rsvp-status ' + getStatusClass(rsvp.status)">{{ getStatusText(rsvp.status) }}</span>
+                    </div>
+                  </mat-card-content>
+                  
+                  <mat-card-actions>
+                    <button mat-button color="warn" (click)="cancelRsvp(rsvp)">
+                      <mat-icon>cancel</mat-icon> CANCEL RSVP
+                    </button>
+                  </mat-card-actions>
+                </div>
+              </mat-card>
+            </div>
+          </div>
+        </mat-tab>
+        
+        <mat-tab label="Past Events ({{ pastEvents.length }})">
+          <div class="tab-content">
+            <div class="loading-container" *ngIf="loading">
+              <mat-spinner diameter="40"></mat-spinner>
+            </div>
+            
+            <div class="error-message" *ngIf="error && !loading">
+              <p>{{ error }}</p>
+              <button mat-raised-button color="primary" (click)="loadRsvps()">Try Again</button>
+            </div>
+            
+            <div class="no-events-message" *ngIf="!loading && !error && pastEvents.length === 0">
+              <mat-icon>history</mat-icon>
+              <p>You haven't attended any events yet</p>
+              <a mat-raised-button color="primary" routerLink="/dashboard/events">Find Events</a>
+            </div>
+            
+            <div class="events-list" *ngIf="!loading && !error && pastEvents.length > 0">
+              <mat-card *ngFor="let rsvp of pastEvents" class="event-card">
+                <div class="event-image" *ngIf="rsvp.event.image">
+                  <img [src]="rsvp.event.image" [alt]="rsvp.event.name">
+                </div>
+                
+                <div class="event-content">
+                  <mat-card-header>
+                    <mat-card-title>{{ rsvp.event.name }}</mat-card-title>
+                    <mat-card-subtitle>{{ formatDate(rsvp.event.date) }}</mat-card-subtitle>
+                  </mat-card-header>
+                  
+                  <mat-card-content>
+                    <p class="event-description">{{ rsvp.event.description }}</p>
+                    <div class="rsvp-info">
+                      <span class="rsvp-date">RSVP'd on {{ formatDate(rsvp.rsvpDate) }}</span>
+                      <span [class]="'rsvp-status ' + getStatusClass(rsvp.status)">{{ getStatusText(rsvp.status) }}</span>
+                    </div>
+                  </mat-card-content>
+                  
+                  <mat-card-actions>
+                    <button 
+                      mat-button 
+                      color="primary" 
+                      *ngIf="rsvp.status === 'attended' && !rsvp.feedbackProvided"
+                      (click)="provideFeedback(rsvp)">
+                      <mat-icon>feedback</mat-icon> PROVIDE FEEDBACK
+                    </button>
+                    <div class="feedback-provided" *ngIf="rsvp.status === 'attended' && rsvp.feedbackProvided">
+                      <mat-icon color="primary">check_circle</mat-icon> Feedback provided
+                    </div>
+                  </mat-card-actions>
+                </div>
+              </mat-card>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+  </div>
+  

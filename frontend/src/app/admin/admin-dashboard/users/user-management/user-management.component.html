@@ -1,0 +1,242 @@
+<div class="user-management-container">
+  <div class="page-header">
+    <div class="title-section">
+      <h2>User Management</h2>
+      <p class="subtitle">Manage all registered users and their membership status</p>
+    </div>
+    <button mat-raised-button color="primary" (click)="exportToExcel()">
+      <mat-icon>file_download</mat-icon>
+      Export to Excel
+    </button>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-cards">
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-icon">
+          <mat-icon>people</mat-icon>
+        </div>
+        <div class="stat-details">
+          <div class="stat-value">{{ stats.totalUsers }}</div>
+          <div class="stat-label">Total Users</div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card paid">
+      <mat-card-content>
+        <div class="stat-icon">
+          <mat-icon>check_circle</mat-icon>
+        </div>
+        <div class="stat-details">
+          <div class="stat-value">{{ stats.paidUsers }}</div>
+          <div class="stat-label">Paid Members</div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card pending">
+      <mat-card-content>
+        <div class="stat-icon">
+          <mat-icon>pending</mat-icon>
+        </div>
+        <div class="stat-details">
+          <div class="stat-value">{{ stats.pendingUsers }}</div>
+          <div class="stat-label">Pending Users</div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card revenue">
+      <mat-card-content>
+        <div class="stat-icon">
+          <mat-icon>payments</mat-icon>
+        </div>
+        <div class="stat-details">
+          <div class="stat-value">₹{{ stats.totalRevenue }}</div>
+          <div class="stat-label">Total Revenue</div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Filter Form -->
+  <mat-card class="filter-card">
+    <mat-card-content>
+      <form [formGroup]="filterForm" (ngSubmit)="applyFilter()">
+        <div class="filter-form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Search</mat-label>
+            <input matInput formControlName="search" placeholder="Search by name, email, or ID">
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Role</mat-label>
+            <mat-select formControlName="role">
+              <mat-option value="">All Roles</mat-option>
+              <mat-option value="admin">Admin</mat-option>
+              <mat-option value="individual member">Individual Member</mat-option>
+              <mat-option value="associate member">Associate Member</mat-option>
+              <mat-option value="pending">Pending</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Payment Status</mat-label>
+            <mat-select formControlName="paymentStatus">
+              <mat-option value="">All</mat-option>
+              <mat-option value="true">Paid</mat-option>
+              <mat-option value="false">Not Paid</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="filter-form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>From Date</mat-label>
+            <input matInput [matDatepicker]="pickerFrom" formControlName="dateFrom">
+            <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+            <mat-datepicker #pickerFrom></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>To Date</mat-label>
+            <input matInput [matDatepicker]="pickerTo" formControlName="dateTo">
+            <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+            <mat-datepicker #pickerTo></mat-datepicker>
+          </mat-form-field>
+
+          <div class="filter-buttons">
+            <button mat-raised-button color="primary" type="submit">
+              <mat-icon>filter_list</mat-icon>
+              Apply Filters
+            </button>
+            <button mat-stroked-button type="button" (click)="resetFilter()">
+              <mat-icon>clear</mat-icon>
+              Reset
+            </button>
+          </div>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Loading Spinner -->
+  <div class="loading-container" *ngIf="loading">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <!-- Error Message -->
+  <div class="error-container" *ngIf="error && !loading">
+    <p class="error-message">{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="loadUsers()">Retry</button>
+  </div>
+
+  <!-- Users Table -->
+  <div class="table-container mat-elevation-z2" *ngIf="!loading && !error">
+    <table mat-table [dataSource]="dataSource" matSort class="users-table">
+      <!-- ID Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
+        <td mat-cell *matCellDef="let user"> {{ user.id }} </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+        <td mat-cell *matCellDef="let user"> {{ user.name }} </td>
+      </ng-container>
+
+      <!-- Email Column -->
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Email </th>
+        <td mat-cell *matCellDef="let user"> {{ user.email }} </td>
+      </ng-container>
+
+      <!-- Role Column -->
+      <ng-container matColumnDef="role">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Role </th>
+        <td mat-cell *matCellDef="let user">
+          <span class="role-badge" [ngClass]="getRoleClass(user.role)">
+            {{ user.role }}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Payment Status Column -->
+      <ng-container matColumnDef="hasPaid">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Payment Status </th>
+        <td mat-cell *matCellDef="let user">
+          <span class="status-badge" [ngClass]="getPaymentStatusClass(user.hasPaid)">
+            {{ user.hasPaid ? 'Paid' : 'Not Paid' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Payment Amount Column -->
+    <ng-container matColumnDef="paymentAmount">
+  <th mat-header-cell *matHeaderCellDef> Payment Amount </th>
+  <td mat-cell *matCellDef="let user">
+    <span *ngIf="user.formattedPaymentAmount" class="payment-amount">
+      {{ user.formattedPaymentAmount }}
+    </span>
+    <span *ngIf="!user.formattedPaymentAmount && user.hasPaid" class="status-paid">
+      Paid
+    </span>
+    <span *ngIf="!user.formattedPaymentAmount && !user.hasPaid" class="status-pending">
+      Not Paid
+    </span>
+  </td>
+</ng-container>
+
+      <!-- Created At Column -->
+      <ng-container matColumnDef="createdAt">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Registered On </th>
+        <td mat-cell *matCellDef="let user"> {{ formatDate(user.createdAt) }} </td>
+      </ng-container>
+
+      <!-- Auto Pay Status Column -->
+    <ng-container matColumnDef="autoPayStatus">
+  <th mat-header-cell *matHeaderCellDef> Auto Pay </th>
+  <td mat-cell *matCellDef="let user">
+    <span class="autopay-badge" 
+          [ngClass]="getAutoPayStatusClass(user.autoPayEnabled)">
+      <mat-icon class="autopay-icon">
+        {{ getAutoPayIcon(user.autoPayEnabled) }}
+      </mat-icon>
+      {{ getAutoPayStatusText(user.autoPayEnabled) }}
+    </span>
+  </td>
+</ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> Actions </th>
+        <td mat-cell *matCellDef="let user">
+          <button mat-icon-button color="primary" (click)="viewUserDetails(user)" matTooltip="View Details">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button mat-icon-button color="accent" (click)="editUser(user)" matTooltip="Edit User">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteUser(user)" matTooltip="Delete User" 
+                  [disabled]="user.role === 'admin'">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      <!-- Row shown when there is no matching data -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="8">No users found</td>
+      </tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" showFirstLastButtons></mat-paginator>
+  </div>
+</div>

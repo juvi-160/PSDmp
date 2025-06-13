@@ -1,0 +1,74 @@
+.event-list-container {
+    padding: 20px;
+  }
+  
+  .event-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .filter-card {
+    margin-bottom: 20px;
+    padding: 10px;
+  }
+  
+  .filter-field {
+    width: 100%;
+  }
+  
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    padding: 40px;
+  }
+  
+  .error-container {
+    text-align: center;
+    padding: 40px;
+  }
+  
+  .error-message {
+    color: #f44336;
+    margin-bottom: 20px;
+  }
+  
+  .table-container {
+    overflow-x: auto;
+  }
+  
+  .event-table {
+    width: 100%;
+  }
+  
+  .event-image-container {
+    width: 80px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .event-thumbnail {
+    max-width: 80px;
+    max-height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+  
+  .no-image {
+    color: #999;
+    font-style: italic;
+    font-size: 0.9rem;
+  }
+  
+  .mat-column-actions {
+    width: 120px;
+    text-align: center;
+  }
+  
+  .mat-column-image {
+    width: 100px;
+  }
+  

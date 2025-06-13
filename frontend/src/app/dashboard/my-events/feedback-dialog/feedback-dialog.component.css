@@ -1,0 +1,48 @@
+.event-name {
+    color: var(--primary-dark);
+    margin-top: 0;
+    margin-bottom: 20px;
+  }
+  
+  .rating-container {
+    margin-bottom: 20px;
+  }
+  
+  .rating-label {
+    font-size: 16px;
+    margin-bottom: 10px;
+    display: block;
+  }
+  
+  .star-rating {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .star-rating button {
+    margin: 0 5px;
+  }
+  
+  .star-rating mat-icon {
+    font-size: 30px;
+    width: 30px;
+    height: 30px;
+  }
+  
+  .rating-error {
+    color: #f44336;
+    font-size: 12px;
+    margin-top: 5px;
+    text-align: center;
+  }
+  
+  .full-width {
+    width: 100%;
+  }
+  
+  .spinner {
+    display: inline-block;
+    margin-right: 8px;
+  }
+  

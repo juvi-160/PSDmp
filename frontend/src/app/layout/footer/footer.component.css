@@ -1,0 +1,130 @@
+.footer {
+    background-color: #00796b;
+    color: white;
+    padding: 3rem 0 0;
+  }
+  
+  .footer-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+  
+  .footer-section {
+    width: 23%;
+    min-width: 200px;
+    margin-bottom: 2rem;
+  }
+  
+  .footer-logo {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  .footer-logo-img {
+    width: 170px;
+    height: 80px;
+    margin-right: 1rem;
+  }
+  
+  .footer-logo h3 {
+    font-size: 1.2rem;
+    margin: 0;
+  }
+  
+  .footer-description {
+    margin-top: 1rem;
+    line-height: 1.6;
+    font-size: 0.9rem;
+  }
+  
+  .footer-section h4 {
+    font-size: 1.1rem;
+    margin-bottom: 1.2rem;
+    position: relative;
+    padding-bottom: 10px;
+  }
+  
+  .footer-section h4::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 40px;
+    height: 2px;
+    background-color: #f5f5f5;
+  }
+  
+  .footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .footer-links li {
+    margin-bottom: 0.8rem;
+  }
+  
+  .footer-links a {
+    color: #f5f5f5;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  
+  .footer-links a:hover {
+    color: #e0e0e0;
+    text-decoration: underline;
+  }
+  
+  .social-links {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .social-icon {
+    background-color: rgba(255, 255, 255, 0.1);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    transition: background-color 0.3s;
+  }
+  
+  .social-icon:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+  
+  .footer-bottom {
+    background-color: #005a4e;
+    text-align: center;
+    padding: 1.5rem 0;
+    margin-top: 1rem;
+  }
+  
+  .footer-bottom p {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+  
+  @media (max-width: 992px) {
+    .footer-section {
+      width: 48%;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .footer-section {
+      width: 100%;
+    }
+    
+    .footer-container {
+      flex-direction: column;
+    }
+  }

@@ -1,0 +1,46 @@
+<h2 mat-dialog-title>Event Feedback</h2>
+<h3 class="event-name">{{ data.eventName }}</h3>
+
+<div mat-dialog-content>
+  <form [formGroup]="feedbackForm">
+    <div class="rating-container">
+      <label class="rating-label">How would you rate this event?</label>
+      <div class="star-rating">
+        <button 
+          type="button" 
+          mat-icon-button 
+          *ngFor="let star of [1, 2, 3, 4, 5]" 
+          [color]="feedbackForm.get('rating')?.value >= star ? 'accent' : ''"
+          (click)="feedbackForm.get('rating')?.setValue(star)">
+          <mat-icon>{{ feedbackForm.get('rating')?.value >= star ? 'star' : 'star_border' }}</mat-icon>
+        </button>
+      </div>
+      <div class="rating-error" *ngIf="feedbackForm.get('rating')?.invalid && feedbackForm.get('rating')?.touched">
+        Please select a rating
+      </div>
+    </div>
+    
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Comments (Optional)</mat-label>
+      <textarea 
+        matInput 
+        formControlName="comments" 
+        placeholder="Share your thoughts about the event..."
+        rows="4"
+        maxlength="500"></textarea>
+      <mat-hint align="end">{{ feedbackForm.get('comments')?.value?.length || 0 }}/500</mat-hint>
+    </mat-form-field>
+  </form>
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()" [disabled]="loading">Cancel</button>
+  <button 
+    mat-raised-button 
+    color="primary" 
+    [disabled]="feedbackForm.invalid || loading" 
+    (click)="onSubmit()">
+    <mat-spinner diameter="20" *ngIf="loading" class="spinner"></mat-spinner>
+    <span *ngIf="!loading">Submit Feedback</span>
+  </button>
+</div>

@@ -1,0 +1,215 @@
+.profile-container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Profile Header */
+.profile-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 20px;
+  background: linear-gradient(135deg, #00796b, #004c40);
+  border-radius: 12px;
+  color: white;
+}
+
+.profile-avatar {
+  margin-right: 20px;
+}
+
+.avatar-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+.profile-info h2 {
+  margin: 0 0 8px 0;
+  font-size: 1.8rem;
+  font-weight: 500;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Profile Completion */
+.completion-card {
+  margin-bottom: 20px;
+  border-left: 4px solid #ff9800;
+}
+
+.completion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.completion-header h3 {
+  margin: 0;
+  color: #ff9800;
+}
+
+.completion-percentage {
+  font-weight: 600;
+  color: #ff9800;
+}
+
+.completion-progress {
+  margin-bottom: 10px;
+}
+
+.completion-text {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Loading and Error */
+.loading-container,
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.error-message {
+  color: #f44336;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Form Styling */
+.profile-form-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.form-section {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.form-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.section-title {
+  color: var(--primary-color);
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.section-title::before {
+  content: "";
+  width: 4px;
+  height: 20px;
+  background-color: var(--primary-color);
+  margin-right: 10px;
+  border-radius: 2px;
+}
+
+.form-row {
+  margin-bottom: 20px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+/* Interests */
+.interests-display {
+  margin-top: 15px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.interests-label {
+  margin: 0 0 10px 0;
+  font-weight: 500;
+  color: #666;
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px;
+  background-color: #f8f9fa;
+  border-top: 1px solid #eee;
+}
+
+.spinner {
+  display: inline-block;
+  margin-right: 8px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .profile-container {
+    padding: 10px;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .profile-avatar {
+    margin-right: 0;
+    margin-bottom: 15px;
+  }
+
+  .completion-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .completion-percentage {
+    margin-top: 5px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+}
+
+/* Material Design Overrides */
+.mat-mdc-form-field {
+  margin-bottom: 16px;
+}
+
+.mat-mdc-chip-grid {
+  min-height: 48px;
+}
+
+.mat-mdc-progress-bar {
+  height: 8px;
+  border-radius: 4px;
+}
+
+
+.member-since {
+  margin-top: 4px;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.85);
+}

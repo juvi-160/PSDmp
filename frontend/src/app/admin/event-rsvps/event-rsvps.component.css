@@ -1,0 +1,136 @@
+.event-rsvps-container {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.title-section h2 {
+  margin: 0;
+  color: var(--primary-dark);
+  font-size: 1.8rem;
+}
+
+.subtitle {
+  color: #666;
+  margin-top: 5px;
+}
+
+/* Filter Card */
+.filter-card {
+  margin-bottom: 20px;
+  border-radius: 8px;
+}
+
+.filter-form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.filter-form-row mat-form-field {
+  flex: 1;
+  min-width: 200px;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  margin-bottom: 8px;
+}
+
+/* Loading and Error */
+.loading-container,
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.error-message {
+  color: #f44336;
+  margin-bottom: 20px;
+}
+
+/* Table */
+.table-container {
+  overflow-x: auto;
+  border-radius: 8px;
+  background-color: white;
+}
+
+.rsvps-table {
+  width: 100%;
+}
+
+/* Status and Role Badges */
+.status-badge,
+.role-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.status-confirmed {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-cancelled {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.status-attended {
+  background-color: #e3f2fd;
+  color: #1565c0;
+}
+
+.role-admin {
+  background-color: #e3f2fd;
+  color: #1565c0;
+}
+
+.role-member {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.role-pending {
+  background-color: #fff3e0;
+  color: #e65100;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .page-header button {
+    margin-top: 10px;
+  }
+
+  .filter-form-row {
+    flex-direction: column;
+  }
+
+  .filter-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+}

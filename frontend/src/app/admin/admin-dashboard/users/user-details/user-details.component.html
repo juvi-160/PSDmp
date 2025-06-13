@@ -1,0 +1,179 @@
+<div class="user-details-container">
+  <div class="page-header">
+    <button mat-icon-button (click)="goBack()" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h2>User Details</h2>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div class="loading-container" *ngIf="loading">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <!-- Error Message -->
+  <div class="error-container" *ngIf="error && !loading">
+    <p class="error-message">{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="loadUserDetails()">Retry</button>
+  </div>
+
+  <!-- User Details -->
+  <div class="user-details-content" *ngIf="user && !loading && !error">
+    <div class="user-details-grid">
+      <!-- Basic Information Card -->
+      <mat-card class="details-card">
+        <mat-card-header>
+          <mat-card-title>Basic Information</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="detail-item">
+            <span class="detail-label">User ID:</span>
+            <span class="detail-value">{{ user.id }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Auth0 ID:</span>
+            <span class="detail-value">{{ user.auth0Id }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Name:</span>
+            <span class="detail-value">{{ user.name }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Email:</span>
+            <span class="detail-value">{{ user.email }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Phone:</span>
+            <span class="detail-value">{{ user.phone || 'Not provided' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Role:</span>
+            <span class="detail-value role-badge" [ngClass]="getRoleClass(user.role)">{{ user.role }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Registered On:</span>
+            <span class="detail-value">{{ formatDate(user.createdAt) }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Last Updated:</span>
+            <span class="detail-value">{{ formatDate(user.updatedAt) }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Verification Status Card -->
+      <mat-card class="details-card">
+        <mat-card-header>
+          <mat-card-title>Verification Status</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="detail-item">
+            <span class="detail-label">Email Verified:</span>
+            <span class="detail-value">
+              <mat-icon *ngIf="user.isEmailVerified" class="verified-icon">check_circle</mat-icon>
+              <mat-icon *ngIf="!user.isEmailVerified" class="unverified-icon">cancel</mat-icon>
+              {{ user.isEmailVerified ? 'Verified' : 'Not Verified' }}
+            </span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Phone Verified:</span>
+            <span class="detail-value">
+              <mat-icon *ngIf="user.isPhoneVerified" class="verified-icon">check_circle</mat-icon>
+              <mat-icon *ngIf="!user.isPhoneVerified" class="unverified-icon">cancel</mat-icon>
+              {{ user.isPhoneVerified ? 'Verified' : 'Not Verified' }}
+            </span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Payment Status:</span>
+            <span class="detail-value status-badge" [ngClass]="getPaymentStatusClass(user.hasPaid)">
+              {{ user.hasPaid ? 'Paid' : 'Not Paid' }}
+            </span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Auto Pay:</span>
+            <span class="detail-value">
+              <span class="autopay-badge" [ngClass]="getAutoPayStatusClass(user.autoPayEnabled)">
+                <mat-icon class="autopay-icon">{{ getAutoPayIcon(user.autoPayEnabled) }}</mat-icon>
+                {{ getAutoPayStatusText(user.autoPayEnabled) }}
+              </span>
+            </span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Payment Summary Card -->
+      <mat-card class="details-card">
+        <mat-card-header>
+          <mat-card-title>Payment Summary</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="detail-item">
+            <span class="detail-label">Total Amount Paid:</span>
+            <span class="detail-value payment-amount">{{ user.formattedPaymentAmount || '₹0' }}</span>
+          </div>
+          <div class="detail-item" *ngIf="user.subscriptionId">
+            <span class="detail-label">Subscription ID:</span>
+            <span class="detail-value">{{ user.subscriptionId }}</span>
+          </div>
+          <div class="detail-item" *ngIf="user.subscriptionStatus">
+            <span class="detail-label">Subscription Status:</span>
+            <span class="detail-value">
+              <span class="status-badge" [ngClass]="getSubscriptionStatusClass(user.subscriptionStatus)">
+                {{ user.subscriptionStatus | titlecase }}
+              </span>
+            </span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Payment History Card -->
+      <mat-card class="details-card payment-history-card">
+        <mat-card-header>
+          <mat-card-title>Payment History</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div *ngIf="user.paymentHistory && user.paymentHistory.length > 0; else noPaymentHistory">
+            <div class="payment-history-list">
+              <div *ngFor="let payment of user.paymentHistory" class="payment-item">
+                <div class="payment-header">
+                  <span class="payment-order-id">{{ payment.orderId }}</span>
+                  <span class="payment-amount">{{ payment.formattedAmount }}</span>
+                </div>
+                <div class="payment-details">
+                  <div class="payment-detail">
+                    <span class="label">Date:</span>
+                    <span class="value">{{ formatDate(payment.paymentDate) }}</span>
+                  </div>
+                  <div class="payment-detail">
+                    <span class="label">Status:</span>
+                    <span class="value">
+                      <span class="status-badge" [ngClass]="getPaymentStatusClassByStatus(payment.status)">
+                        {{ payment.status | titlecase }}
+                      </span>
+                    </span>
+                  </div>
+                  <div class="payment-detail" *ngIf="payment.paymentId">
+                    <span class="label">Payment ID:</span>
+                    <span class="value">{{ payment.paymentId }}</span>
+                  </div>
+                  <div class="payment-detail" *ngIf="payment.isSubscription">
+                    <span class="label">Type:</span>
+                    <span class="value">
+                      <span class="subscription-badge">Subscription</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ng-template #noPaymentHistory>
+            <div class="no-payment-history">
+              <mat-icon>payment</mat-icon>
+              <p>No payment history available for this user.</p>
+            </div>
+          </ng-template>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
