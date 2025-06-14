@@ -2,6 +2,9 @@ import Razorpay from "razorpay"
 import Order from "../model/orderModel.js"
 import User from "../model/userModel.js"
 import crypto from "crypto"
+import dotenv from 'dotenv';
+dotenv.config(); // Load environment variables from .env file
+
 
 // Initialize Razorpay
 const razorpay = new Razorpay({

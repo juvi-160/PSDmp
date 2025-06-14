@@ -4,6 +4,9 @@ import User from "../model/userModel.js"
 import Subscription from "../model/subscriptionModel.js"
 import SubscriptionPlan from "../model/subscriptionPlanModel.js"
 import crypto from "crypto"
+import dotenv from 'dotenv';
+dotenv.config(); // Load environment variables from .env file
+
 
 // Initialize Razorpay
 const razorpay = new Razorpay({

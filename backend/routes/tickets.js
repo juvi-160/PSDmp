@@ -1,5 +1,7 @@
 // File: routes/tickets.js
 import express from "express"
+import dotenv from "dotenv"
+dotenv.config() // Load environment variables from .env file
 import { auth } from "express-oauth2-jwt-bearer"
 import {
   createTicket,

@@ -1,4 +1,7 @@
 import User from "../model/userModel.js"
+import dotenv from 'dotenv';
+dotenv.config(); // Load environment variables from .env file
+
 
 // Get user profile
 export const getUserProfile = async (req, res) => {

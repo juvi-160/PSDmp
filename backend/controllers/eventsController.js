@@ -3,6 +3,9 @@ import fs from "fs"
 import path from "path"
 import { fileURLToPath } from "url"
 import multer from "multer"
+import dotenv from 'dotenv';
+dotenv.config(); // Load environment variables from .env file
+
 
 // Get directory name
 const __filename = fileURLToPath(import.meta.url)

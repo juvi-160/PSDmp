@@ -8,6 +8,9 @@ import {
   getUserEventStats,
 } from "../controllers/rsvpController.js";
 import { submitFeedback, getEventFeedback } from "../controllers/feedbackController.js";
+import dotenv from 'dotenv';
+dotenv.config(); // Load environment variables from .env file
+
 
 const router = express.Router();
 

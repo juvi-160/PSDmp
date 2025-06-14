@@ -1,5 +1,7 @@
 import User from "../model/userModel.js"
 import Order from "../model/orderModel.js"
+import dotenv from 'dotenv';
+dotenv.config(); // Load environment variables from .env file
 import { auth } from "express-oauth2-jwt-bearer"
 import crypto from "crypto"
 import { Op } from "sequelize" // Import Op from sequelize
