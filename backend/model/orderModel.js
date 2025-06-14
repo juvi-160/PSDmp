@@ -10,7 +10,7 @@ const Order = sequelize.define(
       unique: true,
     },
     user_id: {
-      type: DataTypes.STRING(255),  // ✅ fixed from INTEGER to STRING
+      type: DataTypes.INTEGER,  // ✅ fixed from INTEGER to STRING
       allowNull: false,
     },
     amount: {
@@ -57,7 +57,6 @@ const Order = sequelize.define(
 Order.associate = (models) => {
   Order.belongsTo(models.User, {
     foreignKey: "user_id",
-    targetKey: "auth0_id",  // ✅ Correct reference
     as: "user",
   });
 };

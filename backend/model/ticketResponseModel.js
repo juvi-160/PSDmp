@@ -17,7 +17,7 @@ const TicketResponse = sequelize.define(
       allowNull: false,
     },
     user_id: {
-      type: DataTypes.STRING(255), // ✅ fixed from INTEGER to STRING
+      type: DataTypes.INTEGER, // ✅ fixed from INTEGER to STRING
       allowNull: false,
     },
     responder_email: {
@@ -49,7 +49,6 @@ TicketResponse.associate = (models) => {
 
   TicketResponse.belongsTo(models.User, {
     foreignKey: "user_id",
-    targetKey: "auth0_id", // ✅ very important to match with Users.auth0_id
     as: "user",
   });
 };

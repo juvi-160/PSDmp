@@ -1,489 +1,294 @@
-import Ticket from "../model/ticketsModel.js"
-import TicketResponse from "../model/ticketResponseModel.js"
-import User from "../model/userModel.js"
-import { Op } from "sequelize"
+import Ticket from "../model/ticketsModel.js";
+import TicketResponse from "../model/ticketResponseModel.js";
+import User from "../model/userModel.js";
+import { Op } from "sequelize";
 
-// Create a new ticket
+// CREATE TICKET
 export const createTicket = async (req, res) => {
   try {
-    const { subject, description, priority, category } = req.body
+    const { subject, description, priority, category } = req.body;
+    const sub = req.auth?.sub || req.auth?.payload?.sub;
+    if (!sub) return res.status(401).json({ message: "Invalid authentication token" });
 
-    // Get Auth0 user ID from token
-    const sub = req.auth?.sub || req.auth?.payload?.sub
-    if (!sub) {
-      console.error("Invalid auth object:", req.auth)
-      return res.status(401).json({ message: "Invalid authentication token" })
-    }
+    if (!subject || !description)
+      return res.status(400).json({ message: "Subject and description are required" });
 
-    console.log("Creating ticket for user with sub:", sub)
-
-    // Validate required fields
-    if (!subject || !description) {
-      return res.status(400).json({ message: "Subject and description are required" })
-    }
-
-    // Get user details from database
     const user = await User.findOne({
       where: { auth0_id: sub },
-      attributes: ["name", "email"],
-    })
+      attributes: ["id", "name", "email"]
+    });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-    if (!user) {
-      console.error("User not found in database for sub:", sub)
-      return res.status(404).json({ message: "User not found" })
-    }
-
-    console.log("Found user:", user.name, "with email:", user.email)
-
-    // Create ticket
     const ticket = await Ticket.create({
-      user_id: sub,
+      user_id: user.id,
       subject,
       description,
       priority: priority || "medium",
-      category: category || "general",
-    })
-
-    console.log("Ticket created with ID:", ticket.id)
+      category: category || "general"
+    });
 
     res.status(201).json({
       message: "Ticket created successfully",
-      ticket: {
-        id: ticket.id,
-        subject: ticket.subject,
-        description: ticket.description,
-        status: ticket.status,
-        priority: ticket.priority,
-        category: ticket.category,
-        adminResponse: ticket.admin_response,
-        createdAt: ticket.created_at,
-        updatedAt: ticket.updated_at,
-        resolvedAt: ticket.resolved_at,
-      },
-    })
+      ticket
+    });
   } catch (error) {
-    console.error("Error creating ticket:", error)
-    res.status(500).json({ message: "Server error" })
+    console.error("Error creating ticket:", error);
+    res.status(500).json({ message: "Server error" });
   }
-}
+};
 
-// Get user's tickets
+// GET USER TICKETS
 export const getUserTickets = async (req, res) => {
   try {
-    // Get Auth0 user ID from token
-    const sub = req.auth?.sub || req.auth?.payload?.sub
-    if (!sub) {
-      return res.status(401).json({ message: "Invalid authentication token" })
-    }
+    const sub = req.auth?.sub || req.auth?.payload?.sub;
+    if (!sub) return res.status(401).json({ message: "Invalid authentication token" });
 
-    const { status, page = 1, limit = 10 } = req.query
+    const user = await User.findOne({ where: { auth0_id: sub }, attributes: ["id"] });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-    const whereClause = { user_id: sub }
-    if (status) {
-      whereClause.status = status
-    }
+    const { status, page = 1, limit = 10 } = req.query;
+    const whereClause = { user_id: user.id };
+    if (status) whereClause.status = status;
 
-    const offset = (Number.parseInt(page) - 1) * Number.parseInt(limit)
-
+    const offset = (Number(page) - 1) * Number(limit);
     const { count, rows: tickets } = await Ticket.findAndCountAll({
       where: whereClause,
       order: [["created_at", "DESC"]],
-      limit: Number.parseInt(limit),
-      offset: offset,
-    })
-
-    const formattedTickets = tickets.map((ticket) => ({
-      id: ticket.id,
-      subject: ticket.subject,
-      description: ticket.description,
-      status: ticket.status,
-      priority: ticket.priority,
-      category: ticket.category,
-      adminResponse: ticket.admin_response,
-      createdAt: ticket.created_at,
-      updatedAt: ticket.updated_at,
-      resolvedAt: ticket.resolved_at,
-    }))
+      limit: Number(limit),
+      offset
+    });
 
     res.status(200).json({
-      tickets: formattedTickets,
+      tickets,
       pagination: {
-        page: Number.parseInt(page),
-        limit: Number.parseInt(limit),
+        page: Number(page),
+        limit: Number(limit),
         total: count,
-        totalPages: Math.ceil(count / Number.parseInt(limit)),
-      },
-    })
+        totalPages: Math.ceil(count / limit)
+      }
+    });
   } catch (error) {
-    console.error("Error getting user tickets:", error)
-    res.status(500).json({ message: "Server error" })
+    console.error("Error getting user tickets:", error);
+    res.status(500).json({ message: "Server error" });
   }
-}
+};
 
-// Get all tickets (Admin only)
+// GET ALL TICKETS (ADMIN)
 export const getAllTickets = async (req, res) => {
   try {
-    // Get Auth0 user ID from token
-    const sub = req.auth?.sub || req.auth?.payload?.sub
-    if (!sub) {
-      return res.status(401).json({ message: "Invalid authentication token" })
-    }
+    const sub = req.auth?.sub || req.auth?.payload?.sub;
+    if (!sub) return res.status(401).json({ message: "Invalid authentication token" });
 
-    // Check if user has admin role
-    const user = await User.findOne({
-      where: { auth0_id: sub },
-      attributes: ["role"],
-    })
+    const user = await User.findOne({ where: { auth0_id: sub }, attributes: ["id", "role"] });
+    if (!user || user.role !== "admin") return res.status(403).json({ message: "Unauthorized" });
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" })
-    }
-
-    if (user.role !== "admin") {
-      return res.status(403).json({ message: "Unauthorized: Admin access required" })
-    }
-
-    const { status, priority, category, search, page = 1, limit = 10 } = req.query
-
-    const whereClause = {}
-
-    if (status) whereClause.status = status
-    if (priority) whereClause.priority = priority
-    if (category) whereClause.category = category
-
+    const { status, priority, category, search, page = 1, limit = 10 } = req.query;
+    const whereClause = {};
+    if (status) whereClause.status = status;
+    if (priority) whereClause.priority = priority;
+    if (category) whereClause.category = category;
     if (search) {
-      whereClause[Op.or] = [{ subject: { [Op.like]: `%${search}%` } }, { description: { [Op.like]: `%${search}%` } }]
+      whereClause[Op.or] = [
+        { subject: { [Op.like]: `%${search}%` } },
+        { description: { [Op.like]: `%${search}%` } }
+      ];
     }
 
-    const offset = (Number.parseInt(page) - 1) * Number.parseInt(limit)
-
+    const offset = (Number(page) - 1) * Number(limit);
     const { count, rows: tickets } = await Ticket.findAndCountAll({
       where: whereClause,
-      include: [
-        {
-          model: User,
-          as: "user",
-          attributes: ["name", "email"],
-        },
-      ],
+      include: [{ model: User, as: "user", attributes: ["name", "email"] }],
       order: [["created_at", "DESC"]],
-      limit: Number.parseInt(limit),
-      offset: offset,
-    })
-
-    const formattedTickets = tickets.map((ticket) => ({
-      id: ticket.id,
-      subject: ticket.subject,
-      description: ticket.description,
-      status: ticket.status,
-      priority: ticket.priority,
-      category: ticket.category,
-      userName: ticket.user?.name,
-      userEmail: ticket.user?.email,
-      adminResponse: ticket.admin_response,
-      createdAt: ticket.created_at,
-      updatedAt: ticket.updated_at,
-      resolvedAt: ticket.resolved_at,
-    }))
+      limit: Number(limit),
+      offset
+    });
 
     res.status(200).json({
-      tickets: formattedTickets,
+      tickets,
       pagination: {
-        page: Number.parseInt(page),
-        limit: Number.parseInt(limit),
+        page: Number(page),
+        limit: Number(limit),
         total: count,
-        totalPages: Math.ceil(count / Number.parseInt(limit)),
-      },
-    })
+        totalPages: Math.ceil(count / limit)
+      }
+    });
   } catch (error) {
-    console.error("Error getting all tickets:", error)
-    res.status(500).json({ message: "Server error" })
+    console.error("Error getting all tickets:", error);
+    res.status(500).json({ message: "Server error" });
   }
-}
+};
 
-// Get ticket by ID
+// GET TICKET BY ID
 export const getTicketById = async (req, res) => {
   try {
-    const ticketId = req.params.id
+    const { id } = req.params;
+    const sub = req.auth?.sub || req.auth?.payload?.sub;
+    if (!sub) return res.status(401).json({ message: "Invalid authentication token" });
 
-    // Get Auth0 user ID from token
-    const sub = req.auth?.sub || req.auth?.payload?.sub
-    if (!sub) {
-      return res.status(401).json({ message: "Invalid authentication token" })
-    }
+    const user = await User.findOne({ where: { auth0_id: sub }, attributes: ["id", "role"] });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Get user details from database
-    const user = await User.findOne({
-      where: { auth0_id: sub },
-      attributes: ["email", "role"],
-    })
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" })
-    }
-
-    const whereClause = { id: ticketId }
-
-    // Non-admin users can only view their own tickets
-    if (user.role !== "admin") {
-      whereClause.user_id = sub
-    }
+    const whereClause = { id };
+    if (user.role !== "admin") whereClause.user_id = user.id;
 
     const ticket = await Ticket.findOne({
       where: whereClause,
       include: [
-        {
-          model: User,
-          as: "user",
-          attributes: ["name", "email"],
-        },
-        {
-          model: TicketResponse,
-          as: "responses",
-          order: [["created_at", "ASC"]],
-        },
-      ],
-    })
+        { model: User, as: "user", attributes: ["name", "email"] },
+        { model: TicketResponse, as: "responses", order: [["created_at", "ASC"]] }
+      ]
+    });
 
-    if (!ticket) {
-      return res.status(404).json({ message: "Ticket not found" })
-    }
+    if (!ticket) return res.status(404).json({ message: "Ticket not found" });
 
-    const formattedTicket = {
-      id: ticket.id,
-      subject: ticket.subject,
-      description: ticket.description,
-      status: ticket.status,
-      priority: ticket.priority,
-      category: ticket.category,
-      userName: ticket.user?.name,
-      userEmail: ticket.user?.email,
-      adminResponse: ticket.admin_response,
-      createdAt: ticket.created_at,
-      updatedAt: ticket.updated_at,
-      resolvedAt: ticket.resolved_at,
-      responses: ticket.responses?.map((response) => ({
-        id: response.id,
-        message: response.message,
-        isAdminResponse: response.is_admin_response,
-        createdAt: response.created_at,
-      })),
-    }
-
-    res.status(200).json(formattedTicket)
+    res.status(200).json(ticket);
   } catch (error) {
-    console.error("Error getting ticket by ID:", error)
-    res.status(500).json({ message: "Server error" })
+    console.error("Error getting ticket by ID:", error);
+    res.status(500).json({ message: "Server error" });
   }
-}
+};
 
-// Update ticket (Admin only)
+// UPDATE TICKET (ADMIN)
 export const updateTicket = async (req, res) => {
   try {
-    const ticketId = req.params.id
-    const { status, priority, adminResponse } = req.body
+    const { id } = req.params;
+    const { status, priority, adminResponse } = req.body;
+    const sub = req.auth?.sub || req.auth?.payload?.sub;
 
-    // Get Auth0 user ID from token
-    const sub = req.auth?.sub || req.auth?.payload?.sub
-    if (!sub) {
-      return res.status(401).json({ message: "Invalid authentication token" })
-    }
+    const user = await User.findOne({ where: { auth0_id: sub }, attributes: ["id", "role"] });
+    if (!user || user.role !== "admin") return res.status(403).json({ message: "Unauthorized" });
 
-    // Get admin details from database
-    const user = await User.findOne({
-      where: { auth0_id: sub },
-      attributes: ["name", "email", "role"],
-    })
+    const ticket = await Ticket.findByPk(id);
+    if (!ticket) return res.status(404).json({ message: "Ticket not found" });
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" })
-    }
+    const updateData = {};
+    if (status) updateData.status = status;
+    if (priority) updateData.priority = priority;
+    if (adminResponse) updateData.admin_response = adminResponse;
+    if (["resolved", "closed"].includes(status)) updateData.resolved_at = new Date();
 
-    if (user.role !== "admin") {
-      return res.status(403).json({ message: "Unauthorized: Admin access required" })
-    }
+    await ticket.update(updateData);
 
-    // Check if ticket exists
-    const ticket = await Ticket.findByPk(ticketId)
-
-    if (!ticket) {
-      return res.status(404).json({ message: "Ticket not found" })
-    }
-
-    // Prepare update data
-    const updateData = {}
-    if (status) updateData.status = status
-    if (priority) updateData.priority = priority
-    if (adminResponse) updateData.admin_response = adminResponse
-
-    if (status === "resolved" || status === "closed") {
-      updateData.resolved_at = new Date()
-    }
-
-    // Update ticket
-    await ticket.update(updateData)
-
-    // Add admin response to ticket_responses if provided
     if (adminResponse) {
       await TicketResponse.create({
-        ticket_id: ticketId,
-        user_id: sub,
+        ticket_id: id,
+        user_id: user.id,
         message: adminResponse,
-        is_admin_response: true,
-      })
+        is_admin_response: true
+      });
     }
 
-    // Reload ticket to get updated data
-    await ticket.reload()
-
-    res.status(200).json({
-      message: "Ticket updated successfully",
-      ticket: {
-        id: ticket.id,
-        subject: ticket.subject,
-        description: ticket.description,
-        status: ticket.status,
-        priority: ticket.priority,
-        category: ticket.category,
-        adminResponse: ticket.admin_response,
-        createdAt: ticket.created_at,
-        updatedAt: ticket.updated_at,
-        resolvedAt: ticket.resolved_at,
-      },
-    })
+    res.status(200).json({ message: "Ticket updated successfully", ticket });
   } catch (error) {
-    console.error("Error updating ticket:", error)
-    res.status(500).json({ message: "Server error" })
+    console.error("Error updating ticket:", error);
+    res.status(500).json({ message: "Server error" });
   }
-}
+};
 
-// Add response to ticket
+// ADD RESPONSE TO TICKET
 export const addTicketResponse = async (req, res) => {
   try {
-    const ticketId = req.params.id
-    const { message } = req.body
+    const { id } = req.params;
+    const { message } = req.body;
+    const sub = req.auth?.sub || req.auth?.payload?.sub;
 
-    // Get Auth0 user ID from token
-    const sub = req.auth?.sub || req.auth?.payload?.sub
-    if (!sub) {
-      return res.status(401).json({ message: "Invalid authentication token" })
-    }
+    const user = await User.findOne({ where: { auth0_id: sub }, attributes: ["id", "role"] });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Get user details from database
-    const user = await User.findOne({
-      where: { auth0_id: sub },
-      attributes: ["name", "email", "role"],
-    })
+    const whereClause = { id };
+    if (user.role !== "admin") whereClause.user_id = user.id;
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" })
-    }
+    const ticket = await Ticket.findOne({ where: whereClause });
+    if (!ticket) return res.status(404).json({ message: "Ticket not found" });
 
-    if (!message) {
-      return res.status(400).json({ message: "Message is required" })
-    }
-
-    // Check if ticket exists and user has access
-    const whereClause = { id: ticketId }
-
-    if (user.role !== "admin") {
-      whereClause.user_id = sub
-    }
-
-    const ticket = await Ticket.findOne({ where: whereClause })
-
-    if (!ticket) {
-      return res.status(404).json({ message: "Ticket not found" })
-    }
-
-    // Add response
     await TicketResponse.create({
-      ticket_id: ticketId,
-      user_id: sub,
+      ticket_id: id,
+      user_id: user.id,
       message,
-      is_admin_response: user.role === "admin",
-    })
+      is_admin_response: user.role === "admin"
+    });
 
-    // Update ticket status if it was resolved/closed and user is responding
-    if (user.role !== "admin" && (ticket.status === "resolved" || ticket.status === "closed")) {
-      await ticket.update({ status: "open" })
+    if (user.role !== "admin" && ["resolved", "closed"].includes(ticket.status)) {
+      await ticket.update({ status: "open" });
     }
 
-    res.status(201).json({ message: "Response added successfully" })
+    res.status(201).json({ message: "Response added successfully" });
   } catch (error) {
-    console.error("Error adding ticket response:", error)
-    res.status(500).json({ message: "Server error" })
+    console.error("Error adding ticket response:", error);
+    res.status(500).json({ message: "Server error" });
   }
-}
+};
 
-// Get ticket statistics (Admin only)
+// GET TICKET STATS (ADMIN)
 export const getTicketStats = async (req, res) => {
   try {
-    // Get Auth0 user ID from token
-    const sub = req.auth?.sub || req.auth?.payload?.sub
-    if (!sub) {
-      return res.status(401).json({ message: "Invalid authentication token" })
-    }
+    const sub = req.auth?.sub || req.auth?.payload?.sub;
+    const user = await User.findOne({ where: { auth0_id: sub }, attributes: ["id", "role"] });
+    if (!user || user.role !== "admin") return res.status(403).json({ message: "Unauthorized" });
 
-    // Check if user has admin role
-    const user = await User.findOne({
-      where: { auth0_id: sub },
-      attributes: ["role"],
-    })
+    const total = await Ticket.count();
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" })
-    }
-
-    if (user.role !== "admin") {
-      return res.status(403).json({ message: "Unauthorized: Admin access required" })
-    }
-
-    // Get total tickets
-    const totalTickets = await Ticket.count()
-
-    // Get tickets by status
-    const statusCounts = await Ticket.findAll({
+    const byStatusRaw = await Ticket.findAll({
       attributes: ["status", [Ticket.sequelize.fn("COUNT", "*"), "count"]],
       group: ["status"],
-      raw: true,
-    })
+      raw: true
+    });
 
-    // Get tickets by priority
-    const priorityCounts = await Ticket.findAll({
+    const byPriorityRaw = await Ticket.findAll({
       attributes: ["priority", [Ticket.sequelize.fn("COUNT", "*"), "count"]],
       group: ["priority"],
-      raw: true,
-    })
+      raw: true
+    });
 
-    // Get recent tickets (last 7 days)
-    const sevenDaysAgo = new Date()
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
-
-    const recentTickets = await Ticket.count({
+    const recent = await Ticket.count({
       where: {
         created_at: {
-          [Op.gte]: sevenDaysAgo,
-        },
-      },
-    })
+          [Op.gte]: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+        }
+      }
+    });
 
-    const stats = {
-      total: totalTickets,
-      recent: recentTickets,
-      byStatus: statusCounts.reduce((acc, item) => {
-        acc[item.status] = Number.parseInt(item.count)
-        return acc
-      }, {}),
-      byPriority: priorityCounts.reduce((acc, item) => {
-        acc[item.priority] = Number.parseInt(item.count)
-        return acc
-      }, {}),
-    }
+    const byStatus = {};
+    byStatusRaw.forEach((item) => (byStatus[item.status] = Number(item.count)));
 
-    res.status(200).json(stats)
+    const byPriority = {};
+    byPriorityRaw.forEach((item) => (byPriority[item.priority] = Number(item.count)));
+
+    res.status(200).json({ total, recent, byStatus, byPriority });
   } catch (error) {
-    console.error("Error getting ticket stats:", error)
-    res.status(500).json({ message: "Server error" })
+    console.error("Error getting ticket stats:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// DELETE TICKET (ADMIN)
+export const deleteTicket = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const sub = req.auth?.sub || req.auth?.payload?.sub;
+
+    const user = await User.findOne({ where: { auth0_id: sub }, attributes: ["id", "role"] });
+    if (!user || user.role !== "admin") return res.status(403).json({ message: "Unauthorized" });
+    const ticket = await Ticket.findByPk(id);
+    if (!ticket) return res.status(404).json({ message: "Ticket not found" });
+    await TicketResponse.destroy({ where: { ticket_id: id } });
+    await ticket.destroy();                                   
+    res.status(200).json({ message: "Ticket deleted successfully" });
+  }
+  catch (error) {
+    console.error("Error deleting ticket:", error);
+    res.status(500).json({ message: "Server error" });
   }
 }
+
+// Export all functions
+export default {
+  createTicket,
+  getUserTickets,
+  getAllTickets,
+  getTicketById,
+  updateTicket,
+  addTicketResponse,
+  getTicketStats,
+  deleteTicket
+};

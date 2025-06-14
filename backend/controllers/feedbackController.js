@@ -1,4 +1,4 @@
-import EventRSVP from "../model/eventFeedbackModel.js"
+import EventRSVP from "../model/eventRsvpModel.js"
 import EventFeedback from "../model/eventFeedbackModel.js"
 import User from "../model/userModel.js"
 
@@ -8,10 +8,15 @@ export const submitFeedback = async (req, res) => {
     const { eventId } = req.params
     const { rating, comments } = req.body
 
-    // Get Auth0 user ID from token
     const sub = req.auth?.sub || req.auth?.payload?.sub
     if (!sub) {
       return res.status(401).json({ message: "Invalid authentication token" })
+    }
+
+    // Get user by auth0_id to retrieve internal numeric user_id
+    const user = await User.findOne({ where: { auth0_id: sub } })
+    if (!user) {
+      return res.status(404).json({ message: "User not found" })
     }
 
     // Validate rating
@@ -19,43 +24,42 @@ export const submitFeedback = async (req, res) => {
       return res.status(400).json({ message: "Rating must be between 1 and 5" })
     }
 
-    // Check if user attended the event
+    // Check RSVP status
     const rsvp = await EventRSVP.findOne({
       where: {
         event_id: eventId,
-        user_id: sub, // Using auth0_id directly as user_id
+        user_id: user.id,
       },
     })
 
     if (!rsvp) {
-      return res.status(400).json({ message: "You must RSVP to an event before providing feedback" })
+      return res.status(400).json({
+        message: "You must RSVP to an event before providing feedback",
+      })
     }
 
     // Check if feedback already exists
     const existingFeedback = await EventFeedback.findOne({
       where: {
         event_id: eventId,
-        user_id: sub, // Using auth0_id directly as user_id
+        user_id: user.id,
       },
     })
 
     if (existingFeedback) {
-      // Update existing feedback
       await existingFeedback.update({
         rating,
         comments: comments || null,
       })
     } else {
-      // Create new feedback
       await EventFeedback.create({
         event_id: eventId,
-        user_id: sub, // Using auth0_id directly as user_id
+        user_id: user.id,
         rating,
         comments: comments || null,
       })
     }
 
-    // Mark that feedback has been provided in the RSVP
     await rsvp.update({ feedback_provided: true })
 
     res.status(200).json({ message: "Feedback submitted successfully" })
@@ -70,23 +74,20 @@ export const getEventFeedback = async (req, res) => {
   try {
     const { eventId } = req.params
 
-    // Get Auth0 user ID from token
     const sub = req.auth?.sub || req.auth?.payload?.sub
     if (!sub) {
       return res.status(401).json({ message: "Invalid authentication token" })
     }
 
-    // Check if user has admin role
     const user = await User.findOne({
       where: { auth0_id: sub },
-      attributes: ["role"],
+      attributes: ["id", "role"],
     })
 
     if (!user || user.role !== "admin") {
       return res.status(403).json({ message: "Unauthorized: Admin access required" })
     }
 
-    // Get all feedback for the event
     const feedback = await EventFeedback.findAll({
       where: { event_id: eventId },
       include: [
@@ -106,7 +107,9 @@ export const getEventFeedback = async (req, res) => {
     })
 
     const averageRating =
-      feedbackData.length > 0 ? feedbackData.reduce((sum, f) => sum + f.rating, 0) / feedbackData.length : 0
+      feedbackData.length > 0
+        ? feedbackData.reduce((sum, f) => sum + f.rating, 0) / feedbackData.length
+        : 0
 
     const formattedFeedback = feedback.map((f) => ({
       id: f.id,
@@ -128,7 +131,6 @@ export const getEventFeedback = async (req, res) => {
   }
 }
 
-// Export the controller functions
 export default {
   submitFeedback,
   getEventFeedback,

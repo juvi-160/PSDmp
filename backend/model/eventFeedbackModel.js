@@ -9,7 +9,7 @@ const EventFeedback = sequelize.define(
       allowNull: false,
     },
     user_id: {
-      type: DataTypes.STRING,  // ✅ fixed
+      type: DataTypes.INTEGER,  // ✅ fixed
       allowNull: false,
     },
     rating: {
@@ -42,7 +42,6 @@ const EventFeedback = sequelize.define(
 EventFeedback.associate = (models) => {
   EventFeedback.belongsTo(models.User, {
     foreignKey: "user_id",
-    targetKey: "auth0_id",  // ✅ critical for custom FK
     as: "user",
   });
   EventFeedback.belongsTo(models.Event, {

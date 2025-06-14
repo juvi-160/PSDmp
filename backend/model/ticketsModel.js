@@ -28,11 +28,11 @@ const Ticket = sequelize.define('Ticket', {
     allowNull: true
   },
   user_id: {
-    type: DataTypes.STRING(255), // ✅ changed from INTEGER to STRING
+    type: DataTypes.INTEGER, // ✅ changed from INTEGER to STRING
     allowNull: false
   },
   admin_id: {
-    type: DataTypes.STRING(255), // ✅ added for association with admin (optional)
+    type: DataTypes.INTEGER, // ✅ added for association with admin (optional)
     allowNull: true
   },
   resolved_at: {
@@ -60,13 +60,11 @@ const Ticket = sequelize.define('Ticket', {
 Ticket.associate = (models) => {
   Ticket.belongsTo(models.User, {
     foreignKey: 'user_id',
-    targetKey: 'auth0_id',
     as: 'user'
   });
 
   Ticket.belongsTo(models.User, {
     foreignKey: 'admin_id',
-    targetKey: 'auth0_id',
     as: 'admin',
     constraints: false // Optional if admin is not always present
   });

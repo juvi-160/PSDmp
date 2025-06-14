@@ -10,7 +10,7 @@ const EventRSVP = sequelize.define(
       allowNull: false,
     },
     user_id: {
-      type: DataTypes.STRING, // ✅ Changed from INTEGER to STRING to match Auth0 ID
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     status: {
@@ -39,7 +39,6 @@ const EventRSVP = sequelize.define(
 EventRSVP.associate = (models) => {
   EventRSVP.belongsTo(models.User, {
     foreignKey: "user_id",
-    targetKey: "auth0_id", // ✅ Specify we’re linking to auth0_id, not id
     as: "user",
   });
   EventRSVP.belongsTo(models.Event, { foreignKey: "event_id", as: "event" });

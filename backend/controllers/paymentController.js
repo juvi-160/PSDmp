@@ -1,6 +1,6 @@
 import Razorpay from "razorpay"
 import Order from "../model/orderModel.js"
-import User from "..//model/userModel.js"
+import User from "../model/userModel.js"
 import crypto from "crypto"
 
 // Initialize Razorpay
@@ -12,16 +12,12 @@ const razorpay = new Razorpay({
 // Create a new payment order
 const createOrder = async (req, res) => {
   try {
-    // Get Auth0 user ID from token
     const sub = req.auth?.sub || req.auth?.payload?.sub
     if (!sub) {
       return res.status(401).json({ message: "Invalid authentication token" })
     }
 
-    // Look up the user
-    const user = await User.findOne({
-      where: { auth0_id: sub },
-    })
+    const user = await User.findOne({ where: { auth0_id: sub } })
 
     if (!user) {
       return res.status(404).json({ message: "User not found" })
@@ -36,17 +32,17 @@ const createOrder = async (req, res) => {
       receipt,
       notes: {
         ...notes,
-        userId: sub, // Using auth0_id directly
+        userId: user.id, // Store internal user ID in notes
       },
     }
 
     const order = await razorpay.orders.create(options)
 
-    // Save order in our database
+    // Save order in your DB using internal numeric user_id
     await Order.create({
       order_id: order.id,
-      user_id: sub, // Using auth0_id directly as user_id
-      amount: order.amount / 100, // Convert from paise to rupees for storage
+      user_id: user.id,
+      amount: order.amount / 100,
       currency: order.currency,
       receipt: order.receipt,
       status: order.status,
@@ -63,13 +59,22 @@ const createOrder = async (req, res) => {
 // Get payment status
 const getPaymentStatus = async (req, res) => {
   try {
-    const userId = req.auth.sub // Auth0 user ID from JWT token
+    const sub = req.auth?.sub || req.auth?.payload?.sub
+    if (!sub) {
+      return res.status(401).json({ message: "Invalid authentication token" })
+    }
+
+    const user = await User.findOne({ where: { auth0_id: sub } })
+    if (!user) {
+      return res.status(404).json({ message: "User not found" })
+    }
+
     const { orderId } = req.params
 
     const order = await Order.findOne({
       where: {
         order_id: orderId,
-        user_id: userId, // Using auth0_id directly as user_id
+        user_id: user.id,
       },
     })
 
@@ -90,7 +95,6 @@ const handleWebhook = async (req, res) => {
     const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET
     const signature = req.headers["x-razorpay-signature"]
 
-    // Verify webhook signature
     const shasum = crypto.createHmac("sha256", webhookSecret)
     shasum.update(JSON.stringify(req.body))
     const digest = shasum.digest("hex")
@@ -101,7 +105,6 @@ const handleWebhook = async (req, res) => {
 
     const event = req.body
 
-    // Handle different event types
     if (event.event === "payment.authorized") {
       const paymentId = event.payload.payment.entity.id
       const orderId = event.payload.payment.entity.order_id
@@ -117,21 +120,21 @@ const handleWebhook = async (req, res) => {
         },
       )
 
-      // Get user ID from order
+      // Find order to get internal user_id
       const order = await Order.findOne({
         where: { order_id: orderId },
         attributes: ["user_id"],
       })
 
       if (order) {
-        // Update user role and payment status
+        // Update user's role and payment status using internal ID
         await User.update(
           {
             role: "individual member",
             has_paid: true,
           },
           {
-            where: { auth0_id: order.user_id }, // Using auth0_id directly
+            where: { id: order.user_id },
           },
         )
       }

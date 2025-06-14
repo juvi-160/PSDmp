@@ -78,26 +78,27 @@ export const createSubscriptionWithImmediatePayment = async (req, res) => {
       return res.status(401).json({ message: "Invalid authentication token" })
     }
 
+    // Get user with database ID
     const user = await User.findOne({
       where: { auth0_id: sub },
-      attributes: ["id"],
+      attributes: ["id", "auth0_id"], // Get both IDs
     })
 
     if (!user) {
       return res.status(404).json({ message: "User not found" })
     }
-    const userId = user.id
 
     const { planId, amount, customerNotify = true, notes = {} } = req.body
 
     // Step 1: Create immediate payment order for first month
     const firstPaymentOrder = await razorpay.orders.create({
-      amount: amount * 100, // Convert to paise
+      amount: amount * 100,
       currency: "INR",
       receipt: `first_payment_${new Date().getTime()}`,
       notes: {
         ...notes,
-        userId: userId.toString(),
+        userId: user.id.toString(), // Use database ID
+        auth0Id: user.auth0_id, // Store auth0_id in notes for reference
         paymentType: "subscription-first-payment",
         planId: planId,
       },
@@ -106,18 +107,19 @@ export const createSubscriptionWithImmediatePayment = async (req, res) => {
     // Step 2: Create subscription starting from next month
     const nextMonthStart = new Date()
     nextMonthStart.setMonth(nextMonthStart.getMonth() + 1)
-    nextMonthStart.setDate(1) // Start on 1st of next month
-    nextMonthStart.setHours(0, 0, 0, 0) // Start at midnight
+    nextMonthStart.setDate(1)
+    nextMonthStart.setHours(0, 0, 0, 0)
 
     const subscriptionData = {
       plan_id: planId,
       customer_notify: customerNotify,
       quantity: 1,
-      total_count: 11, // 11 more payments (since first payment is immediate)
+      total_count: 11,
       start_at: Math.floor(nextMonthStart.getTime() / 1000),
       notes: {
         ...notes,
-        userId: userId.toString(),
+        userId: user.id.toString(), // Use database ID
+        auth0Id: user.auth0_id,
         paymentType: "monthly-subscription",
         firstPaymentOrderId: firstPaymentOrder.id,
       },
@@ -125,10 +127,10 @@ export const createSubscriptionWithImmediatePayment = async (req, res) => {
 
     const subscription = await razorpay.subscriptions.create(subscriptionData)
 
-    // Save both order and subscription in our database using Sequelize
+    // Save records with database user_id
     await Order.create({
       order_id: firstPaymentOrder.id,
-      user_id: userId,
+      user_id: user.id, // Database ID
       amount: amount,
       currency: firstPaymentOrder.currency,
       receipt: firstPaymentOrder.receipt,
@@ -139,7 +141,7 @@ export const createSubscriptionWithImmediatePayment = async (req, res) => {
 
     await Subscription.create({
       subscription_id: subscription.id,
-      user_id: userId,
+      user_id: user.id, // Database ID
       plan_id: planId,
       status: subscription.status,
       start_at: new Date(subscription.start_at * 1000),
@@ -165,38 +167,37 @@ export const createSubscription = async (req, res) => {
       return res.status(401).json({ message: "Invalid authentication token" })
     }
 
+    // Get user with database ID
     const user = await User.findOne({
       where: { auth0_id: sub },
-      attributes: ["id"],
+      attributes: ["id", "auth0_id"],
     })
 
     if (!user) {
       return res.status(404).json({ message: "User not found" })
     }
-    const userId = user.id
 
     const { planId, customerNotify = true, notes = {} } = req.body
 
-    // Create subscription starting immediately
     const subscriptionData = {
       plan_id: planId,
       customer_notify: customerNotify,
       quantity: 1,
-      total_count: 12, // 12 monthly payments
-      start_at: Math.floor(Date.now() / 1000), // Start immediately
+      total_count: 12,
+      start_at: Math.floor(Date.now() / 1000),
       notes: {
         ...notes,
-        userId: userId.toString(),
+        userId: user.id.toString(), // Database ID
+        auth0Id: user.auth0_id,
         paymentType: "monthly-subscription",
       },
     }
 
     const subscription = await razorpay.subscriptions.create(subscriptionData)
 
-    // Save subscription in our database using Sequelize
     await Subscription.create({
       subscription_id: subscription.id,
-      user_id: userId,
+      user_id: user.id, // Database ID
       plan_id: planId,
       status: subscription.status,
       start_at: new Date(subscription.start_at * 1000),
@@ -218,8 +219,10 @@ export const createOneTimeOrder = async (req, res) => {
       return res.status(401).json({ message: "Invalid authentication token" })
     }
 
+    // Get user with database ID
     const user = await User.findOne({
       where: { auth0_id: sub },
+      attributes: ["id", "auth0_id"],
     })
 
     if (!user) {
@@ -228,21 +231,20 @@ export const createOneTimeOrder = async (req, res) => {
 
     const { amount, currency = "INR", notes = {} } = req.body
 
-    // Validate minimum amount (₹300)
     if (amount < 300) {
       return res.status(400).json({ message: "Minimum amount is ₹300" })
     }
 
     const amountInPaise = amount * 100
 
-    // Create order in Razorpay
     const options = {
       amount: amountInPaise,
       currency,
       receipt: `onetime_${new Date().getTime()}`,
       notes: {
         ...notes,
-        userId: sub, // Using auth0_id directly
+        userId: user.id.toString(), // Database ID
+        auth0Id: user.auth0_id,
         paymentType: "one-time",
         membershipDuration: "1-month",
         originalAmount: amount,
@@ -251,16 +253,15 @@ export const createOneTimeOrder = async (req, res) => {
 
     const order = await razorpay.orders.create(options)
 
-    // Save order in our database
     await Order.create({
       order_id: order.id,
-      user_id: sub, // Using auth0_id directly as user_id
-      amount: amount, // Store in rupees
+      user_id: user.id, // Database ID
+      amount: amount,
       currency: order.currency,
       receipt: order.receipt,
       status: order.status,
       notes: JSON.stringify(order.notes),
-      is_subscription: false, // Mark as non-subscription order
+      is_subscription: false,
     })
 
     res.status(200).json(order)
@@ -302,23 +303,21 @@ export const verifyOneTimePayment = async (req, res) => {
       },
     )
 
-    // Get user ID from order
+    // Get order details
     const order = await Order.findOne({
       where: { order_id: razorpay_order_id },
       attributes: ["user_id", "notes"],
     })
 
     if (order) {
-      const userId = order.user_id // This is the auth0_id
-
-      // Update user status for 1-month membership
+      // Update user status using database ID
       await User.update(
         {
           role: "individual member",
           has_paid: true,
         },
         {
-          where: { auth0_id: userId }, // Using auth0_id directly
+          where: { id: order.user_id }, // Now using database ID
         },
       )
     }
@@ -392,7 +391,7 @@ export const verifySubscriptionFirstPayment = async (req, res) => {
       return res.status(400).json({ message: "Invalid payment signature" })
     }
 
-    // Update order status using Sequelize
+    // Update order status
     await Order.update(
       {
         status: "paid",
@@ -410,14 +409,10 @@ export const verifySubscriptionFirstPayment = async (req, res) => {
     })
 
     if (order) {
-      const userId = order.user_id
-      const orderNotes = JSON.parse(order.notes || "{}")
-
-      // Calculate membership end date (1 month from now for first payment)
       const membershipEndDate = new Date()
       membershipEndDate.setMonth(membershipEndDate.getMonth() + 1)
 
-      // Update user status for subscription membership using Sequelize
+      // Update user status using database ID
       await User.update(
         {
           role: "individual member",
@@ -428,7 +423,7 @@ export const verifySubscriptionFirstPayment = async (req, res) => {
           auto_pay_enabled: true,
         },
         {
-          where: { id: userId },
+          where: { id: order.user_id }, // Using database ID
         }
       )
     }
@@ -648,3 +643,5 @@ const handleSubscriptionCompleted = async (subscription) => {
     console.error("Error handling subscription completed:", error)
   }
 }
+
+

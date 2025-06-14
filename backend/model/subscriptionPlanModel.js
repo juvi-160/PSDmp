@@ -57,7 +57,6 @@ const SubscriptionPlan = sequelize.define('SubscriptionPlan', {
 SubscriptionPlan.associate = (models) => {
   SubscriptionPlan.hasMany(models.Subscription, {
     foreignKey: 'plan_id',
-    sourceKey: 'plan_id',
     as: 'subscriptions'
   });
 };

@@ -5,12 +5,12 @@ const Subscription = sequelize.define(
   "Subscription",
   {
     subscription_id: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.INTEGER,
       allowNull: false,
       unique: true,
     },
     user_id: {
-      type: DataTypes.STRING(255), // ✅ fixed from INTEGER to STRING
+      type: DataTypes.INTEGER, // ✅ fixed from INTEGER to STRING
       allowNull: false,
     },
     plan_id: {
@@ -54,13 +54,11 @@ const Subscription = sequelize.define(
 Subscription.associate = (models) => {
   Subscription.belongsTo(models.User, {
     foreignKey: "user_id",
-    targetKey: "auth0_id", // ✅ to match User model
     as: "user",
   });
 
   Subscription.belongsTo(models.SubscriptionPlan, {
     foreignKey: "plan_id",
-    targetKey: "plan_id", // Assuming SubscriptionPlan uses plan_id as primary/unique
     as: "plan",
   });
 };
