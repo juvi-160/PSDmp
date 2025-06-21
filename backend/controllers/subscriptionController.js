@@ -10,9 +10,11 @@ dotenv.config(); // Load environment variables from .env file
 
 // Initialize Razorpay
 const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
+  key_id: process.env.RAZORPAY_KEY_ID, 
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 })
+
+console.log(process.env.RAZORPAY_KEY_ID,process.env.RAZORPAY_KEY_SECRET)
 
 // Create dynamic subscription plan for custom amount
 export const createDynamicPlan = async (req, res) => {
@@ -228,6 +230,7 @@ export const createOneTimeOrder = async (req, res) => {
       attributes: ["id", "auth0_id"],
     })
 
+// console.log(user);
     if (!user) {
       return res.status(404).json({ message: "User not found" })
     }
@@ -239,7 +242,6 @@ export const createOneTimeOrder = async (req, res) => {
     }
 
     const amountInPaise = amount * 100
-
     const options = {
       amount: amountInPaise,
       currency,
@@ -253,9 +255,12 @@ export const createOneTimeOrder = async (req, res) => {
         originalAmount: amount,
       },
     }
+    
+    console.log(options)
 
     const order = await razorpay.orders.create(options)
-
+// console.log(order)
+console.log(order.id,user.id,amount,order.currency,order.receipt,order.status, order.notes)
     await Order.create({
       order_id: order.id,
       user_id: user.id, // Database ID
@@ -333,7 +338,7 @@ export const verifyOneTimePayment = async (req, res) => {
     })
   } catch (error) {
     console.error("Error verifying payment:", error)
-    res.status(500).json({ message: "Server error" })
+    res.status(500).json({ message: error.message })
   }
 }
 
