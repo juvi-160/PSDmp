@@ -36,10 +36,11 @@ import subscriptionRoutes from "./routes/subscription.js"
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+dotenv.config({ path: path.join(__dirname, '../config/.env') });
 
 
 const app = express();
-
+app.set('trust proxy', 1);
 
 async function testConnection() {
   try {
@@ -67,7 +68,9 @@ async function syncDb() {
     console.error("Error synchronizing models:", error)
   }
 }
+
 //syncDb()
+
 
 
 /// Middleware
