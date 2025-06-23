@@ -5,44 +5,53 @@ const Subscription = sequelize.define(
   "Subscription",
   {
     subscription_id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false,
       unique: true,
     },
+
     user_id: {
       type: DataTypes.INTEGER, // ✅ fixed from INTEGER to STRING
       allowNull: false,
     },
+
     plan_id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false,
     },
+
     status: {
       type: DataTypes.STRING(50),
       allowNull: false,
       defaultValue: "created",
     },
+
     start_at: {
       type: DataTypes.DATE,
       allowNull: false,
     },
+
     current_start: {
       type: DataTypes.DATE,
       allowNull: true,
     },
+
     current_end: {
       type: DataTypes.DATE,
       allowNull: true,
     },
+
     paid_count: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
     },
+
     notes: {
       type: DataTypes.JSON,
       allowNull: true,
     },
   },
+
   {
     timestamps: true,
     createdAt: "created_at",

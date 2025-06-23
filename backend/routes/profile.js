@@ -1,9 +1,13 @@
-// File: routes/profile.js
-import express from "express";
-import { checkJwt } from "../controllers/authController.js"; // Corrected import
-import { getUserProfile, updateUserProfile } from "../controllers/profileController.js";
+import express from "express"
+import { checkJwt } from "../controllers/authController.js"
+import { getUserProfile, updateUserProfile } from "../controllers/profileController.js"
 
-const router = express.Router();
-router.get("/", checkJwt, getUserProfile);
-router.put("/", checkJwt, updateUserProfile);
-export default router;
+const router = express.Router()
+
+// Apply auth middleware to all profile routes
+router.use(checkJwt)
+
+router.get("/", getUserProfile)
+router.put("/", updateUserProfile)
+
+export default router

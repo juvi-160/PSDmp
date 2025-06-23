@@ -1,7 +1,4 @@
-// File: routes/tickets.js
 import express from "express"
-import dotenv from "dotenv"
-dotenv.config() // Load environment variables from .env file
 import { auth } from "express-oauth2-jwt-bearer"
 import {
   createTicket,
@@ -12,10 +9,12 @@ import {
   addTicketResponse,
   getTicketStats,
 } from "../controllers/ticketController.js"
+import dotenv from "dotenv"
+dotenv.config()
 
 const router = express.Router()
 
-// Auth middleware - EXACTLY matching the working rsvps.js pattern
+// Auth middleware
 const checkJwt = auth({
   audience: process.env.AUTH0_AUDIENCE,
   issuerBaseURL: `https://${process.env.AUTH0_DOMAIN}/`,
@@ -31,7 +30,7 @@ const checkJwt = auth({
   },
 })
 
-// Debug middleware to log token information
+// Debug middleware
 const logToken = (req, res, next) => {
   console.log(
     "Auth headers:",
@@ -41,16 +40,19 @@ const logToken = (req, res, next) => {
   next()
 }
 
-// Fix route order - admin routes with potential path conflicts should come first
-// Admin routes
-router.get("/admin/stats", checkJwt, logToken, getTicketStats)
-router.get("/", checkJwt, logToken, getAllTickets)
-router.put("/:id", checkJwt, logToken, updateTicket)
+// Apply auth to all routes
+router.use(checkJwt)
+router.use(logToken)
 
-// User routes (authenticated users)
-router.post("/", checkJwt, logToken, createTicket)
-router.get("/my-tickets", checkJwt, logToken, getUserTickets)
-router.get("/:id", checkJwt, logToken, getTicketById)
-router.post("/:id/responses", checkJwt, logToken, addTicketResponse)
+// Admin routes (more specific routes first)
+router.get("/admin/stats", getTicketStats)
+
+// User routes
+router.post("/", createTicket)
+router.get("/my-tickets", getUserTickets)
+router.get("/all", getAllTickets) // Changed from "/" to "/all" to avoid conflicts
+router.get("/:id", getTicketById)
+router.put("/:id", updateTicket)
+router.post("/:id/responses", addTicketResponse)
 
 export default router
