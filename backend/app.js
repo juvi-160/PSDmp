@@ -72,8 +72,6 @@ async function syncDb() {
 //syncDb()
 
 
-
-/// Middleware
 // Middleware
 const allowedOrigins = [
   "https://join.psfhyd.org",
