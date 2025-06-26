@@ -57,7 +57,7 @@ async function syncDb() {
   try {
     // Use force: false and alter: false for production
     // Only use alter: true in development
-    const isDevelopment = process.env.NODE_ENV !== "production"
+    const isDevelopment = process.env.NODE_ENV !== "development"
 
     await sequelize.sync({
       force: false,
