@@ -1,46 +1,63 @@
-<div class="edit-dialog">
-  <h2 mat-dialog-title>Edit User</h2>
+<div class="edit-dialog bg-white rounded-lg shadow-xl overflow-hidden w-full max-w-md">
+  <div class="bg-indigo-600 px-6 py-4">
+    <h2 class="text-xl font-semibold text-white">Edit User</h2>
+  </div>
   
-  <mat-dialog-content>
-    <div class="user-info">
-      <p><strong>Name:</strong> {{ data.user.name }}</p>
-      <p><strong>Email:</strong> {{ data.user.email }}</p>
-      <p><strong>ID:</strong> {{ data.user.id }}</p>
+  <div class="p-6">
+    <div class="user-info mb-6 space-y-2">
+      <p class="text-gray-700"><span class="font-medium">Name:</span> {{ data.user.name }}</p>
+      <p class="text-gray-700"><span class="font-medium">Email:</span> {{ data.user.email }}</p>
+      <p class="text-gray-700"><span class="font-medium">ID:</span> {{ data.user.id }}</p>
     </div>
 
-    <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Role</mat-label>
-        <mat-select formControlName="role">
-          <mat-option *ngFor="let role of roles" [value]="role.value">
-            {{ role.label }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+    <form [formGroup]="editForm" (ngSubmit)="onSubmit()" class="space-y-4">
+      <div class="form-group">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Role</label>
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-select formControlName="role" class="py-2 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <mat-option *ngFor="let role of roles" [value]="role.value" class="hover:bg-gray-100">
+              {{ role.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
 
-      <div class="checkbox-group">
-        <mat-checkbox formControlName="isEmailVerified">
-          Email Verified
-        </mat-checkbox>
+      <div class="checkbox-group space-y-2">
+        <div class="flex items-center">
+          <mat-checkbox formControlName="isEmailVerified" class="mr-2"></mat-checkbox>
+          <span class="text-sm text-gray-700">Email Verified</span>
+        </div>
         
-        <mat-checkbox formControlName="isPhoneVerified">
-          Phone Verified
-        </mat-checkbox>
+        <div class="flex items-center">
+          <mat-checkbox formControlName="isPhoneVerified" class="mr-2"></mat-checkbox>
+          <span class="text-sm text-gray-700">Phone Verified</span>
+        </div>
         
-        <mat-checkbox formControlName="hasPaid">
-          Payment Completed
-        </mat-checkbox>
+        <div class="flex items-center">
+          <mat-checkbox formControlName="hasPaid" class="mr-2"></mat-checkbox>
+          <span class="text-sm text-gray-700">Payment Completed</span>
+        </div>
       </div>
     </form>
-  </mat-dialog-content>
+  </div>
 
-  <mat-dialog-actions align="end">
-    <button mat-button (click)="onCancel()" [disabled]="loading">
+  <div class="bg-gray-50 px-6 py-4 flex justify-end space-x-3">
+    <button 
+      (click)="onCancel()" 
+      [disabled]="loading"
+      class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+    >
       Cancel
     </button>
-    <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="loading || !editForm.valid">
-      <mat-spinner diameter="20" *ngIf="loading"></mat-spinner>
-      <span *ngIf="!loading">Update User</span>
+    <button 
+      (click)="onSubmit()" 
+      [disabled]="loading || !editForm.valid"
+      class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      <span class="flex items-center justify-center">
+        <mat-spinner diameter="20" *ngIf="loading" class="mr-2"></mat-spinner>
+        <span *ngIf="!loading">Update User</span>
+      </span>
     </button>
-  </mat-dialog-actions>
+  </div>
 </div>

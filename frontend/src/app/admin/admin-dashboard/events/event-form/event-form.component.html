@@ -1,79 +1,113 @@
-<div class="event-form-container">
-  <div class="event-form-header">
-    <h2>{{ isEditMode ? 'Edit Event' : 'Add New Event' }}</h2>
+<div class="max-w-3xl mx-auto mt-10 p-8 bg-white shadow-xl rounded-2xl border border-indigo-100">
+  <!-- Gradient Header -->
+  <div class="bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl p-4 mb-8 shadow-md">
+    <h2 class="text-2xl font-bold text-center tracking-wide">
+      {{ isEditMode ? 'Edit Event' : 'Add New Event' }}
+    </h2>
   </div>
 
-  <div class="loading-container" *ngIf="loading">
+  <!-- Loading Spinner -->
+  <div class="flex justify-center items-center py-10" *ngIf="loading">
     <mat-spinner diameter="40"></mat-spinner>
   </div>
 
+  <!-- Event Form -->
   <form [formGroup]="eventForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
-    <mat-card class="event-form-card">
-      <mat-card-content>
-        <div class="form-row">
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Event Name</mat-label>
-            <input matInput formControlName="name" placeholder="Enter event name" required>
-            <mat-error *ngIf="eventForm.get('name')?.hasError('required')">
-              Event name is required
-            </mat-error>
-            <mat-error *ngIf="eventForm.get('name')?.hasError('maxlength')">
-              Event name cannot exceed 100 characters
-            </mat-error>
-          </mat-form-field>
+    <div class="space-y-6">
+
+      <!-- Event Name -->
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">📛 Event Name</label>
+        <mat-form-field appearance="outline" class="w-full">
+          <input matInput formControlName="name" placeholder="Enter event name" required>
+          <mat-error *ngIf="eventForm.get('name')?.hasError('required')">
+            Event name is required
+          </mat-error>
+          <mat-error *ngIf="eventForm.get('name')?.hasError('maxlength')">
+            Event name cannot exceed 100 characters
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Event Date -->
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">📅 Event Date</label>
+        <mat-form-field appearance="outline" class="w-full">
+          <input matInput [matDatepicker]="picker" formControlName="date" required>
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-error *ngIf="eventForm.get('date')?.hasError('required')">
+            Event date is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Description -->
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">📝 Description</label>
+        <mat-form-field appearance="outline" class="w-full">
+          <textarea matInput formControlName="description" rows="5" placeholder="Enter event description" required></textarea>
+          <mat-error *ngIf="eventForm.get('description')?.hasError('required')">
+            Event description is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Image Upload -->
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-2">🖼️ Event Image</label>
+
+        <div *ngIf="imagePreview" class="relative w-full max-w-md">
+          <img [src]="imagePreview" alt="Event image preview"
+               class="w-full h-60 object-cover rounded-xl border border-gray-300 shadow-sm" />
+          <button
+            type="button"
+            mat-icon-button
+            color="warn"
+            (click)="removeImage()"
+            class="absolute top-2 right-2 bg-white rounded-full p-1 shadow hover:bg-gray-100 transition"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
         </div>
 
-        <div class="form-row">
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Event Date</mat-label>
-            <input matInput [matDatepicker]="picker" formControlName="date" required>
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
-            <mat-error *ngIf="eventForm.get('date')?.hasError('required')">
-              Event date is required
-            </mat-error>
-          </mat-form-field>
+        <div *ngIf="!imagePreview">
+          <button
+            type="button"
+            mat-stroked-button
+            (click)="fileInput.click()"
+            class="flex items-center gap-2 text-indigo-600 border border-indigo-300 px-4 py-2 rounded-lg hover:bg-indigo-50 transition"
+          >
+            <mat-icon>cloud_upload</mat-icon>
+            <span>Select Image</span>
+          </button>
         </div>
 
-        <div class="form-row">
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Description</mat-label>
-            <textarea matInput formControlName="description" rows="6" placeholder="Enter event description" required></textarea>
-            <mat-error *ngIf="eventForm.get('description')?.hasError('required')">
-              Event description is required
-            </mat-error>
-          </mat-form-field>
-        </div>
+        <input type="file" #fileInput style="display: none" accept="image/*" (change)="onImageSelected($event)" />
 
-        <div class="form-row">
-          <div class="image-upload-container">
-            <label class="image-upload-label">Event Image</label>
-            
-            <div class="image-preview-container" *ngIf="imagePreview">
-              <img [src]="imagePreview" alt="Event image preview" class="image-preview">
-              <button type="button" mat-icon-button color="warn" class="remove-image-btn" (click)="removeImage()">
-                <mat-icon>delete</mat-icon>
-              </button>
-            </div>
-            
-            <button type="button" mat-stroked-button (click)="fileInput.click()" *ngIf="!imagePreview">
-              <mat-icon>cloud_upload</mat-icon>
-              Select Image
-            </button>
-            
-            <input type="file" #fileInput style="display: none" accept="image/*" (change)="onImageSelected($event)">
-            
-            <p class="image-hint">Recommended size: 800x600 pixels, max 2MB</p>
-          </div>
-        </div>
-      </mat-card-content>
+        <p class="text-xs text-gray-500 mt-1">Recommended: 800x600px, Max 2MB</p>
+      </div>
+    </div>
 
-      <mat-card-actions class="form-actions">
-        <button type="button" mat-button (click)="cancel()">Cancel</button>
-        <button type="submit" mat-raised-button color="primary" [disabled]="eventForm.invalid">
-          {{ isEditMode ? 'Update Event' : 'Create Event' }}
-        </button>
-      </mat-card-actions>
-    </mat-card>
+    <!-- Form Actions -->
+    <div class="flex justify-end items-center gap-4 mt-10">
+      <button
+        type="button"
+        mat-button
+        (click)="cancel()"
+        class="text-sm text-gray-600 hover:text-red-500 transition font-medium"
+      >
+        Cancel
+      </button>
+      <button
+        type="submit"
+        mat-raised-button
+        color="primary"
+        class="bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-6 py-2 rounded-lg shadow hover:scale-105 hover:shadow-lg transition-all duration-200 disabled:opacity-60"
+        [disabled]="eventForm.invalid"
+      >
+        {{ isEditMode ? 'Update Event' : 'Create Event' }}
+      </button>
+    </div>
   </form>
 </div>

@@ -1,242 +1,409 @@
-<div class="user-management-container">
-  <div class="page-header">
-    <div class="title-section">
-      <h2>User Management</h2>
-      <p class="subtitle">Manage all registered users and their membership status</p>
+<div class="min-h-screen bg-gray-50 p-10 m-10">
+  <!-- Header Section -->
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+    <div>
+      <div class="flex items-center gap-3">
+        <mat-icon class="text-blue-600">manage_accounts</mat-icon>
+        <h1 class="text-2xl font-bold text-gray-800">User Management</h1>
+      </div>
+      <p class="text-gray-600 mt-1">Manage all registered users and their membership status</p>
     </div>
-    <button mat-raised-button color="primary" (click)="exportToExcel()">
-      <mat-icon>file_download</mat-icon>
+    <button 
+      mat-raised-button 
+      color="primary"
+      class="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-md"
+      (click)="exportToExcel()"
+    >
+      <mat-icon class="text-white">file_download</mat-icon>
       Export to Excel
     </button>
   </div>
 
   <!-- Stats Cards -->
-  <div class="stats-cards">
-    <mat-card class="stat-card">
-      <mat-card-content>
-        <div class="stat-icon">
-          <mat-icon>people</mat-icon>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+    <!-- Total Users -->
+    <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-blue-500 hover:shadow-md transition-shadow">
+      <div class="flex items-center gap-4">
+        <div class="p-3 rounded-full bg-blue-50 text-blue-600">
+          <mat-icon class="!w-6 !h-6">groups</mat-icon>
         </div>
-        <div class="stat-details">
-          <div class="stat-value">{{ stats.totalUsers }}</div>
-          <div class="stat-label">Total Users</div>
+        <div>
+          <p class="text-2xl font-bold text-gray-800">{{ stats.totalUsers | number }}</p>
+          <p class="text-gray-500 text-sm">Total Users</p>
         </div>
-      </mat-card-content>
-    </mat-card>
+      </div>
+    </div>
 
-    <mat-card class="stat-card paid">
-      <mat-card-content>
-        <div class="stat-icon">
-          <mat-icon>check_circle</mat-icon>
+    <!-- Paid Members -->
+    <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-green-500 hover:shadow-md transition-shadow">
+      <div class="flex items-center gap-4">
+        <div class="p-3 rounded-full bg-green-50 text-green-600">
+          <mat-icon class="!w-6 !h-6">verified_user</mat-icon>
         </div>
-        <div class="stat-details">
-          <div class="stat-value">{{ stats.paidUsers }}</div>
-          <div class="stat-label">Paid Members</div>
+        <div>
+          <p class="text-2xl font-bold text-gray-800">{{ stats.paidUsers | number }}</p>
+          <p class="text-gray-500 text-sm">Paid Members</p>
         </div>
-      </mat-card-content>
-    </mat-card>
+      </div>
+    </div>
 
-    <mat-card class="stat-card pending">
-      <mat-card-content>
-        <div class="stat-icon">
-          <mat-icon>pending</mat-icon>
+    <!-- Pending Users -->
+    <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-amber-500 hover:shadow-md transition-shadow">
+      <div class="flex items-center gap-4">
+        <div class="p-3 rounded-full bg-amber-50 text-amber-600">
+          <mat-icon class="!w-6 !h-6">pending_actions</mat-icon>
         </div>
-        <div class="stat-details">
-          <div class="stat-value">{{ stats.pendingUsers }}</div>
-          <div class="stat-label">Pending Users</div>
+        <div>
+          <p class="text-2xl font-bold text-gray-800">{{ stats.pendingUsers | number }}</p>
+          <p class="text-gray-500 text-sm">Pending Users</p>
         </div>
-      </mat-card-content>
-    </mat-card>
+      </div>
+    </div>
 
-    <mat-card class="stat-card revenue">
-      <mat-card-content>
-        <div class="stat-icon">
-          <mat-icon>payments</mat-icon>
+    <!-- Total Revenue -->
+    <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-purple-500 hover:shadow-md transition-shadow">
+      <div class="flex items-center gap-4">
+        <div class="p-3 rounded-full bg-purple-50 text-purple-600">
+          <mat-icon class="!w-6 !h-6">paid</mat-icon>
         </div>
-        <div class="stat-details">
-          <div class="stat-value">₹{{ stats.totalRevenue }}</div>
-          <div class="stat-label">Total Revenue</div>
+        <div>
+          <p class="text-2xl font-bold text-gray-800">₹{{ stats.totalRevenue | number }}</p>
+          <p class="text-gray-500 text-sm">Total Revenue</p>
         </div>
-      </mat-card-content>
-    </mat-card>
+      </div>
+    </div>
   </div>
 
-  <!-- Filter Form -->
-  <mat-card class="filter-card">
-    <mat-card-content>
-      <form [formGroup]="filterForm" (ngSubmit)="applyFilter()">
-        <div class="filter-form-row">
-          <mat-form-field appearance="outline">
-            <mat-label>Search</mat-label>
-            <input matInput formControlName="search" placeholder="Search by name, email, or ID">
-            <mat-icon matSuffix>search</mat-icon>
-          </mat-form-field>
+ <!-- Modern Filter Card -->
+<div class="bg-white rounded-2xl shadow-lg mb-8 overflow-hidden border border-gray-100/50">
+  <!-- Header with subtle gradient -->
+  <div class="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100/50">
+    <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-3">
+      <mat-icon class="text-blue-600">tune</mat-icon>
+      <span>Filter Members</span>
+    </h3>
+  </div>
+  
+  <form [formGroup]="filterForm" (ngSubmit)="applyFilter()" class="p-6 space-y-6">
+    <!-- First Row - Search, Role, Status -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Search Field -->
+      <div class="relative">
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label class="text-gray-500">Search members</mat-label>
+          <input 
+            matInput 
+            formControlName="search" 
+            placeholder="Name, email, or ID"
+            class="!pt-1"
+          >
+          <mat-icon matPrefix class="text-gray-400/80 mr-2 -ml-1">search</mat-icon>
+        </mat-form-field>
+      </div>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Role</mat-label>
-            <mat-select formControlName="role">
-              <mat-option value="">All Roles</mat-option>
-              <mat-option value="admin">Admin</mat-option>
-              <mat-option value="individual member">Individual Member</mat-option>
-              <mat-option value="associate member">Associate Member</mat-option>
-              <mat-option value="pending">Pending</mat-option>
-            </mat-select>
-          </mat-form-field>
+      <!-- Role Field -->
+      <div>
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label class="text-gray-500">Member type</mat-label>
+          <mat-select formControlName="role">
+            <mat-option value="" class="text-gray-500">All member types</mat-option>
+            <mat-option value="admin" class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+              Admin
+            </mat-option>
+            <mat-option value="individual member" class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-green-500"></span>
+              Individual
+            </mat-option>
+            <mat-option value="associate member" class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-purple-500"></span>
+              Associate
+            </mat-option>
+            <mat-option value="pending" class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-yellow-500"></span>
+              Pending
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Payment Status</mat-label>
-            <mat-select formControlName="paymentStatus">
-              <mat-option value="">All</mat-option>
-              <mat-option value="true">Paid</mat-option>
-              <mat-option value="false">Not Paid</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
+      <!-- Payment Status -->
+      <div>
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label class="text-gray-500">Payment status</mat-label>
+          <mat-select formControlName="paymentStatus">
+            <mat-option value="" class="text-gray-500">All statuses</mat-option>
+            <mat-option value="true" class="flex items-center gap-2">
+              <mat-icon class="text-green-500 text-base">check_circle</mat-icon>
+              Paid
+            </mat-option>
+            <mat-option value="false" class="flex items-center gap-2">
+              <mat-icon class="text-red-500 text-base">cancel</mat-icon>
+              Not Paid
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
 
-        <div class="filter-form-row">
-          <mat-form-field appearance="outline">
-            <mat-label>From Date</mat-label>
-            <input matInput [matDatepicker]="pickerFrom" formControlName="dateFrom">
-            <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
-            <mat-datepicker #pickerFrom></mat-datepicker>
-          </mat-form-field>
+    <!-- Second Row - Dates and Buttons -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- From Date -->
+      <div>
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label class="text-gray-500">From date</mat-label>
+          <input 
+            matInput 
+            [matDatepicker]="pickerFrom" 
+            formControlName="dateFrom"
+          >
+          <mat-datepicker-toggle 
+            matSuffix 
+            [for]="pickerFrom"
+            class="text-gray-400/80"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #pickerFrom></mat-datepicker>
+        </mat-form-field>
+      </div>
 
-          <mat-form-field appearance="outline">
-            <mat-label>To Date</mat-label>
-            <input matInput [matDatepicker]="pickerTo" formControlName="dateTo">
-            <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
-            <mat-datepicker #pickerTo></mat-datepicker>
-          </mat-form-field>
+      <!-- To Date -->
+      <div>
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label class="text-gray-500">To date</mat-label>
+          <input 
+            matInput 
+            [matDatepicker]="pickerTo" 
+            formControlName="dateTo"
+          >
+          <mat-datepicker-toggle 
+            matSuffix 
+            [for]="pickerTo"
+            class="text-gray-400/80"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #pickerTo></mat-datepicker>
+        </mat-form-field>
+      </div>
 
-          <div class="filter-buttons">
-            <button mat-raised-button color="primary" type="submit">
-              <mat-icon>filter_list</mat-icon>
-              Apply Filters
-            </button>
-            <button mat-stroked-button type="button" (click)="resetFilter()">
-              <mat-icon>clear</mat-icon>
-              Reset
-            </button>
-          </div>
-        </div>
-      </form>
-    </mat-card-content>
-  </mat-card>
+      <!-- Buttons Container -->
+      <div class="flex items-end gap-3 h-full">
+        <button 
+          mat-stroked-button 
+          type="button" 
+          (click)="resetFilter()"
+          class="h-12 w-full !border-gray-300 !text-gray-600 hover:!bg-gray-50/80 flex items-center justify-center gap-2 rounded-lg transition-all"
+        >
+          <mat-icon class="!text-gray-500 !text-xl">replay</mat-icon>
+          <span>Clear</span>
+        </button>
+        <button 
+          mat-raised-button 
+          color="primary" 
+          type="submit"
+          class="h-12 w-full !bg-gradient-to-r !from-blue-600 !to-indigo-600 hover:!from-blue-700 hover:!to-indigo-700 !text-white !shadow-md flex items-center justify-center gap-2 rounded-lg transition-all"
+        >
+          <mat-icon class="!text-white !text-xl">filter_list</mat-icon>
+          <span>Apply Filters</span>
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
 
-  <!-- Loading Spinner -->
-  <div class="loading-container" *ngIf="loading">
-    <mat-spinner diameter="40"></mat-spinner>
+  <!-- Loading State -->
+  <div *ngIf="loading" class="flex flex-col items-center justify-center p-12 bg-white rounded-xl shadow-sm">
+    <mat-spinner diameter="60" class="text-blue-600"></mat-spinner>
+    <p class="mt-4 text-gray-600">Loading user data...</p>
   </div>
 
-  <!-- Error Message -->
-  <div class="error-container" *ngIf="error && !loading">
-    <p class="error-message">{{ error }}</p>
-    <button mat-raised-button color="primary" (click)="loadUsers()">Retry</button>
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="bg-red-50 border-l-4 border-red-500 p-4 mb-8 rounded-lg shadow-sm">
+    <div class="flex items-start gap-3">
+      <mat-icon class="text-red-500 mt-0.5">error_outline</mat-icon>
+      <div>
+        <p class="text-red-700 font-medium">{{ error }}</p>
+        <button 
+          mat-raised-button 
+          color="primary" 
+          (click)="loadUsers()"
+          class="mt-3 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-md"
+        >
+          Retry
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- Users Table -->
-  <div class="table-container mat-elevation-z2" *ngIf="!loading && !error">
-    <table mat-table [dataSource]="dataSource" matSort class="users-table">
-      <!-- ID Column -->
-      <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
-        <td mat-cell *matCellDef="let user"> {{ user.id }} </td>
-      </ng-container>
+  <div *ngIf="!loading && !error" class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+    <div class="px-6 py-4 bg-gray-50 border-b border-gray-100 flex justify-between items-center">
+      <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+        <mat-icon class="text-gray-500">list_alt</mat-icon>
+        User Records
+      </h3>
+      <div class="text-sm text-gray-500">
+        Showing {{dataSource.filteredData.length}} of {{dataSource.data.length}} users
+      </div>
+    </div>
+    
+    <div class="overflow-x-auto">
+      <table mat-table [dataSource]="dataSource" matSort class="w-full min-w-[1000px]">
+        <!-- ID Column -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="font-medium text-gray-700 px-4 py-3">ID</th>
+          <td mat-cell *matCellDef="let user" class="text-gray-600 px-4 py-3">{{ user.id }}</td>
+        </ng-container>
 
-      <!-- Name Column -->
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
-        <td mat-cell *matCellDef="let user"> {{ user.name }} </td>
-      </ng-container>
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="font-medium text-gray-700 px-4 py-3">Name</th>
+          <td mat-cell *matCellDef="let user" class="font-medium text-gray-800 px-4 py-3">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                {{ user.name?.charAt(0) | uppercase }}
+              </div>
+              {{ user.name }}
+            </div>
+          </td>
+        </ng-container>
 
-      <!-- Email Column -->
-      <ng-container matColumnDef="email">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Email </th>
-        <td mat-cell *matCellDef="let user"> {{ user.email }} </td>
-      </ng-container>
+        <!-- Email Column -->
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="font-medium text-gray-700 px-4 py-3">Email</th>
+          <td mat-cell *matCellDef="let user" class="text-gray-600 px-4 py-3">{{ user.email }}</td>
+        </ng-container>
 
-      <!-- Role Column -->
-      <ng-container matColumnDef="role">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Role </th>
-        <td mat-cell *matCellDef="let user">
-          <span class="role-badge" [ngClass]="getRoleClass(user.role)">
-            {{ user.role }}
-          </span>
-        </td>
-      </ng-container>
+        <!-- Role Column -->
+        <ng-container matColumnDef="role">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="font-medium text-gray-700 px-4 py-3">Role</th>
+          <td mat-cell *matCellDef="let user" class="px-4 py-3">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium leading-4" 
+                  [ngClass]="getRoleClass(user.role)">
+              {{ user.role }}
+            </span>
+          </td>
+        </ng-container>
 
-      <!-- Payment Status Column -->
-      <ng-container matColumnDef="hasPaid">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Payment Status </th>
-        <td mat-cell *matCellDef="let user">
-          <span class="status-badge" [ngClass]="getPaymentStatusClass(user.hasPaid)">
-            {{ user.hasPaid ? 'Paid' : 'Not Paid' }}
-          </span>
-        </td>
-      </ng-container>
+        <!-- Payment Status Column -->
+        <ng-container matColumnDef="hasPaid">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="font-medium text-gray-700 px-4 py-3">Payment</th>
+          <td mat-cell *matCellDef="let user" class="px-4 py-3">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium leading-4" 
+                  [ngClass]="getPaymentStatusClass(user.hasPaid)">
+              <mat-icon class="!w-3 !h-3 mr-1">{{ user.hasPaid ? 'check_circle' : 'cancel' }}</mat-icon>
+              {{ user.hasPaid ? 'Paid' : 'Not Paid' }}
+            </span>
+          </td>
+        </ng-container>
 
-      <!-- Payment Amount Column -->
-    <ng-container matColumnDef="paymentAmount">
-  <th mat-header-cell *matHeaderCellDef> Payment Amount </th>
-  <td mat-cell *matCellDef="let user">
-    <span *ngIf="user.formattedPaymentAmount" class="payment-amount">
-      {{ user.formattedPaymentAmount }}
-    </span>
-    <span *ngIf="!user.formattedPaymentAmount && user.hasPaid" class="status-paid">
-      Paid
-    </span>
-    <span *ngIf="!user.formattedPaymentAmount && !user.hasPaid" class="status-pending">
-      Not Paid
-    </span>
-  </td>
-</ng-container>
+        <!-- Payment Amount Column -->
+        <ng-container matColumnDef="paymentAmount">
+          <th mat-header-cell *matHeaderCellDef class="font-medium text-gray-700 px-4 py-3">Amount</th>
+          <td mat-cell *matCellDef="let user" class="px-4 py-3">
+            <span *ngIf="user.formattedPaymentAmount" class="font-medium text-gray-800">
+              {{ user.formattedPaymentAmount }}
+            </span>
+            <span *ngIf="!user.formattedPaymentAmount && user.hasPaid" class="text-green-600 font-medium">
+              Paid
+            </span>
+            <span *ngIf="!user.formattedPaymentAmount && !user.hasPaid" class="text-amber-600 font-medium">
+              Not Paid
+            </span>
+          </td>
+        </ng-container>
 
-      <!-- Created At Column -->
-      <ng-container matColumnDef="createdAt">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Registered On </th>
-        <td mat-cell *matCellDef="let user"> {{ formatDate(user.createdAt) }} </td>
-      </ng-container>
+        <!-- Registered On Column -->
+        <ng-container matColumnDef="createdAt">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="font-medium text-gray-700 px-4 py-3">Registered</th>
+          <td mat-cell *matCellDef="let user" class="text-gray-600 px-4 py-3">
+            <div class="flex items-center gap-2">
+              <mat-icon class="!w-4 !h-4 text-gray-400">event</mat-icon>
+              {{ formatDate(user.createdAt) }}
+            </div>
+          </td>
+        </ng-container>
 
-      <!-- Auto Pay Status Column -->
-    <ng-container matColumnDef="autoPayStatus">
-  <th mat-header-cell *matHeaderCellDef> Auto Pay </th>
-  <td mat-cell *matCellDef="let user">
-    <span class="autopay-badge" 
-          [ngClass]="getAutoPayStatusClass(user.autoPayEnabled)">
-      <mat-icon class="autopay-icon">
-        {{ getAutoPayIcon(user.autoPayEnabled) }}
-      </mat-icon>
-      {{ getAutoPayStatusText(user.autoPayEnabled) }}
-    </span>
-  </td>
-</ng-container>
+        <!-- Auto Pay Column -->
+        <ng-container matColumnDef="autoPayStatus">
+          <th mat-header-cell *matHeaderCellDef class="font-medium text-gray-700 px-4 py-3">Auto Pay</th>
+          <td mat-cell *matCellDef="let user" class="px-4 py-3">
+            <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium leading-4" 
+                  [ngClass]="getAutoPayStatusClass(user.autoPayEnabled)">
+              <mat-icon class="!w-3 !h-3">{{ getAutoPayIcon(user.autoPayEnabled) }}</mat-icon>
+              {{ getAutoPayStatusText(user.autoPayEnabled) }}
+            </span>
+          </td>
+        </ng-container>
 
-      <!-- Actions Column -->
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef> Actions </th>
-        <td mat-cell *matCellDef="let user">
-          <button mat-icon-button color="primary" (click)="viewUserDetails(user)" matTooltip="View Details">
-            <mat-icon>visibility</mat-icon>
-          </button>
-          <button mat-icon-button color="accent" (click)="editUser(user)" matTooltip="Edit User">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-icon-button color="warn" (click)="deleteUser(user)" matTooltip="Delete User" 
-                  [disabled]="user.role === 'admin'">
-            <mat-icon>delete</mat-icon>
-          </button>
-        </td>
-      </ng-container>
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="font-medium text-gray-700 px-4 py-3">Actions</th>
+          <td mat-cell *matCellDef="let user" class="px-4 py-3">
+            <div class="flex gap-1">
+              <button 
+                mat-icon-button 
+                color="primary" 
+                (click)="viewUserDetails(user)" 
+                matTooltip="View Details"
+                class="hover:bg-blue-50 !w-9 !h-9"
+              >
+                <mat-icon class="text-blue-600 !w-5 !h-5">visibility</mat-icon>
+              </button>
+              <button 
+                mat-icon-button 
+                color="accent" 
+                (click)="editUser(user)" 
+                matTooltip="Edit User"
+                class="hover:bg-green-50 !w-9 !h-9"
+              >
+                <mat-icon class="text-green-600 !w-5 !h-5">edit</mat-icon>
+              </button>
+              <button 
+                mat-icon-button 
+                color="warn" 
+                (click)="deleteUser(user)" 
+                matTooltip="Delete User" 
+                [disabled]="user.role === 'admin'"
+                class="hover:bg-red-50 disabled:opacity-50 !w-9 !h-9"
+              >
+                <mat-icon class="text-red-600 !w-5 !h-5">delete</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns" class="h-12"></tr>
+        <tr 
+          mat-row 
+          *matRowDef="let row; columns: displayedColumns;" 
+          class="h-14 hover:bg-gray-50 border-t border-gray-100"
+        ></tr>
 
-      <!-- Row shown when there is no matching data -->
-      <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell" colspan="8">No users found</td>
-      </tr>
-    </table>
+        <!-- Empty State -->
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell py-12 text-center text-gray-500" colspan="8">
+            <div class="flex flex-col items-center justify-center gap-3">
+              <mat-icon class="text-gray-400 !w-12 !h-12">manage_search</mat-icon>
+              <p class="text-lg font-medium text-gray-600">No users found</p>
+              <p class="text-gray-500 max-w-md text-center">
+                Try adjusting your filters or search criteria to find what you're looking for.
+              </p>
+              <button 
+                mat-stroked-button 
+                (click)="resetFilter()"
+                class="mt-2 border-gray-300 text-gray-700 hover:bg-gray-50"
+              >
+                Reset Filters
+              </button>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
 
-    <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" showFirstLastButtons></mat-paginator>
+    <mat-paginator 
+      [pageSizeOptions]="[10, 25, 50, 100]" 
+      showFirstLastButtons
+      class="border-t border-gray-100"
+    ></mat-paginator>
   </div>
 </div>
