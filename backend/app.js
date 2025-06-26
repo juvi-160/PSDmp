@@ -68,7 +68,7 @@ async function syncDb() {
     console.error("Error synchronizing models:", error)
   }
 }
-syncDb()
+//syncDb()
 
 
 // Middleware

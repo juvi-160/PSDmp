@@ -1,196 +1,368 @@
-<div class="event-rsvps-container">
-  <div class="page-header">
-    <div class="title-section">
-      <h2>Event RSVPs</h2>
-      <p class="subtitle">Manage all event registrations and attendance</p>
+<div class="min-h-screen ">
+  <!-- Header Section -->
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-800">Event RSVPs</h1>
+      <p class="text-gray-500 mt-1">Manage all event registrations and attendance</p>
     </div>
-    <button mat-raised-button color="primary" (click)="exportToExcel()">
-      <mat-icon>file_download</mat-icon>
+    <button 
+      mat-raised-button 
+      (click)="exportToExcel()"
+      class="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow hover:shadow-md transition-all px-4 py-2 rounded-lg"
+    >
+      <mat-icon class="text-white ">file_download</mat-icon>
       Export to Excel
     </button>
   </div>
 
-  <!-- Filter Form -->
-  <mat-card class="filter-card">
-    <mat-card-content>
-      <form [formGroup]="filterForm" (ngSubmit)="applyFilter()">
-        <div class="filter-form-row">
-          <mat-form-field appearance="outline">
-            <mat-label>Event</mat-label>
-            <mat-select formControlName="eventId">
-              <mat-option value="">All Events</mat-option>
-              <mat-option *ngFor="let event of events" [value]="event.id">
-                {{ event.name }} ({{ formatDate(event.date) }})
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+  <!-- Modern Filter Card -->
+<div class="bg-white rounded-2xl shadow-lg mb-8 overflow-hidden border border-gray-100/50">
+  <!-- Header with subtle gradient -->
+  <div class="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100/50">
+    <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-3">
+      <mat-icon class="text-blue-600">filter_alt</mat-icon>
+      <span>Filter RSVPs</span>
+    </h3>
+  </div>
+  
+  <form [formGroup]="filterForm" (ngSubmit)="applyFilter()" class="p-6 space-y-6">
+    <!-- First Row - Search, Event, Status -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Search Field -->
+      <div>
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label class="text-gray-500">Search RSVPs</mat-label>
+          <input 
+            matInput 
+            formControlName="search" 
+            placeholder="Name, email, or phone"
+            class="!pt-1"
+          >
+          <mat-icon matPrefix class="text-gray-400/80 mr-2 -ml-1">search</mat-icon>
+        </mat-form-field>
+      </div>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Status</mat-label>
-            <mat-select formControlName="status">
-              <mat-option value="">All Statuses</mat-option>
-              <mat-option value="confirmed">Confirmed</mat-option>
-              <mat-option value="cancelled">Cancelled</mat-option>
-              <mat-option value="attended">Attended</mat-option>
-            </mat-select>
-          </mat-form-field>
+      <!-- Event Field -->
+      <div>
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label class="text-gray-500">Event</mat-label>
+          <mat-select formControlName="eventId">
+            <mat-option value="" class="text-gray-500">All events</mat-option>
+            <mat-option *ngFor="let event of events" [value]="event.id" class="flex items-center gap-2">
+              <span class="truncate">{{ event.name }}</span>
+              <span class="text-xs text-gray-500">{{ formatDate(event.date) }}</span>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Role</mat-label>
-            <mat-select formControlName="role">
-              <mat-option value="">All Roles</mat-option>
-              <mat-option value="admin">Admin</mat-option>
-              <mat-option value="individual member">Member</mat-option>
-              <mat-option value="pending">Pending</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
+      <!-- RSVP Status -->
+      <div>
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label class="text-gray-500">RSVP status</mat-label>
+          <mat-select formControlName="status">
+            <mat-option value="" class="text-gray-500">All statuses</mat-option>
+            <mat-option value="confirmed" class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-green-500"></span>
+              Confirmed
+            </mat-option>
+            <mat-option value="cancelled" class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-red-500"></span>
+              Cancelled
+            </mat-option>
+            <mat-option value="attended" class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+              Attended
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
 
-        <div class="filter-form-row">
-          <mat-form-field appearance="outline">
-            <mat-label>Search</mat-label>
-            <input matInput formControlName="search" placeholder="Search by name, email, or phone">
-            <mat-icon matSuffix>search</mat-icon>
-          </mat-form-field>
+    <!-- Second Row - Role, Dates -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Role Field -->
+      <div>
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label class="text-gray-500">Member role</mat-label>
+          <mat-select formControlName="role">
+            <mat-option value="" class="text-gray-500">All roles</mat-option>
+            <mat-option value="admin" class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+              Admin
+            </mat-option>
+            <mat-option value="individual member" class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-green-500"></span>
+              Member
+            </mat-option>
+            <mat-option value="pending" class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-yellow-500"></span>
+              Pending
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
 
-          <mat-form-field appearance="outline">
-            <mat-label>From Date</mat-label>
-            <input matInput [matDatepicker]="pickerFrom" formControlName="dateFrom">
-            <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
-            <mat-datepicker #pickerFrom></mat-datepicker>
-          </mat-form-field>
+      <!-- From Date -->
+      <div>
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label class="text-gray-500">From date</mat-label>
+          <input 
+            matInput 
+            [matDatepicker]="pickerFrom" 
+            formControlName="dateFrom"
+          >
+          <mat-datepicker-toggle 
+            matSuffix 
+            [for]="pickerFrom"
+            class="text-gray-400/80"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #pickerFrom></mat-datepicker>
+        </mat-form-field>
+      </div>
 
-          <mat-form-field appearance="outline">
-            <mat-label>To Date</mat-label>
-            <input matInput [matDatepicker]="pickerTo" formControlName="dateTo">
-            <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
-            <mat-datepicker #pickerTo></mat-datepicker>
-          </mat-form-field>
-        </div>
+      <!-- To Date -->
+      <div>
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label class="text-gray-500">To date</mat-label>
+          <input 
+            matInput 
+            [matDatepicker]="pickerTo" 
+            formControlName="dateTo"
+          >
+          <mat-datepicker-toggle 
+            matSuffix 
+            [for]="pickerTo"
+            class="text-gray-400/80"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #pickerTo></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
 
-        <div class="filter-buttons">
-          <button mat-raised-button color="primary" type="submit">
-            <mat-icon>filter_list</mat-icon>
-            Apply Filters
-          </button>
-          <button mat-stroked-button type="button" (click)="resetFilter()">
-            <mat-icon>clear</mat-icon>
-            Reset
-          </button>
-        </div>
-      </form>
-    </mat-card-content>
-  </mat-card>
+    <!-- Buttons Row -->
+    <div class="flex justify-end gap-3 pt-2">
+      <button 
+        mat-stroked-button 
+        type="button" 
+        (click)="resetFilter()"
+        class="h-12 !border-gray-300 !text-gray-600 hover:!bg-gray-50/80 flex items-center justify-center gap-2 rounded-lg transition-all px-6"
+      >
+        <mat-icon class="!text-gray-500 !text-xl">replay</mat-icon>
+        <span>Clear</span>
+      </button>
+      <button 
+        mat-raised-button 
+        color="primary" 
+        type="submit"
+        class="h-12 !bg-gradient-to-r !from-blue-600 !to-indigo-600 hover:!from-blue-700 hover:!to-indigo-700 !text-white !shadow-md flex items-center justify-center gap-2 rounded-lg transition-all px-6"
+      >
+        <mat-icon class="!text-white !text-xl">filter_list</mat-icon>
+        <span>Apply Filters</span>
+      </button>
+    </div>
+  </form>
+</div>
 
-  <!-- Loading Spinner -->
-  <div class="loading-container" *ngIf="loading">
-    <mat-spinner diameter="40"></mat-spinner>
+  <!-- Loading State -->
+  <div class="flex flex-col items-center justify-center py-16" *ngIf="loading">
+    <div class="w-12 h-12 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin mb-4"></div>
+    <p class="text-gray-500">Loading RSVPs...</p>
   </div>
 
-  <!-- Error Message -->
-  <div class="error-container" *ngIf="error && !loading">
-    <p class="error-message">{{ error }}</p>
-    <button mat-raised-button color="primary" (click)="loadRsvps()">Retry</button>
+  <!-- Error State -->
+  <div class="bg-red-50 border border-red-200 rounded-xl p-5 mb-6" *ngIf="error && !loading">
+    <div class="flex items-start gap-3">
+      <div class="bg-red-100 p-2 rounded-full">
+        <mat-icon class="text-red-500">error_outline</mat-icon>
+      </div>
+      <div>
+        <h3 class="font-medium text-red-800">Failed to load RSVPs</h3>
+        <p class="text-red-600 mt-1">{{ error }}</p>
+        <button 
+          mat-stroked-button 
+          (click)="loadRsvps()"
+          class="mt-3 border-red-300 text-red-600 hover:bg-red-100"
+        >
+          Retry
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- RSVPs Table -->
-  <div class="table-container mat-elevation-z2" *ngIf="!loading && !error">
-    <table mat-table [dataSource]="dataSource" matSort class="rsvps-table">
-      <!-- ID Column -->
-      <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
-        <td mat-cell *matCellDef="let rsvp"> {{ rsvp.id }} </td>
-      </ng-container>
+  <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100" *ngIf="!loading && !error">
+    <div class="overflow-x-auto">
+      <table mat-table [dataSource]="dataSource" matSort class="w-full">
+        <!-- ID Column -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50">
+            ID
+          </th>
+          <td mat-cell *matCellDef="let rsvp" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            {{ rsvp.id }}
+          </td>
+        </ng-container>
 
-      <!-- Event Name Column -->
-      <ng-container matColumnDef="eventName">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Event </th>
-        <td mat-cell *matCellDef="let rsvp"> {{ rsvp.eventName }} </td>
-      </ng-container>
+        <!-- Event Name Column -->
+        <ng-container matColumnDef="eventName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50">
+            Event
+          </th>
+          <td mat-cell *matCellDef="let rsvp" class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+            {{ rsvp.eventName }}
+          </td>
+        </ng-container>
 
-      <!-- Event Date Column -->
-      <ng-container matColumnDef="eventDate">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Event Date </th>
-        <td mat-cell *matCellDef="let rsvp"> {{ formatDate(rsvp.eventDate) }} </td>
-      </ng-container>
+        <!-- Event Date Column -->
+        <ng-container matColumnDef="eventDate">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50">
+            Event Date
+          </th>
+          <td mat-cell *matCellDef="let rsvp" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            {{ formatDate(rsvp.eventDate) }}
+          </td>
+        </ng-container>
 
-      <!-- User Name Column -->
-      <ng-container matColumnDef="userName">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
-        <td mat-cell *matCellDef="let rsvp"> {{ rsvp.userName }} </td>
-      </ng-container>
+        <!-- User Name Column -->
+        <ng-container matColumnDef="userName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50">
+            Name
+          </th>
+          <td mat-cell *matCellDef="let rsvp" class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+            {{ rsvp.userName }}
+          </td>
+        </ng-container>
 
-      <!-- User Email Column -->
-      <ng-container matColumnDef="userEmail">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Email </th>
-        <td mat-cell *matCellDef="let rsvp"> {{ rsvp.userEmail }} </td>
-      </ng-container>
+        <!-- User Email Column -->
+        <ng-container matColumnDef="userEmail">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50">
+            Email
+          </th>
+          <td mat-cell *matCellDef="let rsvp" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            {{ rsvp.userEmail }}
+          </td>
+        </ng-container>
 
-      <!-- User Phone Column -->
-      <ng-container matColumnDef="userPhone">
-        <th mat-header-cell *matHeaderCellDef> Phone </th>
-        <td mat-cell *matCellDef="let rsvp"> {{ rsvp.userPhone }} </td>
-      </ng-container>
+        <!-- User Phone Column -->
+        <ng-container matColumnDef="userPhone">
+          <th mat-header-cell *matHeaderCellDef class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50">
+            Phone
+          </th>
+          <td mat-cell *matCellDef="let rsvp" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            {{ rsvp.userPhone || '-' }}
+          </td>
+        </ng-container>
 
-      <!-- User Role Column -->
-      <ng-container matColumnDef="userRole">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Role </th>
-        <td mat-cell *matCellDef="let rsvp">
-          <span class="role-badge" [ngClass]="getRoleClass(rsvp.userRole)">
-            {{ rsvp.userRole }}
-          </span>
-        </td>
-      </ng-container>
+        <!-- User Role Column -->
+        <ng-container matColumnDef="userRole">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50">
+            Role
+          </th>
+          <td mat-cell *matCellDef="let rsvp" class="px-6 py-4 whitespace-nowrap">
+            <span class="px-2 py-1 rounded-full text-xs font-medium" [ngClass]="getRoleClass(rsvp.userRole)">
+              {{ rsvp.userRole }}
+            </span>
+          </td>
+        </ng-container>
 
-      <!-- Status Column -->
-      <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
-        <td mat-cell *matCellDef="let rsvp">
-          <span class="status-badge" [ngClass]="getStatusClass(rsvp.status)">
-            {{ rsvp.status }}
-          </span>
-        </td>
-      </ng-container>
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50">
+            Status
+          </th>
+          <td mat-cell *matCellDef="let rsvp" class="px-6 py-4 whitespace-nowrap">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" [ngClass]="getStatusClass(rsvp.status)">
+              <span class="w-2 h-2 rounded-full mr-1.5" [ngClass]="{
+                'bg-green-500': rsvp.status === 'confirmed',
+                'bg-red-500': rsvp.status === 'cancelled',
+                'bg-blue-500': rsvp.status === 'attended'
+              }"></span>
+              {{ rsvp.status }}
+            </span>
+          </td>
+        </ng-container>
 
-      <!-- RSVP Date Column -->
-      <ng-container matColumnDef="rsvpDate">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> RSVP Date </th>
-        <td mat-cell *matCellDef="let rsvp"> {{ formatDate(rsvp.rsvpDate) }} </td>
-      </ng-container>
+        <!-- RSVP Date Column -->
+        <ng-container matColumnDef="rsvpDate">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50">
+            RSVP Date
+          </th>
+          <td mat-cell *matCellDef="let rsvp" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            {{ formatDate(rsvp.rsvpDate) }}
+          </td>
+        </ng-container>
 
-      <!-- Actions Column -->
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef> Actions </th>
-        <td mat-cell *matCellDef="let rsvp">
-          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Actions">
-            <mat-icon>more_vert</mat-icon>
-          </button>
-          <mat-menu #menu="matMenu">
-            <button mat-menu-item (click)="updateStatus(rsvp, 'confirmed')" [disabled]="rsvp.status === 'confirmed'">
-              <mat-icon>check_circle</mat-icon>
-              <span>Mark as Confirmed</span>
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50">
+            Actions
+          </th>
+          <td mat-cell *matCellDef="let rsvp" class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+            <button 
+              mat-icon-button 
+              [matMenuTriggerFor]="menu" 
+              class="hover:bg-gray-100 rounded-full p-1"
+            >
+              <mat-icon class="text-gray-500">more_vert</mat-icon>
             </button>
-            <button mat-menu-item (click)="updateStatus(rsvp, 'cancelled')" [disabled]="rsvp.status === 'cancelled'">
-              <mat-icon>cancel</mat-icon>
-              <span>Mark as Cancelled</span>
-            </button>
-            <button mat-menu-item (click)="updateStatus(rsvp, 'attended')" [disabled]="rsvp.status === 'attended'">
-              <mat-icon>how_to_reg</mat-icon>
-              <span>Mark as Attended</span>
-            </button>
-          </mat-menu>
-        </td>
-      </ng-container>
+            <mat-menu #menu="matMenu" class="shadow-lg rounded-lg overflow-hidden">
+              <button 
+                mat-menu-item 
+                (click)="updateStatus(rsvp, 'confirmed')" 
+                [disabled]="rsvp.status === 'confirmed'"
+                class="flex items-center gap-2"
+              >
+                <mat-icon class="text-green-500">check_circle</mat-icon>
+                <span>Confirm</span>
+              </button>
+              <button 
+                mat-menu-item 
+                (click)="updateStatus(rsvp, 'cancelled')" 
+                [disabled]="rsvp.status === 'cancelled'"
+                class="flex items-center gap-2"
+              >
+                <mat-icon class="text-red-500">cancel</mat-icon>
+                <span>Cancel</span>
+              </button>
+              <button 
+                mat-menu-item 
+                (click)="updateStatus(rsvp, 'attended')" 
+                [disabled]="rsvp.status === 'attended'"
+                class="flex items-center gap-2"
+              >
+                <mat-icon class="text-blue-500">how_to_reg</mat-icon>
+                <span>Mark Attended</span>
+              </button>
+            </mat-menu>
+          </td>
+        </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns" class="h-12"></tr>
+        <tr 
+          mat-row 
+          *matRowDef="let row; columns: displayedColumns;" 
+          class="hover:bg-gray-50 transition-colors"
+        ></tr>
 
-      <!-- Row shown when there is no matching data -->
-      <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell" colspan="10">No RSVPs found</td>
-      </tr>
-    </table>
+        <!-- Empty State -->
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell py-12 text-center" colspan="10">
+            <div class="flex flex-col items-center justify-center gap-3 text-gray-400">
+              <mat-icon class="text-5xl">people_outline</mat-icon>
+              <h3 class="text-lg font-medium text-gray-500">No RSVPs found</h3>
+              <p class="max-w-md">Try adjusting your filters or check back later</p>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
 
-    <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" showFirstLastButtons></mat-paginator>
+    <!-- Paginator -->
+    <mat-paginator 
+      [pageSizeOptions]="[10, 25, 50, 100]" 
+      showFirstLastButtons
+      class="border-t border-gray-100 px-6 py-3"
+    ></mat-paginator>
   </div>
 </div>
