@@ -70,6 +70,7 @@ import { DashboardHomeComponent } from './dashboard/dashboard-home/dashboard-hom
 import { RaiseTicketComponent } from './dashboard/raise-ticket/raise-ticket.component';
 import { MyTicketsComponent } from './dashboard/my-tickets/my-tickets.component';
 import { TicketManagementComponent } from './admin/admin-dashboard/ticket-management/ticket-management.component';
+import { MemberComponent } from './auth/member/member.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -146,6 +147,7 @@ const routes: Routes = [
     RaiseTicketComponent,
     MyTicketsComponent,
     TicketManagementComponent,
+    MemberComponent,
   ],
   imports: [
     BrowserModule,
