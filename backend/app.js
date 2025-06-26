@@ -144,7 +144,7 @@ app.get("/", (req, res) => {
 
 
 app.listen(PORT, () => {
-  console.log(`app is listening on port https://localhost:${PORT}`);
+  console.log(`app is listening on port http://localhost:${PORT}`);
 });
 
 export default app;

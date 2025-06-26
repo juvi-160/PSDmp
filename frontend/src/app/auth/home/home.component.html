@@ -1,18 +1,60 @@
 <app-navbar></app-navbar>
-<div class="home-container">
-  <div class="welcome-message">
-    <img src="PSF_Logo.png" alt="Professionals Solidarity Forum Logo" class="logo">
-    <h1>Welcome to Professionals Solidarity Forum</h1>
-    <p>Join our community of professionals today</p>
+<div class="min-h-screen bg-gray-50 flex flex-col">
+  <!-- Hero Section -->
+  <div class="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
+    <div class="w-full max-w-md lg:max-w-2xl space-y-12">
+      <div class="text-center mt-8">
+        <img src="PSF_Logo.png" alt="Professionals Solidarity Forum Logo" class="mx-auto h-24 w-auto mb-6">
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
+          Welcome to <br>
+          <span class="text-indigo-600">Professionals</span>
+          <span class="text-emerald-600"> Solidarity Forum</span>
+        </h1>
+        <p class="mt-4 text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
+          Join our network of professionals to collaborate, learn, and advance your career
+        </p>
+      </div>
+
+      <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-6 px-4 sm:px-0">
+        <button
+          mat-raised-button
+          (click)="login()"
+          class="group relative flex justify-center items-center py-3 px-6 border border-transparent text-base sm:text-lg font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 shadow"
+        >
+          <span class="flex items-center">
+            <svg class="h-5 w-5 mr-2 text-indigo-200 group-hover:text-indigo-100" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+            </svg>
+            Login
+          </span>
+        </button>
+
+        <button
+          mat-raised-button
+          color="accent"
+          (click)="signup()"
+          class="group relative flex justify-center items-center py-3 px-6 border border-gray-300 text-base sm:text-lg font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-200 shadow"
+        >
+          <span class="flex items-center">
+            <svg class="h-5 w-5 mr-2 text-emerald-500 group-hover:text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
+            </svg>
+            Sign Up
+          </span>
+        </button>
+      </div>
+
+      <div class="mt-8 pt-8 border-t border-gray-200 text-center">
+        <p class="text-sm text-gray-500">
+          Already a member?
+          <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">Access your dashboard</a>
+        </p>
+      </div>
+    </div>
   </div>
 
-  <div class="auth-buttons">
-    <button mat-raised-button color="primary" routerLink="/membership-selection" class="auth-button">
-      Login
-    </button>
-    <button mat-raised-button color="accent" (click)="signup()" class="auth-button">
-      Sign Up
-    </button>
+  <!-- Footer pushes to bottom -->
+  <div class="mt-auto">
+    <app-footer></app-footer>
   </div>
 </div>
-<app-footer></app-footer>
