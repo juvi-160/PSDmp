@@ -1,54 +1,66 @@
-<footer class="footer">
-    <div class="footer-container">
-      <div class="footer-section">
-        <div class="footer-logo">
-          <img src="PSF_Logo.png" alt="PSF Logo" class="footer-logo-img">
-          <!-- <h3>Professionals Solidarity Forum</h3> -->
-        </div>
-        <p class="footer-description">
-          A community of professionals dedicated to solidarity, mutual support, and professional growth.
-        </p>
+<footer class="bg-teal-700 text-white pt-12">
+  <div class="max-w-6xl mx-auto px-6 flex flex-wrap justify-between gap-y-10">
+
+    <!-- Logo & Description -->
+    <div class="w-full sm:w-1/2 lg:w-[23%]">
+      <div class="flex items-center mb-4">
+        <img src="/PSF_Logo.png" alt="PSF Logo" class="w-44 h-20 mr-4" />
       </div>
-  
-      <div class="footer-section">
-        <h4>Quick Links</h4>
-        <ul class="footer-links">
-          <li><a routerLink="/">Home</a></li>
-          <!-- <li><a routerLink="/about">About</a></li> -->
-          <li><a routerLink="/contact">Contact</a></li>
-        </ul>
-      </div>
-  
-      <div class="footer-section">
-        <h4>Legal</h4>
-        <ul class="footer-links">
-          <li><a routerLink="/privacy-policy">Privacy Policy</a></li>
-          <li><a routerLink="/terms">Terms & Conditions</a></li>
-          <li><a routerLink="/refund-policy">Refund & Cancellation</a></li>
-          <li><a routerLink="/faqs">FAQs</a></li>
-        </ul>
-      </div>
-  
-      <div class="footer-section">
-        <h4>Connect With Us</h4>
-        <div class="social-links">
-          <a href="https://www.facebook.com/PSFHYD" target="_blank" class="social-icon" aria-label="Facebook">
-            <i class="bi bi-facebook"></i>
-          </a>
-          <a href="https://www.instagram.com/psfhyd/" target="_blank" class="social-icon" aria-label="Instagram">
-            <i class="bi bi-instagram"></i>
-          </a>
-          <a href="https://www.linkedin.com/company/professionals-solidarity-forum/" target="_blank" class="social-icon" aria-label="LinkedIn">
-            <i class="bi bi-linkedin"></i>
-          </a>
-          <a href="https://www.youtube.com/c/ProfessionalsSolidarityForum" target="_blank" class="social-icon" aria-label="YouTube">
-            <i class="bi bi-youtube"></i>
-          </a>
-        </div>
+      <p class="text-sm leading-relaxed">
+        A community of professionals dedicated to solidarity, mutual support, and professional growth.
+      </p>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="w-full sm:w-1/2 lg:w-[23%]">
+      <h4 class="text-lg mb-4 relative pb-2">
+        Quick Links
+        <span class="block w-10 h-[2px] bg-gray-100 absolute bottom-0 left-0"></span>
+      </h4>
+      <ul class="space-y-2">
+        <li><a routerLink="/" class="hover:underline text-gray-100">Home</a></li>
+        <li><a routerLink="/contact" class="hover:underline text-gray-100">Contact</a></li>
+      </ul>
+    </div>
+
+    <!-- Legal -->
+    <div class="w-full sm:w-1/2 lg:w-[23%]">
+      <h4 class="text-lg mb-4 relative pb-2">
+        Legal
+        <span class="block w-10 h-[2px] bg-gray-100 absolute bottom-0 left-0"></span>
+      </h4>
+      <ul class="space-y-2">
+        <li><a routerLink="/privacy-policy" class="hover:underline text-gray-100">Privacy Policy</a></li>
+        <li><a routerLink="/terms" class="hover:underline text-gray-100">Terms & Conditions</a></li>
+        <li><a routerLink="/refund-policy" class="hover:underline text-gray-100">Refund & Cancellation</a></li>
+        <li><a routerLink="/faqs" class="hover:underline text-gray-100">FAQs</a></li>
+      </ul>
+    </div>
+
+    <!-- Social Links -->
+    <div class="w-full sm:w-1/2 lg:w-[23%]">
+      <h4 class="text-lg mb-4 relative pb-2">
+        Connect With Us
+        <span class="block w-10 h-[2px] bg-gray-100 absolute bottom-0 left-0"></span>
+      </h4>
+      <div class="flex gap-4">
+        <a href="https://www.facebook.com/PSFHYD" target="_blank" aria-label="Facebook" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20">
+          <i class="bi bi-facebook"></i>
+        </a>
+        <a href="https://www.instagram.com/psfhyd/" target="_blank" aria-label="Instagram" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20">
+          <i class="bi bi-instagram"></i>
+        </a>
+        <a href="https://www.linkedin.com/company/professionals-solidarity-forum/" target="_blank" aria-label="LinkedIn" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20">
+          <i class="bi bi-linkedin"></i>
+        </a>
+        <a href="https://www.youtube.com/c/ProfessionalsSolidarityForum" target="_blank" aria-label="YouTube" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20">
+          <i class="bi bi-youtube"></i>
+        </a>
       </div>
     </div>
-  
-    <div class="footer-bottom">
-      <p>&copy; {{ currentYear }} Professionals Solidarity Forum. All rights reserved.</p>
-    </div>
-  </footer>
+  </div>
+
+  <div class="bg-teal-900 mt-10 text-center py-6">
+    <p class="text-sm m-0">&copy; {{ currentYear }} Professionals Solidarity Forum. All rights reserved.</p>
+  </div>
+</footer>

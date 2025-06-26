@@ -1,121 +1,247 @@
 <app-navbar></app-navbar>
-<div class="policy-container">
-    <div class="policy-header">
-      <h1>Frequently Asked Questions</h1>
-      <p class="last-updated">Last updated: May 2025</p>
+
+<div class=" min-h-screen">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+    <!-- Header -->
+    <div class="text-center mb-12 md:mb-16">
+      <h1 class="text-4xl sm:text-5xl font-bold text-blue-800 mb-3">Frequently Asked Questions</h1>
+      <div class="w-24 h-1.5 bg-blue-500 mx-auto mb-4 rounded-full"></div>
+      <p class="text-sm text-gray-500 italic">Last updated: May 2025</p>
     </div>
-  
-    <mat-card class="policy-section">
-      <mat-card-content>
-        <h2>General Questions</h2>
-        <mat-accordion>
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>What is Professionals Solidarity Forum (PSF)?</mat-panel-title>
-            </mat-expansion-panel-header>
-            <p>PSF is a professional organization dedicated to supporting and connecting professionals across various industries. We provide networking opportunities, professional development resources, and advocacy for our members.</p>
-          </mat-expansion-panel>
-          
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>How do I become a member?</mat-panel-title>
-            </mat-expansion-panel-header>
-            <p>You can become a member by registering on our website and completing the membership application process. Membership requires payment of applicable fees as outlined in our <a routerLink="/terms">Terms & Conditions</a>.</p>
-          </mat-expansion-panel>
-        </mat-accordion>
-        
-        <h2>Membership Questions</h2>
-        <mat-accordion>
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>What are the membership fees?</mat-panel-title>
-            </mat-expansion-panel-header>
-            <p>We offer monthly and custom options. For specific pricing details, please visit our membership page or contact us directly.</p>
-          </mat-expansion-panel>
-          
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>Can I get a refund for my membership?</mat-panel-title>
-            </mat-expansion-panel-header>
-            <p>Refund policies vary depending on membership type and timing of cancellation. Please refer to our detailed <a routerLink="/refund-policy">Refund & Cancellation Policy</a> for specific information.</p>
-          </mat-expansion-panel>
-          
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>How do I cancel my membership?</mat-panel-title>
-            </mat-expansion-panel-header>
-            <p>You can cancel your membership by logging into your account, contacting our support team at contact&#64;psf-india.org, or calling +91-998-877-3493. Note that cancellation does not automatically entitle you to a refund.</p>
-          </mat-expansion-panel>
-        </mat-accordion>
-        
-        <h2>Privacy & Data</h2>
-        <mat-accordion>
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>What information does PSF collect?</mat-panel-title>
-            </mat-expansion-panel-header>
-            <p>We collect various types of personal data as outlined in our <a routerLink="/privacy-policy">Privacy Policy</a>, including identity data, contact information, professional details, and technical usage data.</p>
-          </mat-expansion-panel>
-          
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>How is my data protected?</mat-panel-title>
-            </mat-expansion-panel-header>
-            <p>We implement appropriate security measures to protect your personal data from unauthorized access, alteration, or disclosure. For more details, please see our <a routerLink="/privacy-policy">Privacy Policy</a>.</p>
-          </mat-expansion-panel>
-          
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>Can I request deletion of my data?</mat-panel-title>
-            </mat-expansion-panel-header>
-            <p>Yes, you have the right to request erasure of your personal data under certain circumstances as described in our <a routerLink="/privacy-policy">Privacy Policy</a>.</p>
-          </mat-expansion-panel>
-        </mat-accordion>
-        
-        <h2>Events & Activities</h2>
-        <mat-accordion>
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>What types of events does PSF organize?</mat-panel-title>
-            </mat-expansion-panel-header>
-            <p>We organize various professional development events including workshops, conferences, networking sessions, and training programs. Details are available in our events calendar.</p>
-          </mat-expansion-panel>
-          
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>What is the refund policy for events?</mat-panel-title>
-            </mat-expansion-panel-header>
-            <p>Event refund policies vary based on cancellation timing. Please refer to our <a routerLink="/refund-policy">Refund & Cancellation Policy</a> for specific details.</p>
-          </mat-expansion-panel>
-        </mat-accordion>
-        
-        <h2>Contact & Support</h2>
-        <mat-accordion>
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>How can I contact PSF?</mat-panel-title>
-            </mat-expansion-panel-header>
-            <p>You can reach us via:</p>
-            <ul>
-              <li><strong>Email:</strong> contact&#64;psf-india.org</li>
-              <li><strong>Phone:</strong> +91-998-877-3493</li>
-              <li><strong>Address:</strong> Professionals Solidarity Forum, Hyderabad, India</li>
-            </ul>
-          </mat-expansion-panel>
-          
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>Where can I find your legal policies?</mat-panel-title>
-            </mat-expansion-panel-header>
-            <p>All our legal policies are available in the footer of our website:</p>
-            <ul>
-              <li><a routerLink="/privacy-policy">Privacy Policy</a></li>
-              <li><a routerLink="/terms">Terms & Conditions</a></li>
-              <li><a routerLink="/refund-policy">Refund & Cancellation Policy</a></li>
-            </ul>
-          </mat-expansion-panel>
-        </mat-accordion>
-      </mat-card-content>
-    </mat-card>
+
+    <!-- FAQ Card -->
+    <div class="bg-white shadow-2xl rounded-xl overflow-hidden">
+      <!-- Decorative header strip -->
+      <div class="bg-gradient-to-r from-blue-600 to-blue-400 h-2 w-full"></div>
+
+      <div class="p-6 sm:p-10 space-y-10">
+        <!-- Section -->
+        <div class="animate-fade-in">
+          <h2 class="text-2xl font-semibold text-blue-700 mb-6 flex items-center">
+            <svg class="h-6 w-6 mr-3 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            General Questions
+          </h2>
+          <div class="space-y-4">
+            <details class="group border border-blue-100 rounded-lg p-5 bg-blue-50 hover:bg-blue-100 transition-colors duration-200">
+              <summary class="cursor-pointer font-medium text-gray-800 flex items-center">
+                <svg class="h-5 w-5 mr-2 text-blue-600 group-open:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                <svg class="h-5 w-5 mr-2 text-blue-600 hidden group-open:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                </svg>
+                What is Professionals Solidarity Forum (PSF)?
+              </summary>
+              <p class="mt-3 ml-7 text-gray-700 leading-relaxed">PSF is a professional organization dedicated to supporting and connecting professionals across various industries. We provide networking opportunities, professional development resources, and advocacy for our members.</p>
+            </details>
+
+            <details class="group border border-blue-100 rounded-lg p-5 bg-blue-50 hover:bg-blue-100 transition-colors duration-200">
+              <summary class="cursor-pointer font-medium text-gray-800 flex items-center">
+                <svg class="h-5 w-5 mr-2 text-blue-600 group-open:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                <svg class="h-5 w-5 mr-2 text-blue-600 hidden group-open:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                </svg>
+                How do I become a member?
+              </summary>
+              <p class="mt-3 ml-7 text-gray-700 leading-relaxed">You can become a member by registering on our website and completing the membership application process. Membership requires payment of applicable fees as outlined in our <a href="/terms" class="text-blue-600 hover:underline font-medium">Terms & Conditions</a>.</p>
+            </details>
+          </div>
+        </div>
+
+        <!-- Section -->
+        <div class="animate-fade-in" style="animation-delay: 100ms">
+          <h2 class="text-2xl font-semibold text-blue-700 mb-6 flex items-center">
+            <svg class="h-6 w-6 mr-3 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            Membership Questions
+          </h2>
+          <div class="space-y-4">
+            <details class="group border border-blue-100 rounded-lg p-5 bg-blue-50 hover:bg-blue-100 transition-colors duration-200">
+              <summary class="cursor-pointer font-medium text-gray-800 flex items-center">
+                <svg class="h-5 w-5 mr-2 text-blue-600 group-open:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                <svg class="h-5 w-5 mr-2 text-blue-600 hidden group-open:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                </svg>
+                What are the membership fees?
+              </summary>
+              <p class="mt-3 ml-7 text-gray-700 leading-relaxed">We offer monthly and custom options. For specific pricing details, please visit our membership page or contact us directly.</p>
+            </details>
+
+            <details class="group border border-blue-100 rounded-lg p-5 bg-blue-50 hover:bg-blue-100 transition-colors duration-200">
+              <summary class="cursor-pointer font-medium text-gray-800 flex items-center">
+                <svg class="h-5 w-5 mr-2 text-blue-600 group-open:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                <svg class="h-5 w-5 mr-2 text-blue-600 hidden group-open:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                </svg>
+                Can I get a refund for my membership?
+              </summary>
+              <p class="mt-3 ml-7 text-gray-700 leading-relaxed">Refund policies vary depending on membership type and timing of cancellation. Please refer to our <a href="/refund-policy" class="text-blue-600 hover:underline font-medium">Refund & Cancellation Policy</a> for specific information.</p>
+            </details>
+
+            <details class="group border border-blue-100 rounded-lg p-5 bg-blue-50 hover:bg-blue-100 transition-colors duration-200">
+              <summary class="cursor-pointer font-medium text-gray-800 flex items-center">
+                <svg class="h-5 w-5 mr-2 text-blue-600 group-open:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                <svg class="h-5 w-5 mr-2 text-blue-600 hidden group-open:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                </svg>
+                How do I cancel my membership?
+              </summary>
+              <p class="mt-3 ml-7 text-gray-700 leading-relaxed">You can cancel your membership by logging into your account, contacting our support team at contact&#64;psf-india.org, or calling +91-998-877-3493. Note that cancellation does not automatically entitle you to a refund.</p>
+            </details>
+          </div>
+        </div>
+
+        <!-- Section -->
+        <div class="animate-fade-in" style="animation-delay: 200ms">
+          <h2 class="text-2xl font-semibold text-blue-700 mb-6 flex items-center">
+            <svg class="h-6 w-6 mr-3 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+            Privacy & Data
+          </h2>
+          <div class="space-y-4">
+            <details class="group border border-blue-100 rounded-lg p-5 bg-blue-50 hover:bg-blue-100 transition-colors duration-200">
+              <summary class="cursor-pointer font-medium text-gray-800 flex items-center">
+                <svg class="h-5 w-5 mr-2 text-blue-600 group-open:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                <svg class="h-5 w-5 mr-2 text-blue-600 hidden group-open:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                </svg>
+                What information does PSF collect?
+              </summary>
+              <p class="mt-3 ml-7 text-gray-700 leading-relaxed">We collect various types of personal data as outlined in our <a href="/privacy-policy" class="text-blue-600 hover:underline font-medium">Privacy Policy</a>, including identity data, contact information, professional details, and technical usage data.</p>
+            </details>
+
+            <details class="group border border-blue-100 rounded-lg p-5 bg-blue-50 hover:bg-blue-100 transition-colors duration-200">
+              <summary class="cursor-pointer font-medium text-gray-800 flex items-center">
+                <svg class="h-5 w-5 mr-2 text-blue-600 group-open:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                <svg class="h-5 w-5 mr-2 text-blue-600 hidden group-open:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                </svg>
+                How is my data protected?
+              </summary>
+              <p class="mt-3 ml-7 text-gray-700 leading-relaxed">We implement appropriate security measures to protect your personal data from unauthorized access, alteration, or disclosure. For more details, please see our <a href="/privacy-policy" class="text-blue-600 hover:underline font-medium">Privacy Policy</a>.</p>
+            </details>
+
+            <details class="group border border-blue-100 rounded-lg p-5 bg-blue-50 hover:bg-blue-100 transition-colors duration-200">
+              <summary class="cursor-pointer font-medium text-gray-800 flex items-center">
+                <svg class="h-5 w-5 mr-2 text-blue-600 group-open:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                <svg class="h-5 w-5 mr-2 text-blue-600 hidden group-open:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                </svg>
+                Can I request deletion of my data?
+              </summary>
+              <p class="mt-3 ml-7 text-gray-700 leading-relaxed">Yes, you have the right to request erasure of your personal data under certain circumstances as described in our <a href="/privacy-policy" class="text-blue-600 hover:underline font-medium">Privacy Policy</a>.</p>
+            </details>
+          </div>
+        </div>
+
+        <!-- Section -->
+        <div class="animate-fade-in" style="animation-delay: 300ms">
+          <h2 class="text-2xl font-semibold text-blue-700 mb-6 flex items-center">
+            <svg class="h-6 w-6 mr-3 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            Events & Activities
+          </h2>
+          <div class="space-y-4">
+            <details class="group border border-blue-100 rounded-lg p-5 bg-blue-50 hover:bg-blue-100 transition-colors duration-200">
+              <summary class="cursor-pointer font-medium text-gray-800 flex items-center">
+                <svg class="h-5 w-5 mr-2 text-blue-600 group-open:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                <svg class="h-5 w-5 mr-2 text-blue-600 hidden group-open:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                </svg>
+                What types of events does PSF organize?
+              </summary>
+              <p class="mt-3 ml-7 text-gray-700 leading-relaxed">We organize various professional development events including workshops, conferences, networking sessions, and training programs. Details are available in our events calendar.</p>
+            </details>
+
+            <details class="group border border-blue-100 rounded-lg p-5 bg-blue-50 hover:bg-blue-100 transition-colors duration-200">
+              <summary class="cursor-pointer font-medium text-gray-800 flex items-center">
+                <svg class="h-5 w-5 mr-2 text-blue-600 group-open:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                <svg class="h-5 w-5 mr-2 text-blue-600 hidden group-open:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                </svg>
+                What is the refund policy for events?
+              </summary>
+              <p class="mt-3 ml-7 text-gray-700 leading-relaxed">Event refund policies vary based on cancellation timing. Please refer to our <a href="/refund-policy" class="text-blue-600 hover:underline font-medium">Refund & Cancellation Policy</a> for specific details.</p>
+            </details>
+          </div>
+        </div>
+
+        <!-- Section -->
+        <div class="animate-fade-in" style="animation-delay: 400ms">
+          <h2 class="text-2xl font-semibold text-blue-700 mb-6 flex items-center">
+            <svg class="h-6 w-6 mr-3 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+            </svg>
+            Contact & Support
+          </h2>
+          <div class="space-y-4">
+            <details class="group border border-blue-100 rounded-lg p-5 bg-blue-50 hover:bg-blue-100 transition-colors duration-200">
+              <summary class="cursor-pointer font-medium text-gray-800 flex items-center">
+                <svg class="h-5 w-5 mr-2 text-blue-600 group-open:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                <svg class="h-5 w-5 mr-2 text-blue-600 hidden group-open:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                </svg>
+                How can I contact PSF?
+              </summary>
+              <div class="mt-3 ml-7 text-gray-700 leading-relaxed">
+                You can reach us via:
+                <ul class="list-disc list-inside mt-2 space-y-1">
+                  <li><strong>Email:</strong> contact&#64;psf-india.org</li>
+                  <li><strong>Phone:</strong> +91-998-877-3493</li>
+                  <li><strong>Address:</strong> Professionals Solidarity Forum, Hyderabad, India</li>
+                </ul>
+              </div>
+            </details>
+
+            <details class="group border border-blue-100 rounded-lg p-5 bg-blue-50 hover:bg-blue-100 transition-colors duration-200">
+              <summary class="cursor-pointer font-medium text-gray-800 flex items-center">
+                <svg class="h-5 w-5 mr-2 text-blue-600 group-open:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                <svg class="h-5 w-5 mr-2 text-blue-600 hidden group-open:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                </svg>
+                Where can I find your legal policies?
+              </summary>
+              <div class="mt-3 ml-7 text-gray-700 leading-relaxed">
+                All our legal policies are available in the footer of our website:
+                <ul class="list-disc list-inside mt-2 space-y-1">
+                  <li><a href="/privacy-policy" class="text-blue-600 hover:underline font-medium">Privacy Policy</a></li>
+                  <li><a href="/terms" class="text-blue-600 hover:underline font-medium">Terms & Conditions</a></li>
+                  <li><a href="/refund-policy" class="text-blue-600 hover:underline font-medium">Refund & Cancellation Policy</a></li>
+                </ul>
+              </div>
+            </details>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+</div>
+
 <app-footer></app-footer>

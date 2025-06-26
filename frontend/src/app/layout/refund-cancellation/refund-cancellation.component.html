@@ -1,114 +1,368 @@
 <app-navbar></app-navbar>
-<div class="policy-container">
-    <div class="policy-header">
-      <h1>Refund & Cancellation Policy</h1>
-      <p class="last-updated">Last updated: May 2025</p>
+
+<div class="bg-gradient-to-b from-gray-50 to-white min-h-screen">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+    <!-- Header -->
+    <div class="text-center mb-12 md:mb-16">
+      <h1 class="text-4xl sm:text-5xl font-bold text-emerald-800 mb-3">Refund & Cancellation Policy</h1>
+      <div class="w-24 h-1.5 bg-emerald-800 mx-auto mb-4 rounded-full"></div>
+      <p class="text-sm text-gray-500 italic">Last updated: May 2025</p>
     </div>
-  
-    <mat-card class="policy-section">
-      <mat-card-content>
-        <h2>Membership Fee Refund Policy</h2>
-        <p>
-          At Professionals Solidarity Forum (PSF), we value your membership and want to ensure your satisfaction with our services. 
-          This refund policy outlines the terms and conditions regarding refunds for membership fees.
-        </p>
-        
-        <h2>Annual Membership Fee</h2>
-        <p>
-          Our refund policy for annual membership fees is as follows:
-        </p>
-        <ul>
-          <li><strong>Within 7 days of payment:</strong> Full refund (less payment processing fees)</li>
-          <li><strong>8-30 days after payment:</strong> 50% refund</li>
-          <li><strong>After 30 days:</strong> No refund</li>
-        </ul>
-        
-        <h2>Lifetime Membership Fee</h2>
-        <p>
-          Our refund policy for lifetime membership fees is as follows:
-        </p>
-        <ul>
-          <li><strong>Within 14 days of payment:</strong> Full refund (less payment processing fees)</li>
-          <li><strong>15-60 days after payment:</strong> 50% refund</li>
-          <li><strong>After 60 days:</strong> No refund</li>
-        </ul>
-        
-        <h2>Membership Cancellation</h2>
-        <p>
-          You may cancel your membership at any time by:
-        </p>
-        <ul>
-          <li>Logging into your account and selecting the cancellation option</li>
-          <li>Contacting our support team at contact&#64;psf-india.org</li>
-          <li>Calling our customer service at +91-998-877-3493</li>
-        </ul>
-        <p>
-          Please note that cancellation of membership does not automatically entitle you to a refund. 
-          Refund eligibility is determined by the timeframes outlined above.
-        </p>
-        
-        <h2>Event Registration Refunds</h2>
-        <p>
-          For PSF events, workshops, and conferences, the following refund policy applies:
-        </p>
-        <ul>
-          <li><strong>Cancellation 30+ days before the event:</strong> Full refund (less processing fees)</li>
-          <li><strong>Cancellation 15-29 days before the event:</strong> 50% refund</li>
-          <li><strong>Cancellation 0-14 days before the event:</strong> No refund</li>
-        </ul>
-        <p>
-          In case of event cancellation by PSF, attendees will be offered either a full refund or credit toward a future event.
-        </p>
-        
-        <h2>Exceptional Circumstances</h2>
-        <p>
-          We understand that exceptional circumstances may arise. In cases of serious illness, bereavement, or other exceptional circumstances, 
-          we may consider refund requests outside of the standard policy on a case-by-case basis. Supporting documentation may be required.
-        </p>
-        
-        <h2>How to Request a Refund</h2>
-        <p>
-          To request a refund, please contact our support team with the following information:
-        </p>
-        <ul>
-          <li>Your full name and membership ID</li>
-          <li>Date of payment</li>
-          <li>Reason for refund request</li>
-          <li>Payment method used</li>
-        </ul>
-        
-        <p>
-          Refund requests can be submitted via:
-        </p>
-        <ul>
-          <li>Email: contact&#64;psf-india.org</li>
-          <li>Phone: +91-998-877-3493</li>
-          <li>In writing to our registered address</li>
-        </ul>
-        
-        <h2>Refund Processing</h2>
-        <p>
-          Once approved, refunds will be processed within 7-10 business days. The refund will be issued using the original payment method 
-          unless otherwise specified. Please note that it may take an additional 5-10 business days for the refund to appear in your account, 
-          depending on your payment provider's policies.
-        </p>
-        
-        <h2>Changes to This Policy</h2>
-        <p>
-          We may update our refund and cancellation policy from time to time. Any changes to this policy will be posted on this page 
-          with an updated revision date.
-        </p>
-        
-        <h2>Contact Us</h2>
-        <p>
-          If you have any questions about our refund and cancellation policy, please contact us at:
-        </p>
-        <p>
-          <strong>Email:</strong> contact&#64;psf-india.org<br>
-          <strong>Phone:</strong> +91-998-877-3493<br>
-          <strong>Address:</strong> Professionals Solidarity Forum, Hyderabad, India
-        </p>
-      </mat-card-content>
-    </mat-card>
+
+    <!-- Main Card -->
+    <div class="bg-white shadow-2xl rounded-xl overflow-hidden">
+      <!-- Decorative header strip -->
+      <div class="bg-gradient-to-r from-emerald-600 to-emerald-400 h-2 w-full"></div>
+
+      <div class="p-6 sm:p-10 space-y-10">
+        <!-- Introduction Section -->
+        <section class="animate-fade-in">
+          <div class="flex items-start">
+            <div class="flex-shrink-0 mt-1 mr-4">
+              <svg class="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-2xl font-semibold text-gray-800 mb-4">Membership Fee Refund Policy</h2>
+              <p class="text-gray-700 leading-relaxed">
+                At Professionals Solidarity Forum (PSF), we value your membership and want to ensure your satisfaction with our services.
+                This refund policy outlines the terms and conditions regarding refunds for membership fees.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Annual Membership Section -->
+        <section class="animate-fade-in" style="animation-delay: 100ms">
+          <div class="flex items-start">
+            <div class="flex-shrink-0 mt-1 mr-4">
+              <svg class="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-2xl font-semibold text-gray-800 mb-4">Annual Membership Fee</h2>
+              <p class="text-gray-700 mb-4 leading-relaxed">
+                Our refund policy for annual membership fees is as follows:
+              </p>
+              <div class="overflow-x-auto">
+                <table class="min-w-full bg-gray-50 rounded-lg overflow-hidden">
+                  <thead class="bg-emerald-100">
+                    <tr>
+                      <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Time Period</th>
+                      <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Refund Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-gray-200">
+                    <tr>
+                      <td class="px-4 py-3 text-sm text-gray-700 font-medium">Within 7 days of payment</td>
+                      <td class="px-4 py-3 text-sm text-gray-600">Full refund (less payment processing fees)</td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-3 text-sm text-gray-700 font-medium">8-30 days after payment</td>
+                      <td class="px-4 py-3 text-sm text-gray-600">50% refund</td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-3 text-sm text-gray-700 font-medium">After 30 days</td>
+                      <td class="px-4 py-3 text-sm text-gray-600">No refund</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Lifetime Membership Section -->
+        <section class="animate-fade-in" style="animation-delay: 200ms">
+          <div class="flex items-start">
+            <div class="flex-shrink-0 mt-1 mr-4">
+              <svg class="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-2xl font-semibold text-gray-800 mb-4">Lifetime Membership Fee</h2>
+              <p class="text-gray-700 mb-4 leading-relaxed">
+                Our refund policy for lifetime membership fees is as follows:
+              </p>
+              <div class="overflow-x-auto">
+                <table class="min-w-full bg-gray-50 rounded-lg overflow-hidden">
+                  <thead class="bg-emerald-100">
+                    <tr>
+                      <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Time Period</th>
+                      <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Refund Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-gray-200">
+                    <tr>
+                      <td class="px-4 py-3 text-sm text-gray-700 font-medium">Within 14 days of payment</td>
+                      <td class="px-4 py-3 text-sm text-gray-600">Full refund (less payment processing fees)</td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-3 text-sm text-gray-700 font-medium">15-60 days after payment</td>
+                      <td class="px-4 py-3 text-sm text-gray-600">50% refund</td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-3 text-sm text-gray-700 font-medium">After 60 days</td>
+                      <td class="px-4 py-3 text-sm text-gray-600">No refund</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Membership Cancellation Section -->
+        <section class="animate-fade-in" style="animation-delay: 300ms">
+          <div class="flex items-start">
+            <div class="flex-shrink-0 mt-1 mr-4">
+              <svg class="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-2xl font-semibold text-gray-800 mb-4">Membership Cancellation</h2>
+              <p class="text-gray-700 mb-4 leading-relaxed">
+                You may cancel your membership at any time by:
+              </p>
+              <ul class="space-y-3">
+                <li class="flex items-start">
+                  <span class="flex-shrink-0 mt-1 mr-3 text-emerald-500">
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                  </span>
+                  <span class="text-gray-700">Logging into your account and selecting the cancellation option</span>
+                </li>
+                <li class="flex items-start">
+                  <span class="flex-shrink-0 mt-1 mr-3 text-emerald-500">
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                  </span>
+                  <span class="text-gray-700">Contacting our support team at contact&#64;psf-india.org</span>
+                </li>
+                <li class="flex items-start">
+                  <span class="flex-shrink-0 mt-1 mr-3 text-emerald-500">
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                  </span>
+                  <span class="text-gray-700">Calling our customer service at +91-998-877-3493</span>
+                </li>
+              </ul>
+              <div class="mt-4 p-4 bg-amber-50 border-l-4 border-amber-400 rounded-r">
+                <p class="text-amber-800">
+                  <strong>Note:</strong>Cancellation of membership does not automatically entitle you to a refund.
+                  Refund eligibility is determined by the timeframes outlined above.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Event Registration Section -->
+        <section class="animate-fade-in" style="animation-delay: 400ms">
+          <div class="flex items-start">
+            <div class="flex-shrink-0 mt-1 mr-4">
+              <svg class="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-2xl font-semibold text-gray-800 mb-4">Event Registration Refunds</h2>
+              <p class="text-gray-700 mb-4 leading-relaxed">
+                For PSF events, workshops, and conferences, the following refund policy applies:
+              </p>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                  <h3 class="font-bold text-emerald-700 mb-2">30+ days before</h3>
+                  <p class="text-gray-600 text-sm">Full refund (less processing fees)</p>
+                </div>
+                <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                  <h3 class="font-bold text-emerald-700 mb-2">15-29 days before</h3>
+                  <p class="text-gray-600 text-sm">50% refund</p>
+                </div>
+                <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                  <h3 class="font-bold text-emerald-700 mb-2">0-14 days before</h3>
+                  <p class="text-gray-600 text-sm">No refund</p>
+                </div>
+              </div>
+              <div class="mt-4 p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r">
+                <p class="text-blue-800">
+                  In case of event cancellation by PSF, attendees will be offered either a full refund or credit toward a future event.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Exceptional Circumstances Section -->
+        <section class="animate-fade-in" style="animation-delay: 500ms">
+          <div class="flex items-start">
+            <div class="flex-shrink-0 mt-1 mr-4">
+              <svg class="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-2xl font-semibold text-gray-800 mb-4">Exceptional Circumstances</h2>
+              <p class="text-gray-700 leading-relaxed">
+                We understand that exceptional circumstances may arise. In cases of serious illness, bereavement, or other exceptional circumstances,
+                we may consider refund requests outside of the standard policy on a case-by-case basis. Supporting documentation may be required.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- How to Request Section -->
+        <section class="animate-fade-in" style="animation-delay: 600ms">
+          <div class="flex items-start">
+            <div class="flex-shrink-0 mt-1 mr-4">
+              <svg class="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-2xl font-semibold text-gray-800 mb-4">How to Request a Refund</h2>
+              <p class="text-gray-700 mb-4 leading-relaxed">
+                To request a refund, please contact our support team with the following information:
+              </p>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="bg-gray-50 p-4 rounded-lg">
+                  <h3 class="font-medium text-gray-800 mb-2">Required Information</h3>
+                  <ul class="space-y-2 text-gray-700">
+                    <li class="flex items-start">
+                      <span class="mr-2 text-emerald-500">•</span>
+                      Your full name and membership ID
+                    </li>
+                    <li class="flex items-start">
+                      <span class="mr-2 text-emerald-500">•</span>
+                      Date of payment
+                    </li>
+                    <li class="flex items-start">
+                      <span class="mr-2 text-emerald-500">•</span>
+                      Reason for refund request
+                    </li>
+                    <li class="flex items-start">
+                      <span class="mr-2 text-emerald-500">•</span>
+                      Payment method used
+                    </li>
+                  </ul>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                  <h3 class="font-medium text-gray-800 mb-2">Submission Methods</h3>
+                  <ul class="space-y-2 text-gray-700">
+                    <li class="flex items-start">
+                      <span class="mr-2 text-emerald-500">•</span>
+                      Email: contact&#64;psf-india.org
+                    </li>
+                    <li class="flex items-start">
+                      <span class="mr-2 text-emerald-500">•</span>
+                      Phone: +91-998-877-3493
+                    </li>
+                    <li class="flex items-start">
+                      <span class="mr-2 text-emerald-500">•</span>
+                      In writing to our registered address
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Refund Processing Section -->
+        <section class="animate-fade-in" style="animation-delay: 700ms">
+          <div class="flex items-start">
+            <div class="flex-shrink-0 mt-1 mr-4">
+              <svg class="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-2xl font-semibold text-gray-800 mb-4">Refund Processing</h2>
+              <p class="text-gray-700 leading-relaxed">
+                Once approved, refunds will be processed within 7-10 business days. The refund will be issued using the original payment method
+                unless otherwise specified. Please note that it may take an additional 5-10 business days for the refund to appear in your account,
+                depending on your payment provider's policies.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Policy Changes Section -->
+        <section class="animate-fade-in" style="animation-delay: 800ms">
+          <div class="flex items-start">
+            <div class="flex-shrink-0 mt-1 mr-4">
+              <svg class="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-2xl font-semibold text-gray-800 mb-4">Changes to This Policy</h2>
+              <p class="text-gray-700 leading-relaxed">
+                We may update our refund and cancellation policy from time to time. Any changes to this policy will be posted on this page
+                with an updated revision date.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="animate-fade-in" style="animation-delay: 900ms">
+          <div class="flex items-start">
+            <div class="flex-shrink-0 mt-1 mr-4">
+              <svg class="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-2xl font-semibold text-gray-800 mb-4">Contact Us</h2>
+              <p class="text-gray-700 mb-4 leading-relaxed">
+                If you have any questions about our refund and cancellation policy, please contact us at:
+              </p>
+              <div class="bg-emerald-50 rounded-lg p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h3 class="font-medium text-emerald-800 mb-3 flex items-center">
+                      <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                      Email
+                    </h3>
+                    <p class="text-gray-700">contact&#64;psf-india.org</p>
+                  </div>
+                  <div>
+                    <h3 class="font-medium text-emerald-800 mb-3 flex items-center">
+                      <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                      </svg>
+                      Phone
+                    </h3>
+                    <p class="text-gray-700">+91-998-877-3493</p>
+                  </div>
+                  <div class="md:col-span-2">
+                    <h3 class="font-medium text-emerald-800 mb-3 flex items-center">
+                      <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      Address
+                    </h3>
+                    <p class="text-gray-700">Professionals Solidarity Forum<br>Hyderabad, India</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
   </div>
+</div>
+
 <app-footer></app-footer>
