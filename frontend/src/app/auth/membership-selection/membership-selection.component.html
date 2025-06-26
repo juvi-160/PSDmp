@@ -1,0 +1,46 @@
+<app-navbar></app-navbar>
+
+<div class="home-container bg-gray-50 min-h-screen flex flex-col justify-center items-center py-20">
+  <!-- Welcome Section -->
+  <div class="welcome-message text-center mb-12 px-6">
+    <img src="PSF_Logo.png" alt="Professionals Solidarity Forum Logo" class="logo mx-auto mb-8 w-40 h-auto rounded-full shadow-md">
+    <h1 class="text-4xl font-semibold text-gray-800 mb-4">Welcome to Professionals Solidarity Forum</h1>
+    <p class="text-lg text-gray-600 mb-6">Join our community of professionals today and advance your career</p>
+    <p class="text-lg text-gray-500">Choose your membership type to get started</p>
+  </div>
+
+  <!-- Auth Buttons Section -->
+  <div class="auth-buttons flex flex-col md:flex-row gap-6 justify-center">
+    <!-- Individual Member Button Container -->
+    <div class="button-container bg-white p-6 rounded-lg shadow-xl hover:shadow-2xl transform transition-all duration-300 ease-in-out">
+      <h3 class="text-2xl font-semibold text-gray-800 mb-4">Individual Member</h3>
+      <ul class="text-gray-600 list-disc pl-5 mb-6">
+        <li>Access to exclusive events and networking opportunities</li>
+        <li>Member-only resources for career development</li>
+        <li>Priority invitations to workshops and seminars</li>
+      </ul>
+      <button 
+        (click)="login()"
+        class="auth-button bg-blue-600 text-white font-semibold py-4 px-10 rounded-full shadow-md hover:bg-blue-700 transform transition-all duration-300 ease-in-out hover:scale-105">
+        Become an Individual Member
+      </button>
+    </div>
+
+    <!-- Associate Member Button Container -->
+    <div class="button-container bg-white p-6 rounded-lg shadow-xl hover:shadow-2xl transform transition-all duration-300 ease-in-out">
+      <h3 class="text-2xl font-semibold text-gray-800 mb-4">Associate Member</h3>
+      <ul class="text-gray-600 list-disc pl-5 mb-6">
+        <li>Gain access to community forums and discussions</li>
+        <li>Participate in group activities and mentorship programs</li>
+        <li>Receive updates on industry trends and professional growth</li>
+      </ul>
+      <button 
+        (click)="signup()"
+        class="auth-button bg-green-600 text-white font-semibold py-4 px-10 rounded-full shadow-md hover:bg-green-700 transform transition-all duration-300 ease-in-out hover:scale-105">
+        Become an Associate Member
+      </button>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

@@ -26,9 +26,11 @@ import { DashboardHomeComponent } from './dashboard/dashboard-home/dashboard-hom
 import { RaiseTicketComponent } from './dashboard/raise-ticket/raise-ticket.component';
 import { MyTicketsComponent } from './dashboard/my-tickets/my-tickets.component';
 import { TicketManagementComponent } from './admin/admin-dashboard/ticket-management/ticket-management.component';
+import { MembershipSelectionComponent } from './auth/membership-selection/membership-selection.component';
 
 const routes: Routes = [
   { path: "", component: HomeComponent },
+  { path: "membership-selection", component: MembershipSelectionComponent},
   {
     path: "payment",
     component: PaymentComponent,
