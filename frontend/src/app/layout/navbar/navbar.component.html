@@ -1,12 +1,16 @@
-<mat-toolbar class="bg-blue-400 text-white shadow-md">
-  <div class="container mx-auto px-4 flex items-center justify-between h-16">
+<div class="bg-blue-200 text-black shadow-md border-b border-blue-400">
+  <div
+    class="container mx-auto px-4 flex items-center justify-between h-16 w-full"
+  >
     <!-- Logo Container -->
-    <div class="flex items-center space-x-2">
-      <img src="PSF_Logo.png"
-           alt="PSF Logo"
-           class="h-10 cursor-pointer hover:opacity-90 transition-opacity"
-           routerLink="/"
-           (click)="navigateHome()">
+    <div class="flex items-center space-x-3">
+      <img
+        src="PSF_Logo.png"
+        alt="PSF Logo"
+        class="h-10 w-auto cursor-pointer hover:opacity-90 transition-opacity duration-200"
+        routerLink="/"
+        (click)="navigateHome()"
+      />
       <!-- Optional title if needed -->
       <!-- <span class="hidden md:block text-xl font-semibold cursor-pointer"
             routerLink="/"
@@ -16,122 +20,88 @@
     </div>
 
     <!-- Navigation Links -->
-    <div class="hidden md:flex items-center space-x-2">
-      <a mat-button
-         routerLink="/"
-         routerLinkActive="active-link"
-         [routerLinkActiveOptions]="{exact: true}"
-         class="text-white hover:bg-blue-600 px-4 py-2 rounded-md transition-colors">
+    <div class="hidden md:flex items-center gap-4">
+      <a
+        routerLink="/"
+        routerLinkActive
+        #rla1="routerLinkActive"
+        [routerLinkActiveOptions]="{ exact: true }"
+        [ngClass]="{
+          'bg-blue-400 text-white': rla1.isActive,
+          'bg-blue-300/50 hover:bg-blue-300/80': !rla1.isActive
+        }"
+        class="px-4 py-2 rounded-md transition-colors duration-200 font-medium"
+      >
         Home
       </a>
-
-      <a mat-button
-         routerLink="/contact"
-         routerLinkActive="active-link"
-         class="text-white hover:bg-blue-600 px-4 py-2 rounded-md transition-colors">
+      <a
+        routerLink="/contact"
+        routerLinkActive
+        #rla2="routerLinkActive"
+        [routerLinkActiveOptions]="{ exact: true }"
+        [ngClass]="{
+          'bg-blue-400 text-white': rla2.isActive,
+          'bg-blue-300/50 hover:bg-blue-300/80': !rla2.isActive
+        }"
+        class="px-4 py-2 rounded-md transition-colors duration-200 font-medium"
+      >
         Contact
       </a>
+    </div>
 
-      <!-- Unauthenticated Links -->
-      <!-- <ng-container *ngIf="!(authService.isAuthenticated$ | async)">
-        <button mat-button
-                routerLink="/login"
-                class="text-white hover:bg-blue-600 px-4 py-2 rounded-md transition-colors">
-          Login
-        </button>
-        <button mat-raised-button
-                color="accent"
-                routerLink="/signup"
-                class="bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded-md transition-colors shadow-sm">
-          Sign Up
-        </button>
-      </ng-container> -->
+    <!-- Mobile / Auth Buttons -->
+    <!-- Unauthenticated Links -->
+    <!-- <ng-container *ngIf="!(authService.isAuthenticated$ | async)">
+      <button
+        routerLink="/login"
+        class="text-white hover:bg-blue-600 px-4 py-2 rounded-md transition-colors">
+        Login
+      </button>
+      <button
+        routerLink="/signup"
+        class="bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded-md transition-colors shadow-sm">
+        Sign Up
+      </button>
+    </ng-container> -->
 
-      <!-- Authenticated Links -->
-      <!-- <ng-container *ngIf="authService.isAuthenticated$ | async">
-        <button mat-button
-                [matMenuTriggerFor]="userMenu"
-                class="flex items-center text-white hover:bg-blue-600 px-3 py-2 rounded-md transition-colors">
-          <mat-icon class="mr-1">account_circle</mat-icon>
-          {{ (authService.user$ | async)?.name }}
-        </button>
-        <mat-menu #userMenu="matMenu" class="shadow-lg rounded-md">
-          <button mat-menu-item
-                  routerLink="/dashboard"
-                  class="hover:bg-blue-50 px-4 py-2">
-            Dashboard
-          </button>
-          <button mat-menu-item
-                  routerLink="/profile"
-                  class="hover:bg-blue-50 px-4 py-2">
-            Profile
-          </button>
-          <button mat-menu-item
-                  (click)="authService.logout()"
-                  class="hover:bg-blue-50 px-4 py-2">
-            Logout
-          </button>
-        </mat-menu>
-      </ng-container> -->
-
-    <!-- Mobile Menu Button
-    <button mat-icon-button
-            class="md:hidden text-white"
-            (click)="toggleMobileMenu()">
-      <mat-icon>menu</mat-icon>
-    </button>
-  </div>
-
-   Mobile Menu (hidden by default)
-  <div class="md:hidden bg-blue-800" *ngIf="mobileMenuOpen">
-    <div class="flex flex-col px-4 py-2 space-y-1">
-      <a mat-button
-         routerLink="/"
-         routerLinkActive="active-link"
-         [routerLinkActiveOptions]="{exact: true}"
-         class="text-white hover:bg-blue-700 px-3 py-2 rounded-md text-left">
-        Home
-      </a>
-      <a mat-button
-         routerLink="/contact"
-         routerLinkActive="active-link"
-         class="text-white hover:bg-blue-700 px-3 py-2 rounded-md text-left">
-        Contact
-      </a>
-
-      <!-- Unauthenticated Links (Mobile) -->
-      <!-- <ng-container *ngIf="!(authService.isAuthenticated$ | async)">
-        <button mat-button
-                routerLink="/login"
-                class="text-white hover:bg-blue-700 px-3 py-2 rounded-md text-left">
-          Login
-        </button>
-        <button mat-raised-button
-                color="accent"
-                routerLink="/signup"
-                class="bg-blue-500 hover:bg-blue-400 text-white px-3 py-2 rounded-md text-left mt-2">
-          Sign Up
-        </button>
-      </ng-container> -->
-
-      <!-- Authenticated Links (Mobile) -->
-      <!-- <ng-container *ngIf="authService.isAuthenticated$ | async">
-        <button mat-button
-                routerLink="/dashboard"
-                class="text-white hover:bg-blue-700 px-3 py-2 rounded-md text-left">
+    <!-- Authenticated Links -->
+    <!-- <ng-container *ngIf="authService.isAuthenticated$ | async">
+      <button
+        class="flex items-center text-white hover:bg-blue-600 px-3 py-2 rounded-md transition-colors">
+        <mat-icon class="mr-1">account_circle</mat-icon>
+        {{ (authService.user$ | async)?.name }}
+      </button>
+      <mat-menu #userMenu="matMenu" class="shadow-lg rounded-md">
+        <button
+          routerLink="/dashboard"
+          class="hover:bg-blue-50 px-4 py-2">
           Dashboard
         </button>
-        <button mat-button
-                routerLink="/profile"
-                class="text-white hover:bg-blue-700 px-3 py-2 rounded-md text-left">
+        <button
+          routerLink="/profile"
+          class="hover:bg-blue-50 px-4 py-2">
           Profile
         </button>
-        <button mat-button
-                (click)="authService.logout()"
-                class="text-white hover:bg-blue-700 px-3 py-2 rounded-md text-left">
+        <button
+          (click)="authService.logout()"
+          class="hover:bg-blue-50 px-4 py-2">
           Logout
         </button>
-      </ng-container> -->
-    </div>
+      </mat-menu>
+    </ng-container> -->
+
+    <!-- Mobile Menu Button -->
+    <!-- <button
+        class="md:hidden text-white"
+        (click)="toggleMobileMenu()">
+      <mat-icon>menu</mat-icon>
+    </button> -->
   </div>
-</mat-toolbar>
+
+  <!-- Mobile Menu -->
+  <!-- <div class="md:hidden bg-blue-800" *ngIf="mobileMenuOpen">
+    <div class="flex flex-col px-4 py-2 space-y-1">
+      ...
+    </div>
+  </div> -->
+</div>

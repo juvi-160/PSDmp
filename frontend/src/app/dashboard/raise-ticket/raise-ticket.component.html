@@ -1,118 +1,111 @@
-<div class="raise-ticket-container">
-  <div class="page-header">
-    <h2>Raise a Query/Ticket</h2>
-    <p class="subtitle">Submit your questions, concerns, or technical issues</p>
+<div class="raise-ticket-container max-w-3xl mx-auto p-6 sm:p-8 bg-white rounded-lg shadow-md">
+  <!-- Header -->
+  <div class="mb-6">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-1">Raise a Query/Ticket</h2>
+    <p class="text-sm text-gray-600">Submit your questions, concerns, or technical issues</p>
   </div>
 
-  <mat-card class="ticket-form-card">
-    <mat-card-content>
-      <form [formGroup]="ticketForm" (ngSubmit)="onSubmit()">
-        <div class="form-row">
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Subject</mat-label>
-            <input 
-              matInput 
-              formControlName="subject" 
-              placeholder="Brief description of your issue"
-              maxlength="255">
-            <mat-hint>Provide a clear, concise subject line</mat-hint>
-            <mat-error *ngIf="ticketForm.get('subject')?.invalid && ticketForm.get('subject')?.touched">
-              {{ getErrorMessage('subject') }}
-            </mat-error>
-          </mat-form-field>
-        </div>
+  <!-- Ticket Form -->
+  <form (submit)="onSubmit()" [formGroup]="ticketForm">
+    <!-- Subject -->
+    <div class="mb-4">
+      <label class="block text-gray-700 mb-1">Subject</label>
+      <input
+        type="text"
+        formControlName="subject"
+        maxlength="255"
+        placeholder="Brief description of your issue"
+        class="w-full border border-emerald-400 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+      />
+      <p class="text-[12px] text-gray-500 mt-1">Provide a clear, concise subject line</p>
+      <p *ngIf="ticketForm.get('subject')?.invalid && ticketForm.get('subject')?.touched" class="text-red-500 text-sm mt-1">
+        {{ getErrorMessage("subject") }}
+      </p>
+    </div>
 
-        <div class="form-row">
-          <mat-form-field appearance="outline" class="half-width">
-            <mat-label>Category</mat-label>
-            <mat-select formControlName="category">
-              <mat-option *ngFor="let category of categories" [value]="category.value">
-                {{ category.label }}
-              </mat-option>
-            </mat-select>
-            <mat-hint>Select the most relevant category</mat-hint>
-          </mat-form-field>
+    <!-- Category & Priority -->
+    <div class="flex flex-col md:flex-row gap-4 mb-4">
+      <div class="flex-1">
+        <label class="block text-gray-700 mb-1">Category</label>
+        <select formControlName="category" class="w-full border border-emerald-400 rounded-md p-2">
+          <option *ngFor="let category of categories" [value]="category.value">
+            {{ category.label }}
+          </option>
+        </select>
+        <p class="text-[12px] text-gray-500 mt-1">Select the most relevant category</p>
+      </div>
+      <div class="flex-1">
+        <label class="block text-gray-700 mb-1">Priority</label>
+        <select formControlName="priority" class="w-full border border-emerald-400 rounded-md p-2">
+          <option *ngFor="let priority of priorities" [value]="priority.value">
+            {{ priority.label }}
+          </option>
+        </select>
+        <p class="text-[12px] text-gray-500 mt-1">How urgent is this issue?</p>
+      </div>
+    </div>
 
-          <mat-form-field appearance="outline" class="half-width">
-            <mat-label>Priority</mat-label>
-            <mat-select formControlName="priority">
-              <mat-option *ngFor="let priority of priorities" [value]="priority.value">
-                {{ priority.label }}
-              </mat-option>
-            </mat-select>
-            <mat-hint>How urgent is this issue?</mat-hint>
-          </mat-form-field>
-        </div>
+    <!-- Description -->
+    <div class="mb-4">
+      <label class="block text-gray-700 mb-1">Description</label>
+      <textarea
+        rows="6"
+        formControlName="description"
+        placeholder="Please provide detailed information about your query or issue..."
+        class="w-full border border-emerald-400 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+      ></textarea>
+      <p class="text-[12px] text-gray-500 mt-1">
+        Include as much detail as possible to help us assist you better
+      </p>
+      <p *ngIf="ticketForm.get('description')?.invalid && ticketForm.get('description')?.touched" class="text-red-500 text-sm mt-1">
+        {{ getErrorMessage("description") }}
+      </p>
+    </div>
 
-        <div class="form-row">
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Description</mat-label>
-            <textarea 
-              matInput 
-              formControlName="description" 
-              rows="6"
-              placeholder="Please provide detailed information about your query or issue...">
-            </textarea>
-            <mat-hint>Include as much detail as possible to help us assist you better</mat-hint>
-            <mat-error *ngIf="ticketForm.get('description')?.invalid && ticketForm.get('description')?.touched">
-              {{ getErrorMessage('description') }}
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <div class="form-actions">
-          <button 
-            mat-raised-button 
-            color="primary" 
-            type="submit" 
-            [disabled]="loading || ticketForm.invalid">
-            <mat-icon *ngIf="loading">hourglass_empty</mat-icon>
-            <mat-icon *ngIf="!loading">send</mat-icon>
-            {{ loading ? 'Submitting...' : 'Submit Ticket' }}
-          </button>
-          
-          <button 
-            mat-stroked-button 
-            type="button" 
-            routerLink="/dashboard/my-tickets"
-            [disabled]="loading">
-            <mat-icon>list</mat-icon>
-            View My Tickets
-          </button>
-        </div>
-      </form>
-    </mat-card-content>
-  </mat-card>
+    <!-- Form Actions -->
+    <div class="flex flex-col sm:flex-row gap-4 mt-6">
+      <button
+        type="submit"
+        [disabled]="loading || ticketForm.invalid"
+        class="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md disabled:opacity-50"
+      >
+        <span *ngIf="loading">⏳</span>
+        <span *ngIf="!loading">📤</span>
+        {{ loading ? 'Submitting...' : 'Submit Ticket' }}
+      </button>
+      <a
+        [routerLink]="'/dashboard/my-tickets'"
+        [class.opacity-50]="loading"
+        class="flex items-center justify-center gap-2 px-4 py-2 border border-blue-600 text-blue-600 hover:bg-blue-50 font-medium rounded-md"
+      >
+        📋 View My Tickets
+      </a>
+    </div>
+  </form>
 
   <!-- Help Section -->
-  <mat-card class="help-card">
-    <mat-card-header>
-      <mat-card-title>
-        <mat-icon>help_outline</mat-icon>
-        Need Help?
-      </mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <div class="help-content">
-        <div class="help-item">
-          <h4>Before submitting a ticket:</h4>
-          <ul>
-            <li>Check if your question is answered in our FAQ section</li>
-            <li>Search through existing tickets to see if your issue has been addressed</li>
-            <li>Provide as much detail as possible to help us resolve your issue quickly</li>
-          </ul>
-        </div>
-        
-        <div class="help-item">
-          <h4>Response Times:</h4>
-          <ul>
-            <li><strong>Urgent:</strong> Within 2-4 hours</li>
-            <li><strong>High:</strong> Within 24 hours</li>
-            <li><strong>Medium:</strong> Within 2-3 business days</li>
-            <li><strong>Low:</strong> Within 5 business days</li>
-          </ul>
-        </div>
+  <div class="bg-gray-100 mt-10 p-6 rounded-lg shadow-inner">
+    <div class="flex items-center gap-2 text-blue-600 text-lg font-semibold mb-4">
+      Need Help?
+    </div>
+    <div class="space-y-6 text-sm text-gray-700">
+      <div>
+        <h4 class="font-medium text-gray-800 mb-2">Before submitting a ticket:</h4>
+        <ul class="list-disc list-inside space-y-1">
+          <li>Check if your question is answered in our FAQ section</li>
+          <li>Search through existing tickets to see if your issue has been addressed</li>
+          <li>Provide as much detail as possible to help us resolve your issue quickly</li>
+        </ul>
       </div>
-    </mat-card-content>
-  </mat-card>
+      <div>
+        <h4 class="font-medium text-gray-800 mb-2">Response Times:</h4>
+        <ul class="list-disc list-inside space-y-1">
+          <li><strong>Urgent:</strong> Within 2-4 hours</li>
+          <li><strong>High:</strong> Within 24 hours</li>
+          <li><strong>Medium:</strong> Within 2-3 business days</li>
+          <li><strong>Low:</strong> Within 5 business days</li>
+        </ul>
+      </div>
+    </div>
+  </div>
 </div>

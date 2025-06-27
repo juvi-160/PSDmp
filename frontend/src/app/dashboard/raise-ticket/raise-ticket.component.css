@@ -1,4 +1,4 @@
-.raise-ticket-container {
+/* .raise-ticket-container {
   padding: 24px;
   max-width: 800px;
   margin: 0 auto;
@@ -32,10 +32,18 @@
 
 .full-width {
   width: 100%;
+  border:  solid #19d2aa;
+  border-radius: 4px;
+}
+
+mat-hint{
+  font-size: 7px;
 }
 
 .half-width {
   flex: 1;
+  border:  solid #19d2aa;
+  border-radius: 4px;
 }
 
 .form-actions {
@@ -78,7 +86,7 @@
   font-size: 14px;
 }
 
-/* Responsive Design */
+Responsive Design
 @media (max-width: 768px) {
   .raise-ticket-container {
     padding: 16px;
@@ -100,4 +108,4 @@
   .form-actions button {
     width: 100%;
   }
-}
+} */
