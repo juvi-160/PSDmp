@@ -37,12 +37,14 @@
 
 .sidenav-container {
   flex: 1;
-  margin-top: 64px; /* Matches toolbar height */
+  margin-top: 64px;
 }
 
 .sidenav {
   width: 240px;
   background: #f5f5f5;
+  padding-top: 58px;
+  position: fixed;
 }
 
 .content {

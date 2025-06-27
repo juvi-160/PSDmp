@@ -26,22 +26,13 @@ import { DashboardHomeComponent } from './dashboard/dashboard-home/dashboard-hom
 import { RaiseTicketComponent } from './dashboard/raise-ticket/raise-ticket.component';
 import { MyTicketsComponent } from './dashboard/my-tickets/my-tickets.component';
 import { TicketManagementComponent } from './admin/admin-dashboard/ticket-management/ticket-management.component';
-<<<<<<< HEAD
 import { MembershipSelectionComponent } from './auth/membership-selection/membership-selection.component';
+import { InviteComponent } from './admin/admin-dashboard/invite/invite.component';
 
 const routes: Routes = [
   { path: "", component: HomeComponent },
-  { path: "membership-selection", component: MembershipSelectionComponent},
-=======
-
-const routes: Routes = [
-  { path: "", component: HomeComponent },
->>>>>>> ed5c440 (Initial commit)
-  {
-    path: "payment",
-    component: PaymentComponent,
-    canActivate: [AuthGuard],
-  },
+  { path: "membership-selection", component: MembershipSelectionComponent },
+  { path: "payment", component: PaymentComponent, canActivate: [AuthGuard] },
   { path: "login", component: LoginComponent },
   { path: "register", component: RegisterComponent },
   { path: "privacy-policy", component: PrivacyPolicyComponent },
@@ -50,44 +41,36 @@ const routes: Routes = [
   { path: "contact", component: ContactUsComponent },
   { path: "forgot-password", component: ForgotPasswordComponent },
   { path: "faqs", component: FaqsComponent },
-  
 
-  // { path: "profile", component: ProfileComponent },
-  // { path: "events", component: EventsComponent },
-    {
-      path: 'dashboard',
-      component: DashboardComponent,
-      children: [
-        { path: '', component: DashboardHomeComponent },
-        { path: 'event', component: EventsComponent },
-        { path: "my-events", component: MyEventsComponent },
-        { path: "raise-ticket", component: RaiseTicketComponent },
-        { path: "my-tickets", component: MyTicketsComponent },
-        { path: 'profile', component: ProfileComponent },
- 
-        // { path: '', redirectTo: 'home', pathMatch: 'full' }
-      ]
-    },
-    {
-      path: "admin",
-      component: AdminDashboardComponent,
-      children: [
-        { path: "", redirectTo: "events", pathMatch: "full" },
-        { path: "events", component: EventListComponent },
-        { path: "events/add", component: EventFormComponent },
-        { path: "events/edit/:id", component: EventFormComponent },
-        { path: 'users', component: UserManagementComponent },
-        { path: "users/:id", component: UserDetailsComponent },
-        { path: "event-rsvps", component: EventRsvpsComponent },
-        { path: "tickets", component: TicketManagementComponent },
-      ],
-    },
-    { path: '', redirectTo: 'home', pathMatch: 'full' }
-  
-  // { path: "reset-password", component: ResetPasswordComponent },
+  {
+    path: 'dashboard',
+    component: DashboardComponent,
+    children: [
+      { path: '', component: DashboardHomeComponent },
+      { path: 'event', component: EventsComponent },
+      { path: "my-events", component: MyEventsComponent },
+      { path: "raise-ticket", component: RaiseTicketComponent },
+      { path: "my-tickets", component: MyTicketsComponent },
+      { path: 'profile', component: ProfileComponent }
+    ]
+  },
+  {
+    path: "admin",
+    component: AdminDashboardComponent,
+    children: [
+      { path: "", redirectTo: "events", pathMatch: "full" },
+      { path: "events", component: EventListComponent },
+      { path: "events/add", component: EventFormComponent },
+      { path: "events/edit/:id", component: EventFormComponent },
+      { path: 'users', component: UserManagementComponent },
+      { path: "users/:id", component: UserDetailsComponent },
+      { path: "event-rsvps", component: EventRsvpsComponent },
+      { path: "tickets", component: TicketManagementComponent },
+      { path: "invite", component: InviteComponent }
+    ]
+  },
+  { path: '', redirectTo: 'home', pathMatch: 'full' }
 ];
-
-
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

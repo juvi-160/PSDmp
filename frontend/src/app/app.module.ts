@@ -24,17 +24,18 @@ import { AuthModule } from '@auth0/auth0-angular';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatSelectModule } from "@angular/material/select"
-import { MatTabsModule } from "@angular/material/tabs"
-import { MatMenuModule } from "@angular/material/menu"
-import { MatDividerModule } from "@angular/material/divider"
-import { MatChipsModule } from "@angular/material/chips"
-import { MatProgressBarModule } from "@angular/material/progress-bar"
-import { MatCheckboxModule } from "@angular/material/checkbox"
-import { MatRadioModule } from "@angular/material/radio"
-import { MatAutocompleteModule } from "@angular/material/autocomplete"
-import { MatSlideToggleModule } from "@angular/material/slide-toggle"
-import { MatTooltipModule } from "@angular/material/tooltip"
+import { MatSelectModule } from "@angular/material/select";
+import { MatTabsModule } from "@angular/material/tabs";
+import { MatMenuModule } from "@angular/material/menu";
+import { MatDividerModule } from "@angular/material/divider";
+import { MatChipsModule } from "@angular/material/chips";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { MatRadioModule } from "@angular/material/radio";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatExpansionModule } from '@angular/material/expansion';
 
 // Components
 import { AppComponent } from './app.component';
@@ -64,7 +65,6 @@ import { UserManagementComponent } from './admin/admin-dashboard/users/user-mana
 import { UserDetailsComponent } from './admin/admin-dashboard/users/user-details/user-details.component';
 import { EventRsvpsComponent } from './admin/event-rsvps/event-rsvps.component';
 import { FaqsComponent } from './layout/faqs/faqs.component';
-import { MatExpansionModule } from '@angular/material/expansion';
 import { UserEditDialogComponent } from './admin/admin-dashboard/users/user-edit-dialog/user-edit-dialog.component';
 import { DashboardHomeComponent } from './dashboard/dashboard-home/dashboard-home.component';
 import { RaiseTicketComponent } from './dashboard/raise-ticket/raise-ticket.component';
@@ -73,9 +73,11 @@ import { TicketManagementComponent } from './admin/admin-dashboard/ticket-manage
 import { MemberComponent } from './auth/member/member.component';
 import { MembershipSelectionComponent } from './auth/membership-selection/membership-selection.component';
 
+import { InviteComponent } from './admin/admin-dashboard/invite/invite.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
+  { path: 'membership-selection', component: MembershipSelectionComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
@@ -85,18 +87,17 @@ const routes: Routes = [
   { path: "contact", component: ContactUsComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'faqs', component: FaqsComponent },
-  { path: "payment",component: PaymentComponent},
-  { 
-    path: 'dashboard', 
+  { path: "payment", component: PaymentComponent },
+  {
+    path: 'dashboard',
     component: DashboardComponent,
     children: [
-      // { path: '', redirectTo: 'overview', pathMatch: 'full' },
       { path: '', component: DashboardHomeComponent },
       { path: 'profile', component: ProfileComponent },
       { path: 'event', component: EventsComponent },
       { path: "my-events", component: MyEventsComponent },
       { path: "raise-ticket", component: RaiseTicketComponent },
-      { path: "my-tickets", component: MyTicketsComponent },
+      { path: "my-tickets", component: MyTicketsComponent }
     ]
   },
   {
@@ -111,9 +112,9 @@ const routes: Routes = [
       { path: "users/:id", component: UserDetailsComponent },
       { path: "event-rsvps", component: EventRsvpsComponent },
       { path: "tickets", component: TicketManagementComponent },
-    ],
-  },
-  // { path: 'admin', loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule) }
+      { path: "invite", component: InviteComponent }
+    ]
+  }
 ];
 
 @NgModule({
@@ -152,6 +153,8 @@ const routes: Routes = [
 
     MembershipSelectionComponent,
     MemberComponent,
+    InviteComponent,
+    MemberComponent
   ],
   imports: [
     BrowserModule,
@@ -161,16 +164,15 @@ const routes: Routes = [
     RouterModule.forRoot(routes),
     BrowserAnimationsModule,
     MatExpansionModule,
-   // Auth0 Configuration
-   AuthModule.forRoot({
-    domain: environment.auth0.domain,
-    clientId: environment.auth0.clientId,
-    authorizationParams: {
-    redirect_uri: window.location.origin,
-    audience: environment.auth0.audience
-  }
-}),
-    // Material Modules
+    AuthModule.forRoot({
+      domain: environment.auth0.domain,
+      clientId: environment.auth0.clientId,
+      authorizationParams: {
+        redirect_uri: window.location.origin,
+        audience: environment.auth0.audience
+      }
+    }),
+    // Angular Material Modules
     MatInputModule,
     MatCardModule,
     MatButtonModule,
@@ -197,11 +199,10 @@ const routes: Routes = [
     MatRadioModule,
     MatAutocompleteModule,
     MatSlideToggleModule,
-    MatTooltipModule,
-
+    MatTooltipModule
   ],
   providers: [
-    provideHttpClient(),
+    provideHttpClient()
   ],
   bootstrap: [AppComponent]
 })
