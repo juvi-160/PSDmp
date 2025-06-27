@@ -23,7 +23,6 @@ export const getUsers = async (req, res) => {
     const whereClause = {}
     const { search, role, hasPaid, dateFrom, dateTo } = req.query
 
-    // Apply filters
     if (search) {
       whereClause[Op.or] = [
         { name: { [Op.like]: `%${search}%` } },
@@ -31,25 +30,12 @@ export const getUsers = async (req, res) => {
         { auth0_id: { [Op.like]: `%${search}%` } },
       ]
     }
-
-    if (role) {
-      whereClause.role = role
-    }
-
-    if (hasPaid !== undefined) {
-      whereClause.has_paid = hasPaid === "true"
-    }
-
-    if (dateFrom) {
-      whereClause.created_at = { [Op.gte]: new Date(dateFrom) }
-    }
-
+    if (role) whereClause.role = role
+    if (hasPaid !== undefined) whereClause.has_paid = hasPaid === "true"
+    if (dateFrom) whereClause.created_at = { [Op.gte]: new Date(dateFrom) }
     if (dateTo) {
-      if (whereClause.created_at) {
-        whereClause.created_at[Op.lte] = new Date(dateTo)
-      } else {
-        whereClause.created_at = { [Op.lte]: new Date(dateTo) }
-      }
+      if (whereClause.created_at) whereClause.created_at[Op.lte] = new Date(dateTo)
+      else whereClause.created_at = { [Op.lte]: new Date(dateTo) }
     }
 
     const users = await User.findAll({
@@ -67,16 +53,10 @@ export const getUsers = async (req, res) => {
       order: [["created_at", "DESC"]],
     })
 
-    // Format the response
-    const formattedUsers = users.map((user) => {
-      let paymentAmount = 0
-      let paymentCurrency = "INR"
-
-      if (user.orders && user.orders.length > 0) {
-        const latestOrder = user.orders[0]
-        paymentAmount = Number.parseFloat(latestOrder.amount) || 0
-        paymentCurrency = latestOrder.currency || "INR"
-      }
+    const formattedUsers = users.map(user => {
+      const latestOrder = user.orders?.[0]
+      const paymentAmount = Number.parseFloat(latestOrder?.amount) || 0
+      const paymentCurrency = latestOrder?.currency || "INR"
 
       return {
         id: user.id,
@@ -85,25 +65,26 @@ export const getUsers = async (req, res) => {
         email: user.email,
         phone: user.phone,
         role: user.role,
-        isEmailVerified: user.is_email_verified === 1,
-        isPhoneVerified: user.is_phone_verified === 1,
-        hasPaid: user.has_paid === 1,
+        memberIds: user.member_ids,
+        currentMemberId: user.member_ids?.[user.member_ids.length - 1] || null,
+        isEmailVerified: !!user.is_email_verified,
+        isPhoneVerified: !!user.is_phone_verified,
+        hasPaid: !!user.has_paid,
         createdAt: user.created_at,
         updatedAt: user.updated_at,
         totalPaymentAmount: paymentAmount,
         formattedPaymentAmount: formatPaymentAmount(paymentAmount, paymentCurrency),
-        paymentDetails:
-          user.orders && user.orders.length > 0
-            ? {
-                orderId: user.orders[0].order_id,
-                amount: paymentAmount,
-                currency: paymentCurrency,
-                status: user.orders[0].status,
-                paymentId: user.orders[0].payment_id,
-                paymentDate: user.orders[0].created_at,
-                formattedAmount: formatPaymentAmount(paymentAmount, paymentCurrency),
-              }
-            : null,
+        paymentDetails: latestOrder
+          ? {
+              orderId: latestOrder.order_id,
+              amount: paymentAmount,
+              currency: paymentCurrency,
+              status: latestOrder.status,
+              paymentId: latestOrder.payment_id,
+              paymentDate: latestOrder.created_at,
+              formattedAmount: formatPaymentAmount(paymentAmount, paymentCurrency),
+            }
+          : null,
       }
     })
 
@@ -114,35 +95,19 @@ export const getUsers = async (req, res) => {
   }
 }
 
-// Get user by ID with payment history
 export const getUserById = async (req, res) => {
   try {
-    const userId = req.params.id
-
-    // Get user details with all orders
-    const user = await User.findByPk(userId, {
-      include: [
-        {
-          model: Order,
-          as: "orders",
-          order: [["created_at", "DESC"]],
-        },
-      ],
+    const user = await User.findByPk(req.params.id, {
+      include: [{ model: Order, as: "orders", order: [["created_at", "DESC"]] }],
     })
+    if (!user) return res.status(404).json({ message: "User not found" })
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" })
-    }
-
-    // Calculate total paid amount
     const totalPaid = user.orders
-      .filter((order) => order.status === "paid")
+      .filter(order => order.status === "paid")
       .reduce((sum, order) => sum + (Number.parseFloat(order.amount) || 0), 0)
 
-    // Get latest paid order for payment details
-    const latestPaidOrder = user.orders.find((order) => order.status === "paid")
+    const latestPaidOrder = user.orders.find(order => order.status === "paid")
 
-    // Format the response
     const formattedUser = {
       id: user.id,
       auth0Id: user.auth0_id,
@@ -150,9 +115,11 @@ export const getUserById = async (req, res) => {
       email: user.email,
       phone: user.phone,
       role: user.role,
-      isEmailVerified: user.is_email_verified === 1,
-      isPhoneVerified: user.is_phone_verified === 1,
-      hasPaid: user.has_paid === 1,
+      memberIds: user.member_ids,
+      currentMemberId: user.member_ids?.[user.member_ids.length - 1] || null,
+      isEmailVerified: !!user.is_email_verified,
+      isPhoneVerified: !!user.is_phone_verified,
+      hasPaid: !!user.has_paid,
       createdAt: user.created_at,
       updatedAt: user.updated_at,
       totalPaymentAmount: totalPaid,
@@ -168,16 +135,16 @@ export const getUserById = async (req, res) => {
             formattedAmount: formatPaymentAmount(latestPaidOrder.amount, latestPaidOrder.currency),
           }
         : null,
-      paymentHistory: user.orders.map((payment) => ({
-        id: payment.id,
-        orderId: payment.order_id,
-        amount: Number.parseFloat(payment.amount) || 0,
-        currency: payment.currency,
-        status: payment.status,
-        paymentId: payment.payment_id,
-        paymentDate: payment.created_at,
-        formattedAmount: formatPaymentAmount(payment.amount, payment.currency),
-        notes: payment.notes ? JSON.parse(payment.notes) : null,
+      paymentHistory: user.orders.map(order => ({
+        id: order.id,
+        orderId: order.order_id,
+        amount: Number.parseFloat(order.amount) || 0,
+        currency: order.currency,
+        status: order.status,
+        paymentId: order.payment_id,
+        paymentDate: order.created_at,
+        formattedAmount: formatPaymentAmount(order.amount, order.currency),
+        notes: order.notes ? JSON.parse(order.notes) : null,
       })),
     }
 
@@ -187,6 +154,7 @@ export const getUserById = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message })
   }
 }
+
 
 // Get user payment history
 export const getUserPaymentHistory = async (req, res) => {

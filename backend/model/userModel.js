@@ -1,6 +1,17 @@
-// models/user.js
 import { DataTypes } from 'sequelize';
-import {sequelize} from '../config/db.js';
+import { sequelize } from '../config/db.js';
+
+// Helper function to generate prefixed member ID
+function generateMemberId(role) {
+  const prefixMap = {
+    'admin': 'AD',
+    'associate member': 'AM',
+    'individual member': 'IM'
+  };
+  const prefix = prefixMap[role] || 'XX';
+  const uniquePart = Math.random().toString(36).substr(2, 6).toUpperCase(); // e.g. A1B2C3
+  return `${prefix}-${uniquePart}`;
+}
 
 const User = sequelize.define('User', {
   auth0_id: {
@@ -22,8 +33,8 @@ const User = sequelize.define('User', {
     allowNull: true
   },
   role: {
-    type: DataTypes.ENUM('admin', 'individual member', 'pending'),
-    defaultValue: 'pending'
+    type: DataTypes.ENUM('admin', 'individual member', 'associate member', 'pending'),
+    defaultValue: 'associate member'
   },
   is_email_verified: {
     type: DataTypes.BOOLEAN,
@@ -36,6 +47,11 @@ const User = sequelize.define('User', {
   has_paid: {
     type: DataTypes.BOOLEAN,
     defaultValue: false
+  },
+  member_ids: {
+    type: DataTypes.JSON,
+    allowNull: true,
+    defaultValue: []
   }
 }, {
   timestamps: true,
@@ -43,6 +59,23 @@ const User = sequelize.define('User', {
   updatedAt: 'updated_at'
 });
 
+// Automatically add member ID on creation
+User.beforeCreate((user) => {
+  if (['admin', 'associate member', 'individual member'].includes(user.role)) {
+    const newId = generateMemberId(user.role);
+    user.member_ids = [newId];
+  }
+});
+
+// Append new member ID if role changes
+User.beforeUpdate((user) => {
+  if (user.changed('role') && ['admin', 'associate member', 'individual member'].includes(user.role)) {
+    const newId = generateMemberId(user.role);
+    user.member_ids = [...(user.member_ids || []), newId];
+  }
+});
+
+// Associations
 User.associate = (models) => {
   User.hasMany(models.Order, { foreignKey: 'user_id', as: 'orders' });
   User.hasMany(models.EventRSVP, { foreignKey: 'user_id', as: 'rsvps' });

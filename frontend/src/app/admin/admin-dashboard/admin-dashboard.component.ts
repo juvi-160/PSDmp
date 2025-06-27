@@ -11,7 +11,7 @@ export class AdminDashboardComponent {
     { path: "/admin/users", label: "Users", icon: "people" },
     { path: "/admin/events", label: "Events" },
     { path: "/admin/event-rsvps", label: "Event RSVPs", icon: "how_to_reg" },
-    // { path: "/admin/tickets", label: "Support Tickets", icon: "support" },
+    { path: "/admin/tickets", label: "Support Tickets", icon: "support" },
 
     // Add more admin sections here as needed
   ]
