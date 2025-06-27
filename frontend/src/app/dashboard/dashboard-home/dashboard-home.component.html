@@ -3,6 +3,5 @@
     <mat-card-title>Welcome, {{ user?.name }}</mat-card-title>
   </mat-card>
 </div>
- <div *ngIf="!(auth.user$ | async)">
-    <p>Loading...</p>
-  </div>
+<app-my-events></app-my-events>
+<app-my-tickets></app-my-tickets>

@@ -26,17 +26,17 @@
         <mat-card-title>{{ event.name }}</mat-card-title>
         <mat-card-subtitle>{{ formatDate(event.date) }}</mat-card-subtitle>
       </mat-card-header>
-      
+
       <img *ngIf="event.image" [src]="event.image" mat-card-image alt="{{ event.name }}" class="event-image">
-      
+
       <mat-card-content>
         <p>{{ event.description }}</p>
       </mat-card-content>
-      
+
       <mat-card-actions>
-       <button 
-  mat-raised-button 
-  color="primary" 
+       <button
+  mat-raised-button
+  color="primary"
   (click)="rsvpToEvent(event)"
   [disabled]="event.id == null || isProcessing(event.id) || isPastEvent(event.date)">
   <mat-spinner diameter="20" *ngIf="event.id != null && isProcessing(event.id)" class="spinner"></mat-spinner>
