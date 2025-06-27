@@ -67,14 +67,22 @@ User.beforeCreate((user) => {
   }
 });
 
-// Append new member ID if role changes
-User.beforeUpdate((user) => {
-  if (user.changed('role') && ['admin', 'associate member', 'individual member'].includes(user.role)) {
-    const newId = generateMemberId(user.role);
-    user.member_ids = [...(user.member_ids || []), newId];
+// Update the beforeCreate hook
+User.beforeCreate((user) => {
+  // Default to associate member if not specified
+  if (!user.role) {
+    user.role = 'associate member';
+  }
+  
+  // Generate appropriate member ID
+  const newId = generateMemberId(user.role);
+  user.member_ids = [newId];
+  
+  // Individual members must have paid
+  if (user.role === 'individual member') {
+    user.has_paid = true;
   }
 });
-
 // Associations
 User.associate = (models) => {
   User.hasMany(models.Order, { foreignKey: 'user_id', as: 'orders' });
