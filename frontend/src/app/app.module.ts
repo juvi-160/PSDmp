@@ -70,18 +70,12 @@ import { DashboardHomeComponent } from './dashboard/dashboard-home/dashboard-hom
 import { RaiseTicketComponent } from './dashboard/raise-ticket/raise-ticket.component';
 import { MyTicketsComponent } from './dashboard/my-tickets/my-tickets.component';
 import { TicketManagementComponent } from './admin/admin-dashboard/ticket-management/ticket-management.component';
-<<<<<<< HEAD
+import { MemberComponent } from './auth/member/member.component';
 import { MembershipSelectionComponent } from './auth/membership-selection/membership-selection.component';
 
-const routes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: 'membership-selection', component: MembershipSelectionComponent},
-=======
-import { MemberComponent } from './auth/member/member.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
->>>>>>> ed5c440 (Initial commit)
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
@@ -155,11 +149,9 @@ const routes: Routes = [
     RaiseTicketComponent,
     MyTicketsComponent,
     TicketManagementComponent,
-<<<<<<< HEAD
+
     MembershipSelectionComponent,
-=======
     MemberComponent,
->>>>>>> ed5c440 (Initial commit)
   ],
   imports: [
     BrowserModule,
