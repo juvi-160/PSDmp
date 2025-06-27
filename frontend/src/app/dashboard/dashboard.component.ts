@@ -16,8 +16,8 @@ export class DashboardComponent {
     { icon: 'dashboard', label: 'Dashboard', link: '/dashboard' },
     { icon: 'newspaper', label: 'Events', link: '/dashboard/event' },
     { icon: 'event_note', label: 'My Events', link: '/dashboard/my-events' },
-    // { icon: 'support', label: 'Raise Query/Ticket', link: '/dashboard/raise-ticket' },
-    // { icon: 'confirmation_number', label: 'My Tickets', link: '/dashboard/my-tickets' },
+    { icon: 'support', label: 'Raise Query/Ticket', link: '/dashboard/raise-ticket' },
+    { icon: 'confirmation_number', label: 'My Tickets', link: '/dashboard/my-tickets' },
     { icon: 'account_circle', label: 'Profile', link: '/dashboard/profile' },
   ];
 

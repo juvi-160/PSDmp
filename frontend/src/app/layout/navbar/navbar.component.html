@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <nav class="bg-blue-200 text-blue-800 sticky top-0 z-50 border-b border-blue-300">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex justify-between items-center h-20">
@@ -100,3 +101,36 @@
     </div>
   </div>
 </nav>
+=======
+<mat-toolbar color="primary">
+    <div class="navbar-container">
+      <div class="logo-container">
+        <img src="PSF_Logo.png" alt="PSF Logo" class="nav-logo" routerLink="/" (click)="navigateHome()">
+        <!-- <span class="nav-title" routerLink="/" (click)="navigateHome()">Professionals Solidarity Forum</span> -->
+      </div>
+
+      <div class="nav-links">
+        <a mat-button routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">Home</a>
+        <!-- <a mat-button routerLink="/about" routerLinkActive="active-link">About</a> -->
+        <a mat-button routerLink="/contact" routerLinkActive="active-link">Contact</a>
+
+        <!-- <ng-container *ngIf="!authService.isAuthenticated$ | async; else authenticatedLinks">
+          <button mat-button routerLink="/login" class="login-btn">Login</button>
+          <button mat-raised-button color="accent" routerLink="/signup" class="signup-btn">Sign Up</button>
+        </ng-container> -->
+
+        <!-- <ng-template #authenticatedLinks>
+          <button mat-button [matMenuTriggerFor]="userMenu">
+            <mat-icon>account_circle</mat-icon>
+            {{ (authService.user$ | async)?.name }}
+          </button>
+          <mat-menu #userMenu="matMenu">
+            <button mat-menu-item routerLink="/dashboard">Dashboard</button>
+            <button mat-menu-item routerLink="/profile">Profile</button>
+            <button mat-menu-item (click)="authService.logout()">Logout</button>
+          </mat-menu>
+        </ng-template> -->
+      </div>
+    </div>
+  </mat-toolbar>
+>>>>>>> ed5c440 (Initial commit)
