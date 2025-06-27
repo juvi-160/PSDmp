@@ -8,13 +8,25 @@ import { AuthService } from '../../core/services/auth.service';
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })
-export class NavbarComponent {
-  constructor(
-    public authService: AuthService,
-    private router: Router
-  ) {}
+export class  NavbarComponent {
+  isMenuOpen = false;
 
-  navigateHome(): void {
+  constructor(private router: Router) {}
+
+  // Check if the current route matches the given path
+  isActive(route: string): boolean {
+    return this.router.url === route;
+  }
+
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  closeMenu() {
+    this.isMenuOpen = false;
+  }
+
+  navigateHome() {
     this.router.navigate(['/']);
   }
 }
