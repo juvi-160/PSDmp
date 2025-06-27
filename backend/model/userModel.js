@@ -67,6 +67,7 @@ User.beforeCreate((user) => {
   }
 });
 
+
 // Update the beforeCreate hook
 User.beforeCreate((user) => {
   // Default to associate member if not specified
