@@ -74,7 +74,6 @@ import { MemberComponent } from './auth/member/member.component';
 import { MembershipSelectionComponent } from './auth/membership-selection/membership-selection.component';
 
 import { InviteComponent } from './admin/admin-dashboard/invite/invite.component';
-import { MemberComponent } from './auth/member/member.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
