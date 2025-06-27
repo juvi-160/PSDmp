@@ -49,7 +49,6 @@ router.post('/send-invite', async (req, res) => {
   }
 });
 
-console.error(error.response?.data || error.message);
 
 
 export default router;

@@ -1,17 +1,23 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../config/db.js';
 
-// Helper function to generate prefixed member ID
-function generateMemberId(role) {
+// Helper function to generate member IDs
+const generateMemberId = async (role) => {
   const prefixMap = {
     'admin': 'AD',
     'associate member': 'AM',
     'individual member': 'IM'
   };
+
   const prefix = prefixMap[role] || 'XX';
-  const uniquePart = Math.random().toString(36).substr(2, 6).toUpperCase(); // e.g. A1B2C3
-  return `${prefix}-${uniquePart}`;
-}
+
+  // Get count of users with this role
+  const count = await User.count({ where: { role } });
+
+  // Generate ID like AM_PSF_0001
+  const number = (count + 1).toString().padStart(4, '0');
+  return `${prefix}_PSF_${number}`;
+};
 
 const User = sequelize.define('User', {
   auth0_id: {
@@ -60,30 +66,24 @@ const User = sequelize.define('User', {
 });
 
 // Automatically add member ID on creation
-User.beforeCreate((user) => {
-  if (['admin', 'associate member', 'individual member'].includes(user.role)) {
-    const newId = generateMemberId(user.role);
-    user.member_ids = [newId];
-  }
-});
-
-
-// Update the beforeCreate hook
-User.beforeCreate((user) => {
+User.beforeCreate(async (user) => {
   // Default to associate member if not specified
   if (!user.role) {
     user.role = 'associate member';
   }
   
   // Generate appropriate member ID
-  const newId = generateMemberId(user.role);
-  user.member_ids = [newId];
+  if (['admin', 'associate member', 'individual member'].includes(user.role)) {
+    const newId = await generateMemberId(user.role);
+    user.member_ids = [newId];
+  }
   
   // Individual members must have paid
   if (user.role === 'individual member') {
     user.has_paid = true;
   }
 });
+
 // Associations
 User.associate = (models) => {
   User.hasMany(models.Order, { foreignKey: 'user_id', as: 'orders' });
