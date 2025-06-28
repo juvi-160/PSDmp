@@ -29,11 +29,16 @@ import { TicketManagementComponent } from './admin/admin-dashboard/ticket-manage
 import { MembershipSelectionComponent } from './auth/membership-selection/membership-selection.component';
 import { InviteComponent } from './admin/admin-dashboard/invite/invite.component';
 import { HistoryComponent } from './dashboard/history/history.component';
+import { PaymentGuard } from './core/guards/payment.guard';
 
 const routes: Routes = [
   { path: "", component: HomeComponent },
   { path: "membership-selection", component: MembershipSelectionComponent },
-  { path: "payment", component: PaymentComponent, canActivate: [AuthGuard] },
+  { 
+    path: "payment", 
+    component: PaymentComponent, 
+    canActivate: [AuthGuard, PaymentGuard] 
+  },
   { path: "login", component: LoginComponent },
   { path: "register", component: RegisterComponent },
   { path: "privacy-policy", component: PrivacyPolicyComponent },
@@ -46,6 +51,7 @@ const routes: Routes = [
   {
     path: 'dashboard',
     component: DashboardComponent,
+    canActivate: [AuthGuard],
     children: [
       { path: '', component: DashboardHomeComponent },
       { path: 'event', component: EventsComponent },
@@ -59,6 +65,7 @@ const routes: Routes = [
   {
     path: "admin",
     component: AdminDashboardComponent,
+    canActivate: [AuthGuard],
     children: [
       { path: "", redirectTo: "events", pathMatch: "full" },
       { path: "events", component: EventListComponent },

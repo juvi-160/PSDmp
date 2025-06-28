@@ -1,5 +1,5 @@
 import express from "express"
-import { auth } from "express-oauth2-jwt-bearer"
+// import { auth } from "express-oauth2-jwt-bearer"
 import {
   createTicket,
   getUserTickets,
@@ -15,20 +15,20 @@ dotenv.config()
 const router = express.Router()
 
 // Auth middleware
-const checkJwt = auth({
-  audience: process.env.AUTH0_AUDIENCE,
-  issuerBaseURL: `https://${process.env.AUTH0_DOMAIN}/`,
-  tokenSigningAlg: "RS256",
-  errorHandler: (err, req, res, next) => {
-    console.error("Auth0 middleware error:", err)
-    res.status(err.status || 500).json({
-      message: err.message,
-      code: err.code,
-      statusCode: err.status,
-      error: err.error,
-    })
-  },
-})
+// const checkJwt = auth({
+//   audience: process.env.AUTH0_AUDIENCE,
+//   issuerBaseURL: `https://${process.env.AUTH0_DOMAIN}/`,
+//   tokenSigningAlg: "RS256",
+//   errorHandler: (err, req, res, next) => {
+//     console.error("Auth0 middleware error:", err)
+//     res.status(err.status || 500).json({
+//       message: err.message,
+//       code: err.code,
+//       statusCode: err.status,
+//       error: err.error,
+//     })
+//   },
+// })
 
 // Debug middleware
 const logToken = (req, res, next) => {
@@ -41,7 +41,7 @@ const logToken = (req, res, next) => {
 }
 
 // Apply auth to all routes
-router.use(checkJwt)
+// router.use(checkJwt)
 router.use(logToken)
 
 // Admin routes (more specific routes first)
