@@ -1,5 +1,5 @@
 import express from "express"
-import { checkJwt } from "../controllers/authController.js"
+// import { checkJwt } from "../controllers/authController.js"
 import {
   getAllEvents,
   getEventById,
@@ -16,8 +16,8 @@ router.get("/", getAllEvents)
 router.get("/:id", getEventById)
 
 // Protected routes - admin only (add auth middleware)
-router.post("/", checkJwt, upload.single("image"), createEvent)
-router.put("/:id", checkJwt, upload.single("image"), updateEvent)
-router.delete("/:id", checkJwt, deleteEvent)
+router.post("/", upload.single("image"), createEvent)
+router.put("/:id", upload.single("image"), updateEvent)
+router.delete("/:id", deleteEvent)
 
 export default router
