@@ -12,7 +12,7 @@ export class InviteComponent implements OnInit {
   password: string = '';
   users: any[] = [];
 
-  private apiBase = 'http://localhost:3000/api/invite';
+  private apiBase = 'https://api.psfhyd.org/api/invite';
 
   constructor(private http: HttpClient) {}
 

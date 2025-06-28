@@ -32,6 +32,7 @@ import { HistoryComponent } from './dashboard/history/history.component';
 import { PaymentGuard } from './core/guards/payment.guard';
 
 const routes: Routes = [
+  
   { path: "", component: HomeComponent },
   { path: "membership-selection", component: MembershipSelectionComponent },
   { 
