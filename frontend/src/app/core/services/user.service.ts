@@ -127,22 +127,26 @@ export class UserService {
   }
 
   // Update user role
-  updateUserRole(id: number, role: string): Observable<User> {
-    return this.http.put<User>(`${this.apiUrl}/${id}/role`, { role }).pipe(
-      map((user) => ({
-        ...user,
-        createdAt: new Date(user.createdAt),
-        updatedAt: new Date(user.updatedAt),
-        paymentDetails: user.paymentDetails
+  updateUserRole(id: number, role: string): Observable<{ user: User, emailSent: boolean }> {
+  return this.http.put<{ user: User, emailSent: boolean }>(`${this.apiUrl}/${id}/role`, { role }).pipe(
+    map((response) => ({
+      user: {
+        ...response.user,
+        createdAt: new Date(response.user.createdAt),
+        updatedAt: new Date(response.user.updatedAt),
+        paymentDetails: response.user.paymentDetails
           ? {
-              ...user.paymentDetails,
-              amount: Number(user.paymentDetails.amount),
-              paymentDate: user.paymentDetails.paymentDate ? new Date(user.paymentDetails.paymentDate) : undefined,
+              ...response.user.paymentDetails,
+              amount: Number(response.user.paymentDetails.amount),
+              paymentDate: response.user.paymentDetails.paymentDate ? new Date(response.user.paymentDetails.paymentDate) : undefined,
             }
           : undefined,
-      })),
-    )
-  }
+      },
+      emailSent: response.emailSent
+    }))
+  );
+}
+
 
   // Delete user
   deleteUser(id: number): Observable<void> {

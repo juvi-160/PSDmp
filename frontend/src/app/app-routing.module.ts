@@ -28,6 +28,7 @@ import { MyTicketsComponent } from './dashboard/my-tickets/my-tickets.component'
 import { TicketManagementComponent } from './admin/admin-dashboard/ticket-management/ticket-management.component';
 import { MembershipSelectionComponent } from './auth/membership-selection/membership-selection.component';
 import { InviteComponent } from './admin/admin-dashboard/invite/invite.component';
+import { HistoryComponent } from './dashboard/history/history.component';
 
 const routes: Routes = [
   { path: "", component: HomeComponent },
@@ -51,7 +52,8 @@ const routes: Routes = [
       { path: "my-events", component: MyEventsComponent },
       { path: "raise-ticket", component: RaiseTicketComponent },
       { path: "my-tickets", component: MyTicketsComponent },
-      { path: 'profile', component: ProfileComponent }
+      { path: 'profile', component: ProfileComponent },
+      { path: 'history', component: HistoryComponent },
     ]
   },
   {

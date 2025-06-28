@@ -1,9 +1,9 @@
 <div class="user-details-container bg-gray-50 min-h-screen p-6">
   <!-- Page Header -->
   <div class="page-header flex items-center mb-6">
-    <button 
-      mat-icon-button 
-      (click)="goBack()" 
+    <button
+      mat-icon-button
+      (click)="goBack()"
       class="back-button mr-4 text-gray-600 hover:bg-gray-100 rounded-full"
     >
       <mat-icon class="text-gray-700">arrow_back</mat-icon>
@@ -22,9 +22,9 @@
       <mat-icon class="text-red-500 mr-2">error</mat-icon>
       <p class="error-message text-red-700 font-medium">{{ error }}</p>
     </div>
-    <button 
-      mat-raised-button 
-      color="primary" 
+    <button
+      mat-raised-button
+      color="primary"
       (click)="loadUserDetails()"
       class="mt-3 bg-indigo-600 hover:bg-indigo-700 text-white"
     >
@@ -113,8 +113,8 @@
           <div class="detail-item grid grid-cols-3 gap-4 py-3">
             <span class="detail-label col-span-1 text-sm font-medium text-gray-500">Auto Pay:</span>
             <span class="detail-value col-span-2">
-              <span class="autopay-badge inline-flex items-center px-2 py-1 rounded-full text-xs font-medium" [ngClass]="getAutoPayStatusClass(user.autoPayEnabled)">
-                <mat-icon class="autopay-icon mr-1 text-xs">{{ getAutoPayIcon(user.autoPayEnabled) }}</mat-icon>
+              <span class="autopay-badge inline-flex items-center px-2 py-2 rounded-full text-xs font-medium" [ngClass]="getAutoPayStatusClass(user.autoPayEnabled)">
+                <mat-icon class="autopay-icon mt-2 mr-1 text-xs">{{ getAutoPayIcon(user.autoPayEnabled) }}</mat-icon>
                 {{ getAutoPayStatusText(user.autoPayEnabled) }}
               </span>
             </span>
@@ -151,10 +151,10 @@
 
       <!-- Payment History Card -->
       <mat-card class="details-card payment-history-card bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow col-span-1 md:col-span-2">
-        <mat-card-header class="border-b border-gray-200 px-6 py-4">
-          <mat-card-title class="text-lg font-semibold text-gray-800">Payment History</mat-card-title>
+        <mat-card-header class="border-b mb-2 border-gray-200 px-6 py-4">
+          <mat-card-title class="text-lg font-semibold text-gray-800 ">Payment History</mat-card-title>
         </mat-card-header>
-        <mat-card-content class="px-6 py-4">
+        <mat-card-content class="px-6 py-4 ">
           <div *ngIf="user.paymentHistory && user.paymentHistory.length > 0; else noPaymentHistory">
             <div class="payment-history-list space-y-4">
               <div *ngFor="let payment of user.paymentHistory" class="payment-item border border-gray-200 rounded-lg p-4 hover:bg-gray-50">

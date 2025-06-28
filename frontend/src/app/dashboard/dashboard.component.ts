@@ -19,6 +19,7 @@ export class DashboardComponent {
     { icon: 'support', label: 'Raise Query/Ticket', link: '/dashboard/raise-ticket' },
     { icon: 'confirmation_number', label: 'My Tickets', link: '/dashboard/my-tickets' },
     { icon: 'account_circle', label: 'Profile', link: '/dashboard/profile' },
+    { icon: 'money', label: 'Payment History', link: '/dashboard/history' },
   ];
 
   constructor(

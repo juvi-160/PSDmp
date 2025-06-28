@@ -1,0 +1,14 @@
+.dropdown{
+  width: 100%;
+  background-color: aliceblue;
+}
+
+.custom-paginator {
+  padding: 12px 16px;
+  background-color: #ffffff;
+  border-top: 1px solid #e5e7eb; /* Light border */
+  font-size: 14px;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
