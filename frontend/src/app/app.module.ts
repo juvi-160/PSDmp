@@ -74,6 +74,7 @@ import { MemberComponent } from './auth/member/member.component';
 import { MembershipSelectionComponent } from './auth/membership-selection/membership-selection.component';
 
 import { InviteComponent } from './admin/admin-dashboard/invite/invite.component';
+import { HistoryComponent } from './dashboard/history/history.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -97,7 +98,8 @@ const routes: Routes = [
       { path: 'event', component: EventsComponent },
       { path: "my-events", component: MyEventsComponent },
       { path: "raise-ticket", component: RaiseTicketComponent },
-      { path: "my-tickets", component: MyTicketsComponent }
+      { path: "my-tickets", component: MyTicketsComponent },
+      { path: "history", component: HistoryComponent}
     ]
   },
   {
@@ -154,7 +156,8 @@ const routes: Routes = [
     MembershipSelectionComponent,
     MemberComponent,
     InviteComponent,
-    MemberComponent
+    MemberComponent,
+    HistoryComponent
   ],
   imports: [
     BrowserModule,

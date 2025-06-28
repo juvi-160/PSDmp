@@ -15,7 +15,7 @@ import { ConfirmDialogComponent } from "../../shared/confirm-dialog/confirm-dial
   selector: 'app-user-management',
   standalone: false,
   templateUrl: './user-management.component.html',
-  styleUrl: './user-management.component.css',
+  styleUrl: './user-management.component.css'
 })
 export class UserManagementComponent implements OnInit {
   displayedColumns: string[] = [
