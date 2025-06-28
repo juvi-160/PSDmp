@@ -62,13 +62,13 @@
     <mat-card-content>
       <form [formGroup]="filterForm" (ngSubmit)="applyFilter()">
         <div class="filter-form-row">
-          <mat-form-field appearance="outline">
+          <mat-form-field >
             <mat-label>Search</mat-label>
             <input matInput formControlName="search" placeholder="Search by subject, user name, or email">
             <mat-icon matSuffix>search</mat-icon>
           </mat-form-field>
 
-          <mat-form-field appearance="outline">
+          <mat-form-field >
             <mat-label>Status</mat-label>
             <mat-select formControlName="status">
               <mat-option value="">All Status</mat-option>
@@ -79,7 +79,7 @@
             </mat-select>
           </mat-form-field>
 
-          <mat-form-field appearance="outline">
+          <mat-form-field >
             <mat-label>Priority</mat-label>
             <mat-select formControlName="priority">
               <mat-option value="">All Priorities</mat-option>
@@ -90,7 +90,7 @@
             </mat-select>
           </mat-form-field>
 
-          <mat-form-field appearance="outline">
+          <mat-form-field >
             <mat-label>Category</mat-label>
             <mat-select formControlName="category">
               <mat-option value="">All Categories</mat-option>
@@ -141,7 +141,7 @@
       <!-- Subject Column -->
       <ng-container matColumnDef="subject">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Subject </th>
-        <td mat-cell *matCellDef="let ticket" class="subject-cell"> 
+        <td mat-cell *matCellDef="let ticket" class="subject-cell">
           {{ ticket.subject }}
         </td>
       </ng-container>
@@ -220,7 +220,7 @@
     </table>
 
     <!-- Pagination -->
-    <mat-paginator 
+    <mat-paginator
       [length]="totalTickets"
       [pageSize]="pageSize"
       [pageSizeOptions]="[5, 10, 25, 50]"

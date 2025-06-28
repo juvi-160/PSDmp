@@ -9,7 +9,7 @@ import { Component } from '@angular/core';
 export class AdminDashboardComponent {
   navLinks = [
     { path: "/admin/users", label: "Users", icon: "people" },
-    { path: "/admin/events", label: "Events" },
+    { path: "/admin/events", label: "Events",icon:"event" },
     { path: "/admin/event-rsvps", label: "Event RSVPs", icon: "how_to_reg" },
     { path: "/admin/tickets", label: "Support Tickets", icon: "support" },
     // { path: "/admin/invite", label: "Invite Members", icon: "drafts" },
