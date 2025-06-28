@@ -156,7 +156,7 @@ console.log({
     await Subscription.create({
       subscription_id: subscription.id,
       user_id: user.id, // Database ID
-      plan_id: PID.id,
+      plan_id: PID.plan_id,
       status: subscription.status,
       start_at: new Date(subscription.start_at * 1000),
       notes: JSON.stringify(subscription.notes),

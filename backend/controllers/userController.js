@@ -2,6 +2,8 @@ import User from "../model/userModel.js"
 import Order from "../model/orderModel.js"
 import ExcelJS from "exceljs"
 import { Op } from "sequelize"
+import nodemailer from "nodemailer";
+
 
 // Helper function to format payment amount
 function formatPaymentAmount(amount, currency = "INR") {
@@ -303,36 +305,73 @@ export const updateUser = async (req, res) => {
   }
 }
 
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.SMTP_EMAIL,
+    pass: process.env.SMTP_PASS,
+  }
+});
+
+
+
 // Update user role only
 export const updateUserRole = async (req, res) => {
   try {
-    const userId = req.params.id
-    const { role } = req.body
+    const userId = req.params.id;
+    const { role } = req.body;
 
-    // Validate role
-    const validRoles = ["admin", "individual member", "associate member", "pending"]
+    const validRoles = ["admin", "individual member", "associate member", "pending"];
     if (!validRoles.includes(role)) {
-      return res.status(400).json({ message: "Invalid role" })
+      return res.status(400).json({ message: "Invalid role" });
     }
 
-    // Check if user exists
-    const user = await User.findByPk(userId)
+    const user = await User.findByPk(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" })
+    const previousRole = user.role;
+    await user.update({ role });
+    await user.reload();
+
+    let emailSent = false;
+
+    // Send email if transitioned from associate to individual
+    if (previousRole === "associate member" && role === "individual member") {
+      const mailOptions = {
+        from: process.env.SMTP_EMAIL,
+        to: user.email,
+        subject: "Membership Role Updated",
+        html: `
+          <p>Dear ${user.name},</p>
+          <p>Your membership has been updated to <strong>Individual Member</strong>.</p>
+          <p>Please <a href="https://join.psfhyd.org/login">log in</a> to your dashboard.</p>
+          <br>
+          <p>Best regards,<br>PSF Hyderabad Team</p>
+        `,
+      };
+
+      try {
+        await transporter.sendMail(mailOptions);
+        emailSent = true;
+      } catch (emailError) {
+        console.error("Error sending email:", emailError.message);
+        // Don't call res.json again here!
+      }
     }
 
-    // Update user role
-    await user.update({ role })
+    return res.status(200).json({ user, emailSent });
 
-    // Return updated user
-    await user.reload()
-    res.status(200).json(user)
   } catch (error) {
-    console.error("Error updating user role:", error)
-    res.status(500).json({ message: "Server error" })
+    console.error("Error updating user role:", error);
+    if (!res.headersSent) {
+      return res.status(500).json({ message: "Server error" });
+    }
   }
-}
+};
+
+
 
 // Delete user
 export const deleteUser = async (req, res) => {

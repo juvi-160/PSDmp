@@ -20,8 +20,6 @@ import Ticket from "./model/ticketsModel.js";
 import Subscription from "./model/subscriptionModel.js";
 import SubscriptionPlan from './model/subscriptionPlanModel.js';
 
-
-
 //routes
 import eventRoutes from './routes/events.js';
 import rsvpRoutes from './routes/rsvps.js';
@@ -61,7 +59,7 @@ async function syncDb() {
     const isDevelopment = process.env.NODE_ENV !== "production"
 
     await sequelize.sync({
-      force: false,
+      force: true,
       alter: isDevelopment, // Only alter in development
     })
     console.log("All models were synchronized successfully.")
@@ -69,8 +67,7 @@ async function syncDb() {
     console.error("Error synchronizing models:", error)
   }
 }
-
-// syncDb()
+//syncDb()
 
 
 // Middleware
@@ -127,8 +124,6 @@ const apiLimiter = rateLimit({
 
 // Apply rate limiting to API routes
 app.use("/api/", apiLimiter)
-
-
 
 // Routes
 app.use('/api/events', eventRoutes);
