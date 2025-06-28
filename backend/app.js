@@ -31,7 +31,7 @@ import paymentRoutes from './routes/payment.js';
 import profileRoutes from './routes/profile.js';
 import ticketRoutes from './routes/tickets.js';
 import subscriptionRoutes from "./routes/subscription.js"
-import inviteRoutes from './routes/invite.js';
+// import inviteRoutes from './routes/invite.js';
 
 // Get directory name
 const __filename = fileURLToPath(import.meta.url);
@@ -69,7 +69,8 @@ async function syncDb() {
     console.error("Error synchronizing models:", error)
   }
 }
-//syncDb()
+
+// syncDb()
 
 
 // Middleware
@@ -138,7 +139,7 @@ app.use('/api/admin', adminRoutes);
 app.use("/api/subscription", subscriptionRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/tickets", ticketRoutes);
-app.use('/api/invite', inviteRoutes);
+// app.use('/api/invite', inviteRoutes);
 
 app.get("/", (req, res) => {
   res.send("hello world");
