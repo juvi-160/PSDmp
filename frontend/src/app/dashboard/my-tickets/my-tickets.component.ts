@@ -14,7 +14,7 @@ import  { Ticket, TicketFilter } from "../../core/models/ticket.model"
   styleUrl: './my-tickets.component.css'
 })
 export class MyTicketsComponent implements OnInit {
-  displayedColumns: string[] = ["id", "subject", "category", "priority", "status", "createdAt", "actions"]
+  displayedColumns: string[] = ["id", "subject", "category", "priority", "status", "createdAt"]
 
   dataSource = new MatTableDataSource<Ticket>([])
   loading = false
@@ -86,9 +86,21 @@ export class MyTicketsComponent implements OnInit {
     this.router.navigate(["/dashboard/raise-ticket"])
   }
 
-  formatDate(date: Date): string {
-    return date.toLocaleDateString()
-  }
+  formatDate(date: Date | string): string {
+  if (!date) return 'N/A';
+
+  const d = new Date(date);
+  return isNaN(d.getTime())
+    ? 'Invalid Date'
+    : d.toLocaleDateString('en-IN', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+}
+
 
   getStatusClass(status: string): string {
     switch (status) {
@@ -136,6 +148,8 @@ export class MyTicketsComponent implements OnInit {
         return "help_outline"
     }
   }
+
+
 
   onPageChange(event: any): void {
     this.currentPage = event.pageIndex + 1

@@ -1,4 +1,4 @@
-import { Component,ViewChild  } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatSidenav } from '@angular/material/sidenav';
 import { AuthService } from '@auth0/auth0-angular';
@@ -9,8 +9,9 @@ import { AuthService } from '@auth0/auth0-angular';
   styleUrls: ['./dashboard.component.css'],
   standalone: false
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
   @ViewChild('sidenav') sidenav!: MatSidenav;
+  isAdmin = false; // ADDED ADMIN FLAG
 
   navItems = [
     { icon: 'dashboard', label: 'Dashboard', link: '/dashboard' },
@@ -24,14 +25,28 @@ export class DashboardComponent {
 
   constructor(
     private router: Router,
-    public auth: AuthService,
+    public auth: AuthService
   ) {}
+
+  // ADDED ngOnInit FOR ADMIN CHECK
+  ngOnInit(): void {
+    this.auth.user$.subscribe((user: any) => {
+      // Check for admin role in user's app_metadata or user_metadata
+      this.isAdmin = user?.['https://your-namespace/roles']?.includes('admin') || 
+                    user?.app_metadata?.roles?.includes('admin') ||
+                    user?.user_metadata?.role === 'admin';
+    });
+  }
 
   toggleSidenav() {
     this.sidenav.toggle();
   }
 
   logout() {
-    this.auth.logout({ logoutParams: { returnTo: window.location.origin } });
+    this.auth.logout({ 
+      logoutParams: { 
+        returnTo: window.location.origin 
+      } 
+    });
   }
 }

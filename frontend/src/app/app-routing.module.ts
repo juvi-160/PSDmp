@@ -30,6 +30,7 @@ import { MembershipSelectionComponent } from './auth/membership-selection/member
 import { InviteComponent } from './admin/admin-dashboard/invite/invite.component';
 import { HistoryComponent } from './dashboard/history/history.component';
 import { PaymentGuard } from './core/guards/payment.guard';
+import { AdminGuard } from './core/guards/admin.guard'; // ADDED
 
 const routes: Routes = [
   
@@ -66,7 +67,7 @@ const routes: Routes = [
   {
     path: "admin",
     component: AdminDashboardComponent,
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, AdminGuard],
     children: [
       { path: "", redirectTo: "events", pathMatch: "full" },
       { path: "events", component: EventListComponent },

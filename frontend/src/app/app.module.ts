@@ -75,6 +75,7 @@ import { MembershipSelectionComponent } from './auth/membership-selection/member
 
 import { InviteComponent } from './admin/admin-dashboard/invite/invite.component';
 import { HistoryComponent } from './dashboard/history/history.component';
+import { AdminGuard } from './core/guards/admin.guard';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -205,7 +206,8 @@ const routes: Routes = [
     MatTooltipModule
   ],
   providers: [
-    provideHttpClient()
+    provideHttpClient(),
+    AdminGuard
   ],
   bootstrap: [AppComponent]
 })
