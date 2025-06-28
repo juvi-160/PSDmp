@@ -1,5 +1,5 @@
 import express from "express"
-import { checkJwt } from "../controllers/authController.js"
+// import { checkJwt } from "../controllers/authController.js"
 import {
   getUsers,
   getUserById,
@@ -21,7 +21,7 @@ import {
 const router = express.Router()
 
 // Apply auth middleware to all admin routes
-router.use(checkJwt)
+// router.use(checkJwt)
 
 // User management routes
 router.get("/users", getUsers)
