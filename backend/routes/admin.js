@@ -1,5 +1,5 @@
 import express from "express"
-import { checkJwt } from "../controllers/authController.js"
+// import { checkJwt } from "../controllers/authController.js"
 import {
   getUsers,
   getUserById,

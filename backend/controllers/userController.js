@@ -20,6 +20,83 @@ function formatPaymentAmount(amount, currency = "INR") {
 }
 
 // Get all users with optional filtering
+// export const getUsers = async (req, res) => {
+//   try {
+//     const whereClause = {}
+//     const { search, role, hasPaid, dateFrom, dateTo } = req.query
+
+//     if (search) {
+//       whereClause[Op.or] = [
+//         { name: { [Op.like]: `%${search}%` } },
+//         { email: { [Op.like]: `%${search}%` } },
+//         { auth0_id: { [Op.like]: `%${search}%` } },
+//       ]
+//     }
+//     if (role) whereClause.role = role
+//     if (hasPaid !== undefined) whereClause.has_paid = hasPaid === "true"
+//     if (dateFrom) whereClause.created_at = { [Op.gte]: new Date(dateFrom) }
+//     if (dateTo) {
+//       if (whereClause.created_at) whereClause.created_at[Op.lte] = new Date(dateTo)
+//       else whereClause.created_at = { [Op.lte]: new Date(dateTo) }
+//     }
+
+//     const users = await User.findAll({
+//       where: whereClause,
+//       include: [
+//         {
+//           model: Order,
+//           as: "orders",
+//           where: { status: "paid" },
+//           required: false,
+//           order: [["created_at", "DESC"]],
+//           limit: 1,
+//         },
+//       ],
+//       order: [["created_at", "DESC"]],
+//     })
+
+//     const formattedUsers = users.map(user => {
+//       const latestOrder = user.orders?.[0]
+//       const paymentAmount = Number.parseFloat(latestOrder?.amount) || 0
+//       const paymentCurrency = latestOrder?.currency || "INR"
+
+//       return {
+//         id: user.id,
+//         auth0Id: user.auth0_id,
+//         name: user.name,
+//         email: user.email,
+//         phone: user.phone,
+//         role: user.role,
+//         memberIds: user.member_ids,
+//         currentMemberId: user.member_ids?.[user.member_ids.length - 1] || null,
+//         isEmailVerified: !!user.is_email_verified,
+//         isPhoneVerified: !!user.is_phone_verified,
+//         hasPaid: !!user.has_paid,
+//         createdAt: user.created_at,
+//         updatedAt: user.updated_at,
+//         totalPaymentAmount: paymentAmount,
+//         formattedPaymentAmount: formatPaymentAmount(paymentAmount, paymentCurrency),
+//         paymentDetails: latestOrder
+//           ? {
+//               orderId: latestOrder.order_id,
+//               amount: paymentAmount,
+//               currency: paymentCurrency,
+//               status: latestOrder.status,
+//               paymentId: latestOrder.payment_id,
+//               paymentDate: latestOrder.created_at,
+//               formattedAmount: formatPaymentAmount(paymentAmount, paymentCurrency),
+//             }
+//           : null,
+//       }
+//     })
+
+//     res.status(200).json(formattedUsers)
+//   } catch (error) {
+//     console.error("Error getting users:", error)
+//     res.status(500).json({ message: "Server error", error: error.message })
+//   }
+// }
+
 export const getUsers = async (req, res) => {
   try {
     const whereClause = {}
@@ -30,6 +107,7 @@ export const getUsers = async (req, res) => {
         { name: { [Op.like]: `%${search}%` } },
         { email: { [Op.like]: `%${search}%` } },
         { auth0_id: { [Op.like]: `%${search}%` } },
+        { member_ids: { [Op.like]: `%${search}%` } } // Add search for member IDs
       ]
     }
     if (role) whereClause.role = role
@@ -87,6 +165,7 @@ export const getUsers = async (req, res) => {
               formattedAmount: formatPaymentAmount(paymentAmount, paymentCurrency),
             }
           : null,
+        requiresPayment: user.role === 'individual member' && !user.has_paid // Add this field
       }
     })
 
