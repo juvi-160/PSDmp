@@ -1,4 +1,3 @@
-// src/app/core/services/auth.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, from, of } from 'rxjs';
@@ -14,7 +13,7 @@ export interface User {
   name: string;
   email: string;
   phone?: string;
-  role: 'admin' | 'individual member' | 'pending';
+  role: 'admin' | 'individual member' | 'associate member' | 'pending';
   isEmailVerified?: boolean;
   isPhoneVerified?: boolean;
   hasPaid?: boolean;
@@ -54,18 +53,8 @@ export class AuthService {
                 console.log('User profile retrieved:', user);
                 this.currentUserSubject.next(user);
 
-                // If user is in pending state, redirect to payment page
-                if (user.role === 'pending') {
-                  this.router.navigate(['/payment']);
-                } else if (
-                  user.role === 'individual member'
-                  // user.role === 'admin'
-                ) {
-                  this.router.navigate(['/dashboard']);
-                }
-                else if ( user.role === 'admin') {
-                  this.router.navigate(['/admin']);
-                }
+                // NEW: Handle user redirection based on role and payment status
+                this.handleUserRedirection(user);
               },
               error: (error) => {
                 console.error('Error fetching user profile:', error);
@@ -111,6 +100,35 @@ export class AuthService {
     });
   }
 
+  // NEW: Method to handle user redirection based on role and payment status
+  private handleUserRedirection(user: User): void {
+    if (user.role === 'admin') {
+      this.router.navigate(['/admin']);
+    } else if (user.role === 'associate member') {
+      this.router.navigate(['/dashboard']);
+    } else if (user.role === 'individual member' && !user.hasPaid) {
+      this.router.navigate(['/payment']);
+    } else if (user.role === 'individual member' && user.hasPaid) {
+      this.router.navigate(['/dashboard']);
+    } else if (user.role === 'pending') {
+      this.router.navigate(['/payment']);
+    }
+  }
+
+  // NEW: Method to check if user needs to pay
+  checkUserPaymentStatus(): Observable<{ needsPayment: boolean, role: string }> {
+    return this.getUserProfile().pipe(
+      map(user => {
+        const needsPayment = 
+          (user.role === 'individual member' && !user.hasPaid) || 
+          user.role === 'pending';
+        return { needsPayment, role: user.role };
+      }),
+      catchError(() => of({ needsPayment: true, role: 'pending' }))
+    );
+  }
+
+  // EXISTING METHODS BELOW (NO CHANGES)
   public get currentUserValue(): User | null {
     return this.currentUserSubject.value;
   }
@@ -175,7 +193,6 @@ export class AuthService {
     });
   }
 
-  // Get user profile from our backend
   getUserProfile(): Observable<User> {
     return this.getAccessToken().pipe(
       switchMap((token) => {
@@ -188,7 +205,6 @@ export class AuthService {
     );
   }
 
-  // Create a new user in our backend
   createUser(user: User): Observable<User> {
     return this.getAccessToken().pipe(
       switchMap((token) => {
@@ -203,7 +219,6 @@ export class AuthService {
     );
   }
 
-  // Update user role after payment
   updateUserAfterPayment(paymentDetails: any): Observable<User> {
     return this.getAccessToken().pipe(
       switchMap((token) => {
@@ -221,7 +236,6 @@ export class AuthService {
     );
   }
 
-  // Check if user has completed payment
   checkPaymentStatus(): Observable<boolean> {
     return this.getUserProfile().pipe(
       map((user) => user.hasPaid === true && user.role === 'individual member'),

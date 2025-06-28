@@ -1,7 +1,7 @@
 <div class="">
-  <div class=" text-black p-6  bg-opacity-90">
+  <div class="text-black p-6 bg-opacity-90">
     <div class="flex justify-baseline gap-3">
-      <mat-icon class="text-white drop-shadow-md">event</mat-icon>
+      <i class="lucide lucide-calendar text-white drop-shadow-md"></i>
       <h2 class="text-2xl font-bold tracking-tight drop-shadow-md">
         {{ isEditMode ? 'Edit Event' : 'Create New Event' }}
       </h2>
@@ -20,86 +20,70 @@
 
     <!-- Event Form -->
     <form [formGroup]="eventForm" (ngSubmit)="onSubmit()" *ngIf="!loading" class="space-y-8">
-      <!-- Event Name with Floating Label Effect -->
-      <div class="relative space-y-1">
-        <label class="flex items-center text-sm font-medium text-gray-700 gap-2 pl-1">
-          <mat-icon class="text-indigo-500 text-lg">title</mat-icon>
-          <span class="text-gray-600">Event Name</span>
+      <!-- Event Name -->
+      <div class="space-y-2">
+        <label class="flex items-center text-sm font-medium text-gray-700 gap-2">
+          <i class="lucide lucide-type text-indigo-500"></i>
+          <span>Event Name</span>
         </label>
-        <mat-form-field appearance="fill" class="w-full !pt-1">
-          <input matInput formControlName="name" placeholder="Tech Conference 2023" required 
-                 class="!pt-2 !pb-1 placeholder-gray-400">
-          <mat-error *ngIf="eventForm.get('name')?.hasError('required')" class="text-red-500 text-xs mt-1">
-            Event name is required
-          </mat-error>
-          <mat-error *ngIf="eventForm.get('name')?.hasError('maxlength')" class="text-red-500 text-xs mt-1">
-            Maximum 100 characters
-          </mat-error>
-        </mat-form-field>
+        <input type="text" formControlName="name" placeholder="Tech Conference 2023"
+               class="w-full border-2 border-[#bedafe] rounded-md px-3 py-2 placeholder-gray-400 focus:ring-2 focus:ring-indigo-300">
+        <p class="text-red-500 text-xs mt-1" *ngIf="eventForm.get('name')?.hasError('required')">
+          Event name is required
+        </p>
+        <p class="text-red-500 text-xs mt-1" *ngIf="eventForm.get('name')?.hasError('maxlength')">
+          Maximum 100 characters
+        </p>
       </div>
 
-      <!-- Date Picker with Modern Styling -->
-      <div class="relative space-y-1">
-        <label class="flex items-center text-sm font-medium text-gray-700 gap-2 pl-1">
-          <mat-icon class="text-indigo-500 text-lg">calendar_today</mat-icon>
-          <span class="text-gray-600">Date & Time</span>
+      <!-- Date Picker -->
+      <div class="space-y-2">
+        <label class="flex items-center text-sm font-medium text-gray-700 gap-2">
+          <i class="lucide lucide-calendar-days text-indigo-500"></i>
+          <span>Date & Time</span>
         </label>
-        <mat-form-field appearance="fill" class="w-full !pt-1">
-          <input matInput [matDatepicker]="picker" formControlName="date" required
-                 class="!pt-2 !pb-1">
-          <mat-datepicker-toggle matSuffix [for]="picker" class="text-indigo-500">
-            <mat-icon matDatepickerToggleIcon class="text-indigo-500 hover:text-indigo-700 transition">calendar_today</mat-icon>
-          </mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
-          <mat-error *ngIf="eventForm.get('date')?.hasError('required')" class="text-red-500 text-xs mt-1">
-            Please select a date
-          </mat-error>
-        </mat-form-field>
+        <input type="datetime-local" formControlName="date" required
+               class="w-full border-2 border-[#bedafe] rounded-md px-3 py-2 placeholder-gray-400 focus:ring-2 focus:ring-indigo-300">
+        <p class="text-red-500 text-xs mt-1" *ngIf="eventForm.get('date')?.hasError('required')">
+          Please select a date
+        </p>
       </div>
 
-      <!-- Description with Character Counter -->
-      <div class="relative space-y-1">
-        <label class="flex items-center text-sm font-medium text-gray-700 gap-2 pl-1">
-          <mat-icon class="text-indigo-500 text-lg">description</mat-icon>
-          <span class="text-gray-600">Description</span>
+      <!-- Description -->
+      <div class="space-y-2">
+        <label class="flex items-center text-sm font-medium text-gray-700 gap-2">
+          <i class="lucide lucide-align-left text-indigo-500"></i>
+          <span>Description</span>
         </label>
-        <mat-form-field appearance="fill" class="w-full !pt-1">
-          <textarea matInput formControlName="description" rows="4" 
-                    placeholder="Describe your event..." required
-                    class="!pt-2 !pb-1 placeholder-gray-400"></textarea>
-          <mat-error *ngIf="eventForm.get('description')?.hasError('required')" class="text-red-500 text-xs mt-1">
-            Description is required
-          </mat-error>
-        </mat-form-field>
+        <textarea formControlName="description" rows="4" placeholder="Describe your event..."
+                  class="w-full border-2 border-[#bedafe] rounded-md px-3 py-2 placeholder-gray-400 focus:ring-2 focus:ring-indigo-300"></textarea>
+        <p class="text-red-500 text-xs mt-1" *ngIf="eventForm.get('description')?.hasError('required')">
+          Description is required
+        </p>
       </div>
 
-      <!-- Enhanced Image Upload with Preview -->
+      <!-- Image Upload -->
       <div class="space-y-3">
-        <label class="flex items-center text-sm font-medium text-gray-700 gap-2 pl-1">
-          <mat-icon class="text-indigo-500 text-lg">image</mat-icon>
-          <span class="text-gray-600">Event Cover Image</span>
+        <label class="flex items-center text-sm font-medium text-gray-700 gap-2">
+          <i class="lucide lucide-image text-indigo-500"></i>
+          <span>Event Cover Image</span>
         </label>
-        
+
         <div *ngIf="imagePreview" class="relative group rounded-xl overflow-hidden transition-all duration-300">
-          <img [src]="imagePreview" alt="Event preview" 
+          <img [src]="imagePreview" alt="Event preview"
                class="w-full h-72 object-cover rounded-xl border border-gray-200 shadow-sm group-hover:shadow-md transition-all">
-          <button
-            type="button"
-            mat-icon-button
-            (click)="removeImage()"
-            class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full p-2 shadow hover:bg-white transition-all transform hover:scale-110"
-            matTooltip="Remove image"
-          >
-            <mat-icon class="text-red-500 !text-xl">delete</mat-icon>
+          <button type="button" (click)="removeImage()"
+                  class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full p-2 shadow hover:bg-white transition-all transform hover:scale-110">
+            <i class="lucide lucide-trash-2 text-red-500 text-xl"></i>
           </button>
         </div>
 
-        <div *ngIf="!imagePreview" 
+        <div *ngIf="!imagePreview"
              class="border-2 border-dashed border-gray-300 rounded-xl p-10 text-center hover:border-indigo-400 transition-colors cursor-pointer bg-gray-50/50"
              (click)="fileInput.click()">
           <div class="flex flex-col items-center justify-center gap-4">
             <div class="p-4 bg-indigo-50 rounded-full shadow-inner">
-              <mat-icon class="text-indigo-500 !text-3xl">cloud_upload</mat-icon>
+              <i class="lucide lucide-upload-cloud text-indigo-500 text-3xl"></i>
             </div>
             <div>
               <p class="text-sm font-medium text-gray-700">Drag & drop image or click to browse</p>
@@ -112,28 +96,21 @@
         <p class="text-xs text-gray-400 mt-2 pl-1">Recommended: 800×600px (16:9 aspect ratio)</p>
       </div>
 
-      <!-- Form Actions with Floating Effect -->
+      <!-- Form Actions -->
       <div class="flex justify-end gap-4 pt-8">
-        <button
-          type="button"
-          mat-stroked-button
-          class="border-gray-300 text-gray-600 hover:bg-gray-50 px-5 py-2.5 rounded-lg transition-all hover:-translate-y-0.5 active:translate-y-0"
-          (click)="cancel()"
-        >
+        <button type="button"
+                class="border border-gray-300 text-gray-600 hover:bg-gray-50 px-5 py-2.5 rounded-lg transition-all hover:-translate-y-0.5 active:translate-y-0"
+                (click)="cancel()">
           <span class="flex items-center gap-2">
-            <mat-icon class="!text-gray-500">close</mat-icon>
+            <i class="lucide lucide-x text-gray-500"></i>
             Cancel
           </span>
         </button>
-        <button
-          type="submit"
-          mat-raised-button
-          color="primary"
-          class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-2.5 rounded-lg shadow-md hover:shadow-lg disabled:opacity-60 transition-all hover:-translate-y-0.5 active:translate-y-0"
-          [disabled]="eventForm.invalid"
-        >
+
+        <button type="submit" [disabled]="eventForm.invalid"
+                class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-2.5 rounded-lg shadow-md hover:shadow-lg disabled:opacity-60 transition-all hover:-translate-y-0.5 active:translate-y-0">
           <span class="flex items-center gap-2 font-medium">
-            <mat-icon class="text-white">{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+            <i class="lucide" [ngClass]="isEditMode ? 'lucide-save' : 'lucide-plus'"></i>
             {{ isEditMode ? 'Update Event' : 'Create Event' }}
           </span>
         </button>

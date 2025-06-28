@@ -2,14 +2,10 @@ import { DataTypes } from 'sequelize';
 import {sequelize} from '../config/db.js';
 
 const SubscriptionPlan = sequelize.define('SubscriptionPlan', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
-  },
   plan_id: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: false,    
+    primaryKey: true,
     unique: true
   },
   name: {
