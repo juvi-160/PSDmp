@@ -95,188 +95,114 @@
   </div>
 
   <!-- Modern Filter Card -->
+ <div
+  class="bg-white rounded-2xl shadow-lg mb-8 overflow-hidden border border-gray-100/50"
+>
+  <!-- Header -->
   <div
-    class="bg-white rounded-2xl shadow-lg mb-8 overflow-hidden border border-gray-100/50"
+    class="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100/50"
   >
-    <!-- Header with subtle gradient -->
-    <div
-      class="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100/50"
-    >
-      <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-3">
-        <mat-icon class="text-blue-600">tune</mat-icon>
-        <span>Filter Members</span>
-      </h3>
+    <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-3">
+      <i class="lucide lucide-sliders text-blue-600"></i>
+      <span>Filter Members</span>
+    </h3>
+  </div>
+
+  <form
+    [formGroup]="filterForm"
+    (ngSubmit)="applyFilter()"
+    class="p-6 space-y-6"
+  >
+    <!-- First Row -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Search Field -->
+      <div>
+        <label class="block text-gray-700 mb-1">Search members</label>
+        <div class="relative">
+          <i
+            class="lucide lucide-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+          ></i>
+          <input
+            type="text"
+            formControlName="search"
+            placeholder="Name, email, or ID"
+            class="w-full border-2 border-[#bedafe] rounded-md pl-10 p-2 focus:outline-none focus:ring-2 focus:ring-[#bedafe]"
+          />
+        </div>
+      </div>
+
+      <!-- Role Dropdown -->
+      <div>
+        <label class="block text-gray-700 mb-1">Member Type</label>
+        <select
+          formControlName="role"
+          class="w-full  border-2 border-[#bedafe] rounded-md p-2"
+        >
+          <option value="">All member types</option>
+          <option value="admin">Admin</option>
+          <option value="individual member">Individual</option>
+          <option value="associate member">Associate</option>
+          <option value="pending">Pending</option>
+        </select>
+      </div>
+
+      <!-- Payment Status -->
+      <div>
+        <label class="block text-gray-700 mb-1">Payment Status</label>
+        <select
+          formControlName="paymentStatus"
+          class="w-full border-2 border-[#bedafe] rounded-md p-2"
+        >
+          <option value="">All statuses</option>
+          <option value="true">Paid</option>
+          <option value="false">Not Paid</option>
+        </select>
+      </div>
     </div>
 
-    <form
-      [formGroup]="filterForm"
-      (ngSubmit)="applyFilter()"
-      class="p-6 space-y-6"
-    >
-      <!-- First Row - Search, Role, Status -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Search Field -->
-        <div class="relative">
-          <mat-form-field appearance="fill" class="w-full">
-            <mat-label class="text-gray-500">Search members</mat-label>
-            <input
-              matInput
-              formControlName="search"
-              placeholder="Name, email, or ID"
-              class="!pt-1"
-            />
-            <mat-icon matPrefix class="text-gray-400/80 mr-2 -ml-1"
-              >search</mat-icon
-            >
-          </mat-form-field>
-        </div>
-
-        <!-- Role Field -->
-        <div>
-          <mat-form-field appearance="fill" class="w-full">
-            <mat-label class="text-gray-500">Member type</mat-label>
-            <mat-select formControlName="role">
-              <mat-option value="" class="text-gray-500"
-                >All member types</mat-option
-              >
-              <mat-option value="admin" class="flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-                Admin
-              </mat-option>
-              <mat-option
-                value="individual member"
-                class="flex items-center gap-2"
-              >
-                <span class="w-2 h-2 rounded-full bg-green-500"></span>
-                Individual
-              </mat-option>
-              <mat-option
-                value="associate member"
-                class="flex items-center gap-2"
-              >
-                <span class="w-2 h-2 rounded-full bg-purple-500"></span>
-                Associate
-              </mat-option>
-              <mat-option value="pending" class="flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-yellow-500"></span>
-                Pending
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-
-        <!-- Payment Status -->
-        <div>
-          <mat-form-field appearance="fill" class="w-full">
-            <mat-label class="text-gray-500">Payment status</mat-label>
-            <mat-select formControlName="paymentStatus">
-              <mat-option value="" class="text-gray-500"
-                >All statuses</mat-option
-              >
-              <mat-option value="true" class="flex items-center gap-2">
-                <mat-icon class="text-green-500 text-base"
-                  >check_circle</mat-icon
-                >
-                Paid
-              </mat-option>
-              <mat-option value="false" class="flex items-center gap-2">
-                <mat-icon class="text-red-500 text-base">cancel</mat-icon>
-                Not Paid
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-      </div>
-
-      <!-- Second Row - Dates and Buttons -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- From Date -->
-        <div>
-          <mat-form-field appearance="fill" class="w-full">
-            <mat-label class="text-gray-500">From date</mat-label>
-            <input
-              matInput
-              [matDatepicker]="pickerFrom"
-              formControlName="dateFrom"
-            />
-            <mat-datepicker-toggle
-              matSuffix
-              [for]="pickerFrom"
-              class="text-gray-400/80"
-            ></mat-datepicker-toggle>
-            <mat-datepicker #pickerFrom></mat-datepicker>
-          </mat-form-field>
-        </div>
-
-        <!-- To Date -->
-        <div>
-          <mat-form-field appearance="fill" class="w-full">
-            <mat-label class="text-gray-500">To date</mat-label>
-            <input
-              matInput
-              [matDatepicker]="pickerTo"
-              formControlName="dateTo"
-            />
-            <mat-datepicker-toggle
-              matSuffix
-              [for]="pickerTo"
-              class="text-gray-400/80"
-            ></mat-datepicker-toggle>
-            <mat-datepicker #pickerTo></mat-datepicker>
-          </mat-form-field>
-        </div>
-
-        <!-- Buttons Container -->
-        <div class="flex items-end gap-3 h-full">
-          <button
-            type="button"
-            (click)="resetFilter()"
-            class="h-12 w-full bg-green-700 !text-white hover:!bg-green-600 flex items-center justify-center gap-2 rounded-lg transition-all"
-          >
-            <mat-icon class="!text-white !text-xl">replay</mat-icon>
-            <span>Clear</span>
-          </button>
-          <button
-            color="primary"
-            type="submit"
-            class="h-12 w-full !bg-gradient-to-r !from-blue-600 !to-indigo-600 hover:!from-blue-700 hover:!to-indigo-700 !text-white !shadow-md flex items-center justify-center gap-2 rounded-lg transition-all"
-          >
-            <mat-icon class="!text-white !text-xl">filter_list</mat-icon>
-            <span>Apply Filters</span>
-          </button>
-        </div>
-      </div>
-    </form>
-  </div>
-
-  <!-- Loading State -->
-  <div
-    *ngIf="loading"
-    class="flex flex-col items-center justify-center p-12 bg-white rounded-xl shadow-sm"
-  >
-    <mat-spinner diameter="60" class="text-blue-600"></mat-spinner>
-    <p class="mt-4 text-gray-600">Loading user data...</p>
-  </div>
-
-  <!-- Error State -->
-  <div
-    *ngIf="error && !loading"
-    class="bg-red-50 border-l-4 border-red-500 p-4 mb-8 rounded-lg shadow-sm"
-  >
-    <div class="flex items-start gap-3">
-      <mat-icon class="text-red-500 mt-0.5">error_outline</mat-icon>
+    <!-- Second Row -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- From Date -->
       <div>
-        <p class="text-red-700 font-medium">{{ error }}</p>
+        <label class="block text-gray-700 mb-1">From Date</label>
+        <input
+          type="date"
+          formControlName="dateFrom"
+          class="w-full border-2 border-[#bedafe] rounded-md p-2"
+        />
+      </div>
+
+      <!-- To Date -->
+      <div>
+        <label class="block text-gray-700 mb-1">To Date</label>
+        <input
+          type="date"
+          formControlName="dateTo"
+          class="w-full border-2 border-[#bedafe] rounded-md p-2"
+        />
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex items-end gap-3 h-full">
         <button
-          color="primary"
-          (click)="loadUsers()"
-          class="mt-3 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-md"
+          type="button"
+          (click)="resetFilter()"
+          class="h-12 w-full bg-green-700 text-white hover:bg-green-600 flex items-center justify-center gap-2 rounded-lg transition-all"
         >
-          Retry
+          <i class="lucide lucide-rotate-ccw text-white"></i>
+          <span>Clear</span>
+        </button>
+        <button
+          type="submit"
+          class="h-12 w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md flex items-center justify-center gap-2 rounded-lg transition-all"
+        >
+          <i class="lucide lucide-filter text-white"></i>
+          <span>Apply Filters</span>
         </button>
       </div>
     </div>
-  </div>
+  </form>
+</div>
 
   <!-- Users Table -->
   <div
@@ -313,8 +239,8 @@
           >
             Member ID
           </th>
-          <td mat-cell *matCellDef="let user" class="text-gray-600 px-4 py-3">
-            {{ user.id }}
+          <td mat-cell *matCellDef="let user" class="text-gray-600 px-4 py-3 overflow-hidden font-bold">
+            {{ user.memberIds }}
           </td>
         </ng-container>
 

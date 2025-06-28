@@ -129,7 +129,17 @@ export class UserManagementComponent implements OnInit {
   viewUserDetails(user: User): void {
     this.router.navigate(["/admin/users", user.id])
   }
-
+  getMemberIds(user: User): string {
+    // If the User model has a single member_id property
+    if ((user as any).member_id) {
+      return (user as any).member_id;
+    }
+    // If the User model has an array of member_ids
+    if ((user as any).member_ids && Array.isArray((user as any).member_ids)) {
+      return (user as any).member_ids.join(", ");
+    }
+    return "";
+  }
   editUser(user: User): void {
     const dialogRef = this.dialog.open(UserEditDialogComponent, {
       width: "500px",
