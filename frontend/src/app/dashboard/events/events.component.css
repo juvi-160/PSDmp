@@ -1,84 +1,129 @@
 .events-container {
-  padding: 20px;
-  max-width: 1200px;
+  padding: 2rem;
+  max-width: 1280px;
   margin: 0 auto;
+  font-family: 'Inter', sans-serif;
+  background-color: #f4f4f4; /* gray-50 */
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem;
 }
 
 .header h2 {
-  margin: 0;
-  color: var(--primary-dark);
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #1f2937; /* gray-800 */
 }
 
 .loading-container {
   display: flex;
   justify-content: center;
-  padding: 40px;
+  padding: 2rem;
 }
 
 .error-message {
   text-align: center;
-  padding: 20px;
-  color: #f44336;
+  padding: 2rem;
+  color: #dc2626; /* red-600 */
+  font-weight: 500;
 }
 
 .no-events {
   text-align: center;
-  padding: 40px;
-  color: #757575;
+  padding: 2.5rem;
+  color: #6b7280; /* gray-500 */
   font-style: italic;
 }
 
 .events-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
 }
 
 .event-card {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  transition: transform 0.3s, box-shadow 0.3s;
+  background-color: #ffffff;
+  border-radius: 5px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  overflow: hidden;
 }
 
 .event-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-6px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
 }
 
 .event-image {
-  height: 200px;
+  height: 220px;
+  padding:8px;
   object-fit: cover;
+  width: 100%;
+  border-bottom: 1px solid #e5e7eb; /* gray-200 */
 }
 
 mat-card-content {
   flex-grow: 1;
+  padding: 1rem 1.25rem;
+  font-size: 0.95rem;
+  color: #374151; /* gray-700 */
 }
 
 mat-card-title {
-  color: var(--primary-color);
-  font-weight: 500;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #041d61; /* indigo-700 */
 }
 
 mat-card-subtitle {
-  color: var(--accent-color);
+  font-size: 0.875rem;
   font-weight: 500;
+  color: #06086f; /* indigo-500 */
 }
 
 mat-card-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  border-top: 1px solid #f3f4f6; /* gray-100 */
+  background-color: #fafafa;
+}
+
+mat-card-actions button {
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: none;
+  
+}
+
+.past-event-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #9ca3af; /* gray-400 */
+  font-style: italic;
+}
+
+.spinner {
+  margin-right: 0.5rem;
 }
 
 @media (max-width: 768px) {
   .events-list {
     grid-template-columns: 1fr;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
   }
 }
