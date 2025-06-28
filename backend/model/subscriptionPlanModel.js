@@ -3,8 +3,9 @@ import {sequelize} from '../config/db.js';
 
 const SubscriptionPlan = sequelize.define('SubscriptionPlan', {
   id: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
     primaryKey: true,
+    autoIncrement: true
   },
   plan_id: {
     type: DataTypes.STRING,

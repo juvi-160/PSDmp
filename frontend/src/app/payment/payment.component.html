@@ -1,206 +1,151 @@
-<div class="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-50 flex items-center justify-center px-4 py-12">
-  <mat-card class="w-full max-w-4xl bg-white rounded-3xl shadow-xl overflow-hidden border-0">
-    <!-- Header Section with subtle gradient -->
-    <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-8 px-6 sm:px-12 text-center">
-      <div class="max-w-md mx-auto">
-        <img src="PSF_Logo.png" alt="PSF Logo" class="h-16 mx-auto mb-4 transform hover:scale-105 transition-transform duration-300" />
-        <h1 class="text-3xl font-bold mb-2 tracking-tight">Join Professionals Solidarity Forum</h1>
-        <div class="flex items-center justify-center space-x-2">
-          <div class="flex-1 border-t border-blue-400"></div>
-          <p class="text-sm text-blue-100 px-2">Complete in 2 simple steps</p>
-          <div class="flex-1 border-t border-blue-400"></div>
-        </div>
-      </div>
+<div class="min-h-screen bg-gradient-to-tr from-[#eef2ff] via-[#f0fdf4] to-[#fff7ed] flex items-center justify-center px-4 py-14">
+  <mat-card class="w-full max-w-5xl bg-white rounded shadow-2xl overflow-hidden border border-gray-200">
+
+    <!-- Header -->
+    <div class="text-center  text-black bg-blue-200 rounded-t-2xl p-8">
+      <img src="PSF_Logo.png" alt="PSF Logo" class="h-16 mx-auto mb-4 drop-shadow-lg transition-transform duration-300 hover:scale-110" />
+      <h1 class="text-4xl font-extrabold tracking-tight mb-2">Join the PSF Movement</h1>
+      <p class="text-sm opacity-90">Empowering professionals through unity, service & growth</p>
     </div>
 
-    <!-- Form Section with better spacing -->
-    <mat-card-content class="p-6 sm:p-10 space-y-8">
+    <!-- Form Body -->
+    <mat-card-content class="p-8 sm:p-12 space-y-12 bg-white">
 
-      <!-- Step 1: Amount Selection -->
-      <div class="space-y-6">
-        <div class="flex items-center space-x-3">
-          <div class="bg-blue-100 text-blue-800 rounded-full w-8 h-8 flex items-center justify-center font-medium">1</div>
-          <h2 class="text-xl font-semibold text-gray-800">Choose Membership Amount</h2>
-        </div>
+      <!-- Step 1 -->
+      <div class="bg-white border border-gray-200 rounded-3xl p-6 sm:p-8 shadow-md hover:shadow-lg transition mt-10">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <span class="text-indigo-600">①</span> Membership Amount
+        </h2>
 
-        <!-- Custom Amount Input with better styling -->
-        <div class="space-y-2">
-          <mat-form-field appearance="outline" class="w-full">
-            <mat-label>Enter custom amount (₹)</mat-label>
-            <input matInput type="number" [formControl]="customAmountControl" (input)="onCustomAmountChange()" placeholder="Minimum ₹300">
-            <span matPrefix class="text-gray-500 mr-1">₹</span>
-            <mat-hint *ngIf="!showMinimumError" class="text-xs">Supports our community initiatives</mat-hint>
-            <mat-error *ngIf="customAmountControl.hasError('required')">Amount is required</mat-error>
-            <mat-error *ngIf="customAmountControl.hasError('min') || showMinimumError">Minimum ₹300 required</mat-error>
-          </mat-form-field>
+        <!-- Custom Input -->
+        <mat-form-field class="w-full">
+          <mat-label>Enter custom amount (₹)</mat-label>
+          <input matInput type="number" [formControl]="customAmountControl" (input)="onCustomAmountChange()" placeholder="Minimum ₹300">
+          <span matPrefix>₹</span>
+          <mat-error *ngIf="customAmountControl.hasError('required')">Amount is required</mat-error>
+          <mat-error *ngIf="customAmountControl.hasError('min') || showMinimumError">Minimum ₹300</mat-error>
+          <mat-error *ngIf="customAmountControl.hasError('pattern')">Enter a valid number</mat-error>
+        </mat-form-field>
 
-          <!-- Minimum Warning with icon -->
-          <div *ngIf="showMinimumError" class="flex items-center gap-2 text-red-600 text-sm animate-pulse">
-            <mat-icon class="text-red-500" style="font-size: 18px;">error_outline</mat-icon>
-            Please enter at least ₹300
-          </div>
-        </div>
-
-        <!-- Quick Amount Selection with better cards -->
-        <div class="space-y-3">
-          <p class="text-sm font-medium text-gray-600">Or select a quick amount:</p>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <!-- Quick Select -->
+        <div class="mt-6">
+          <p class="text-sm font-medium text-gray-600 mb-2">Or choose a quick amount:</p>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <button *ngFor="let plan of presetPlans"
-              mat-stroked-button
-              [ngClass]="{
-                'border-2 border-blue-500 bg-blue-50 text-blue-600': selectedAmount === plan.amount,
-                'border border-gray-200 hover:border-blue-300 bg-white': selectedAmount !== plan.amount
-              }"
-              class="py-3 rounded-lg transition-all duration-200 ease-in-out transform hover:scale-[1.02] relative overflow-hidden"
-              (click)="selectPresetAmount(plan.amount)">
-              <div class="font-medium">₹{{ plan.amount }}</div>
-              <div *ngIf="plan.recommended" class="absolute -top-2 -right-2">
-                <span class="bg-green-500 text-white text-xs px-2 py-1 rounded-full font-medium animate-pulse">Best</span>
-              </div>
-              <div *ngIf="plan.name" class="text-xs text-gray-500 mt-1">{{ plan.name }}</div>
+              mat-raised-button
+              (click)="selectPresetAmount(plan.amount)"
+              [ngClass]="selectedAmount === plan.amount 
+                ? 'bg-indigo-600 text-white hover:bg-indigo-700' 
+                : 'bg-white border border-gray-300 text-gray-800 hover:border-indigo-400'"
+              class="rounded-xl py-2 px-3 text-base font-medium transition-all duration-200">
+              ₹{{ plan.amount }}
+              <span *ngIf="plan.recommended" class="block text-xs text-green-600 mt-1 font-semibold">Recommended</span>
             </button>
           </div>
         </div>
+
+        <!-- Validation -->
+        <div *ngIf="showMinimumError" class="flex items-center gap-2 mt-4 text-red-600 text-sm">
+          <mat-icon>error</mat-icon> Minimum amount is ₹300
+        </div>
       </div>
 
-      <!-- Divider -->
-      <div class="border-t border-gray-200 my-6" *ngIf="isAmountValid"></div>
-
-      <!-- Step 2: Payment Type -->
-      <div *ngIf="isAmountValid" class="space-y-6">
-        <div class="flex items-center space-x-3">
-          <div class="bg-blue-100 text-blue-800 rounded-full w-8 h-8 flex items-center justify-center font-medium">2</div>
-          <h2 class="text-xl font-semibold text-gray-800">Choose Payment Type</h2>
-        </div>
+      <!-- Step 2 -->
+      <div *ngIf="isAmountValid" class="bg-white border border-gray-200 rounded-3xl p-6 sm:p-8 shadow-md hover:shadow-lg transition">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <span class="text-indigo-600">②</span> Payment Type
+        </h2>
 
         <mat-radio-group [(ngModel)]="paymentType" (change)="onPaymentTypeChange($event.value)" class="space-y-4">
-          <!-- Autopay Option -->
-          <mat-radio-button value="autopay" class="block w-full">
-            <div class="rounded-xl border-2 p-5 transition-all duration-200"
-              [class.border-blue-500]="paymentType === 'autopay'"
-              [class.border-gray-200]="paymentType !== 'autopay'"
-              [class.bg-blue-50]="paymentType === 'autopay'">
-              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <div class="flex items-start space-x-3">
-                  <mat-icon class="text-blue-500" *ngIf="paymentType === 'autopay'">check_circle</mat-icon>
-                  <mat-icon class="text-gray-400" *ngIf="paymentType !== 'autopay'">radio_button_unchecked</mat-icon>
-                  <div>
-                    <p class="font-semibold text-gray-800">AutoPay Subscription</p>
-                    <p class="text-sm text-gray-600">Recurring ₹{{ selectedAmount }} every month</p>
-                  </div>
+          <mat-radio-button value="autopay" class="block">
+            <div class="rounded-xl border-2 p-5"
+              [class.border-indigo-600]="paymentType === 'autopay'"
+              [class.bg-indigo-50]="paymentType === 'autopay'"
+              [class.border-gray-300]="paymentType !== 'autopay'">
+              <div class="flex justify-between items-start">
+                <div>
+                  <p class="font-semibold text-gray-800">AutoPay Subscription</p>
+                  <p class="text-sm text-gray-600">₹{{ selectedAmount }} billed monthly</p>
                 </div>
-                <div class="flex flex-col items-end">
-                  <span class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full font-medium">Save 10%</span>
-                  <p class="text-xs text-blue-600 mt-1">Cancel anytime</p>
-                </div>
+                <span class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full font-semibold">Save 10%</span>
               </div>
+              <p class="text-xs text-indigo-700 mt-2">Cancel anytime via dashboard</p>
             </div>
           </mat-radio-button>
 
-          <!-- One-time Option -->
-          <mat-radio-button value="one-time" class="block w-full">
-            <div class="rounded-xl border-2 p-5 transition-all duration-200"
-              [class.border-blue-500]="paymentType === 'one-time'"
-              [class.border-gray-200]="paymentType !== 'one-time'"
-              [class.bg-blue-50]="paymentType === 'one-time'">
-              <div class="flex items-start space-x-3">
-                <mat-icon class="text-blue-500" *ngIf="paymentType === 'one-time'">check_circle</mat-icon>
-                <mat-icon class="text-gray-400" *ngIf="paymentType !== 'one-time'">radio_button_unchecked</mat-icon>
-                <div>
-                  <p class="font-semibold text-gray-800">One-Time Payment</p>
-                  <p class="text-sm text-gray-600">₹{{ selectedAmount }} for 1-month membership</p>
-                </div>
-              </div>
+          <mat-radio-button value="one-time" class="block">
+            <div class="rounded-xl border-2 p-5"
+              [class.border-indigo-600]="paymentType === 'one-time'"
+              [class.bg-indigo-50]="paymentType === 'one-time'"
+              [class.border-gray-300]="paymentType !== 'one-time'">
+              <p class="font-semibold text-gray-800">One-Time Payment</p>
+              <p class="text-sm text-gray-600 mt-1">₹{{ selectedAmount }} for 1-month membership only</p>
             </div>
           </mat-radio-button>
         </mat-radio-group>
       </div>
 
-      <!-- Summary Section with better card styling -->
-      <div *ngIf="isAmountValid" class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-xl p-6 space-y-4">
-        <h2 class="text-lg font-semibold text-blue-800 flex items-center">
-          <mat-icon class="mr-2 text-blue-600">summarize</mat-icon>
-          Membership Summary
-        </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-          <div class="flex items-center">
-            <mat-icon class="text-gray-500 mr-2" style="font-size: 18px;">person</mat-icon>
-            <span><span class="font-medium text-gray-700">Type:</span> {{ getSelectedPresetPlan()?.name || 'Custom' }}</span>
-          </div>
-          <div class="flex items-center">
-            <mat-icon class="text-gray-500 mr-2" style="font-size: 18px;">payments</mat-icon>
-            <span><span class="font-medium text-gray-700">Amount:</span> ₹{{ selectedAmount }}</span>
-          </div>
-          <div class="flex items-center">
-            <mat-icon class="text-gray-500 mr-2" style="font-size: 18px;">calendar_today</mat-icon>
-            <span><span class="font-medium text-gray-700">Duration:</span> {{ paymentType === 'autopay' ? 'Monthly' : '1 Month' }}</span>
-          </div>
-          <div class="flex items-center" *ngIf="paymentType === 'autopay'">
-            <mat-icon class="text-gray-500 mr-2" style="font-size: 18px;">update</mat-icon>
-            <span><span class="font-medium text-gray-700">Next Charge:</span> {{ getNextChargeDate() }}</span>
-          </div>
+      <!-- Summary -->
+      <div *ngIf="isAmountValid" class="bg-indigo-50 border border-indigo-100 rounded-3xl p-6 sm:p-8 shadow-md">
+        <h2 class="text-lg font-bold text-indigo-800 mb-3">Membership Summary</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-gray-800">
+          <div><span class="font-semibold">Type:</span> {{ getSelectedPresetPlan()?.name || 'Custom Individual Member' }}</div>
+          <div><span class="font-semibold">Amount:</span> ₹{{ selectedAmount }}</div>
+          <div><span class="font-semibold">Duration:</span> {{ paymentType === 'autopay' ? 'Monthly' : '1 Month Only' }}</div>
+          <div *ngIf="paymentType === 'autopay'"><span class="font-semibold">Next Charge:</span> {{ getNextChargeDate() }}</div>
         </div>
       </div>
 
-      <!-- Benefits with icons -->
-      <div *ngIf="isAmountValid" class="space-y-4">
-        <h2 class="text-lg font-semibold text-gray-800 flex items-center">
-          <mat-icon class="mr-2 text-blue-600">stars</mat-icon>
-          Membership Benefits
-        </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div *ngFor="let benefit of getFilteredBenefits()" class="flex items-start space-x-2">
-            <mat-icon class="text-green-500 mt-0.5" style="font-size: 18px;">check_circle</mat-icon>
-            <span class="text-gray-700">{{ benefit }}</span>
-          </div>
-        </div>
+      <!-- Benefits -->
+      <div *ngIf="isAmountValid" class="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm">
+        <h2 class="text-lg font-bold text-gray-800 mb-3">Benefits</h2>
+        <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2 list-disc list-inside text-sm text-gray-700">
+          <li>Access to exclusive PSF events</li>
+          <li>Professional networking opportunities</li>
+          <li>Community service participation</li>
+          <li>Skill-building resources</li>
+          <li>Voting rights in PSF elections</li>
+          <li *ngIf="selectedAmount >= 700">Priority event registration</li>
+          <li *ngIf="selectedAmount >= 1000">Premium networking sessions</li>
+          <li *ngIf="selectedAmount >= 1000">Exclusive mentorship</li>
+        </ul>
       </div>
     </mat-card-content>
 
-    <!-- CTA & Footer -->
-    <mat-card-actions class="px-6 pb-8 flex flex-col gap-4">
-      <!-- Payment Button with loading state -->
+    <!-- CTA Button -->
+    <mat-card-actions class="px-8 pb-12 flex flex-col gap-4 bg-white">
       <button 
         mat-raised-button 
-        color="primary"
-        class="w-full py-4 rounded-xl text-lg font-medium flex items-center justify-center gap-2 transition-all transform hover:scale-[1.01]"
+        class="w-full py-3 bg-green-600 rounded-xl text-lg font-semibold flex items-center justify-center gap-2 transition-all"
         [disabled]="!isPaymentButtonEnabled()"
-        [ngClass]="{
-          'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg': isPaymentButtonEnabled(),
-          'bg-gray-300 text-gray-500 cursor-not-allowed': !isPaymentButtonEnabled()
-        }"
+        [ngClass]="isPaymentButtonEnabled() 
+          ? 'bg-gradient-to-r from-indigo-600 to-blue-500 hover:from-indigo-700 hover:to-blue-600 text-white shadow-lg' 
+          : 'bg-gray-300 text-gray-500 cursor-not-allowed'"
         (click)="initiatePayment()">
-        <mat-spinner diameter="20" *ngIf="loading || paymentProcessing" class="mr-2"></mat-spinner>
-        <span class="flex-1">{{ getPaymentButtonText() }}</span>
-        <mat-icon class="animate-bounce-horizontal">arrow_forward</mat-icon>
+        <mat-spinner diameter="20" *ngIf="loading || paymentProcessing"></mat-spinner>
+        <span>{{ getPaymentButtonText() }}</span>
+        <mat-icon>arrow_forward</mat-icon>
       </button>
 
-      <!-- Info Note with better styling -->
-      <div *ngIf="isAmountValid" class="text-sm space-y-2">
-        <div *ngIf="paymentType === 'autopay'" class="flex items-start gap-3 bg-blue-50/50 p-4 rounded-lg border border-blue-100">
-          <mat-icon class="text-blue-500 mt-0.5">info</mat-icon>
-          <span class="text-gray-700">Your membership will auto-renew monthly. You can cancel anytime from your member dashboard.</span>
+      <!-- Info Notes -->
+      <div *ngIf="isAmountValid" class="text-sm text-gray-600 space-y-2">
+        <div *ngIf="paymentType === 'autopay'" class="flex items-start gap-2 bg-indigo-50 p-3 rounded-md">
+          <mat-icon>info</mat-icon>
+          <span>Your membership will auto-renew monthly. Cancel anytime from your dashboard.</span>
         </div>
-        <div *ngIf="paymentType === 'one-time'" class="flex items-start gap-3 bg-blue-50/50 p-4 rounded-lg border border-blue-100">
-          <mat-icon class="text-blue-500 mt-0.5">info</mat-icon>
-          <span class="text-gray-700">This is a one-time payment for 1-month membership. You can upgrade to AutoPay later.</span>
+        <div *ngIf="paymentType === 'one-time'" class="flex items-start gap-2 bg-indigo-50 p-3 rounded-md">
+          <mat-icon class="">info</mat-icon>
+          <span>This is a one-time payment for 1-month membership only.</span>
         </div>
       </div>
     </mat-card-actions>
 
-    <!-- Footer with better security badge -->
-    <mat-card-footer class="bg-gray-50 p-4 border-t border-gray-200">
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-2 text-sm text-gray-600">
-        <div class="flex items-center">
-          <mat-icon class="text-green-500 mr-1">lock</mat-icon>
-          <span>Secure 256-bit SSL encryption</span>
-        </div>
-        <div class="hidden sm:block">•</div>
-        <div class="flex items-center">
-          <span>Payments processed by</span>
-          <img src="https://razorpay.com/assets/razorpay-glyph.svg" alt="Razorpay" class="h-5 ml-2">
-        </div>
-      </div>
+    <!-- Footer -->
+    <mat-card-footer class="bg-gray-50 p-4 border-t border-gray-200 text-sm text-gray-600 flex items-center justify-center gap-2">
+      <mat-icon class="text-green-500">lock</mat-icon>
+      <span>Secure payment powered by</span>
+      <img src="https://razorpay.com/assets/razorpay-glyph.svg" alt="Razorpay" class="h-5 ml-1">
     </mat-card-footer>
+
   </mat-card>
 </div>
