@@ -14,13 +14,12 @@
       Export to Excel
     </button>
   </div>
-
-  <!-- Modern Filter Card -->
+<!-- Modern Filter Card -->
 <div class="bg-white rounded-2xl shadow-lg mb-8 overflow-hidden border border-gray-100/50">
-  <!-- Header with subtle gradient -->
+  <!-- Header -->
   <div class="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100/50">
     <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-3">
-      <mat-icon class="text-blue-600">filter_alt</mat-icon>
+      <i class="lucide lucide-filter text-blue-600"></i>
       <span>Filter RSVPs</span>
     </h3>
   </div>
@@ -28,139 +27,110 @@
   <form [formGroup]="filterForm" (ngSubmit)="applyFilter()" class="p-6 space-y-6">
     <!-- First Row - Search, Event, Status -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <!-- Search Field -->
+      <!-- Search -->
       <div>
-        <mat-form-field appearance="fill" class="w-full">
-          <mat-label class="text-gray-500">Search RSVPs</mat-label>
+        <label class="block text-gray-700 mb-1">Search RSVPs</label>
+        <div class="relative">
+          <i class="lucide lucide-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
           <input
-            matInput
+            type="text"
             formControlName="search"
             placeholder="Name, email, or phone"
-            class="!pt-1"
-          >
-          <mat-icon matPrefix class="text-gray-400/80 mr-2 -ml-1">search</mat-icon>
-        </mat-form-field>
+            class="w-full pl-2 p-2 border-2 border-[#bedafe] rounded-md focus:outline-none focus:ring-2 focus:ring-[#bedafe]"
+          />
+        </div>
       </div>
 
-      <!-- Event Field -->
+      <!-- Event Dropdown -->
       <div>
-        <mat-form-field appearance="fill" class="w-full">
-          <mat-label class="text-gray-500">Event</mat-label>
-          <mat-select formControlName="eventId">
-            <mat-option value="" class="text-gray-500">All events</mat-option>
-            <mat-option *ngFor="let event of events" [value]="event.id" class="flex items-center gap-2">
-              <span class="truncate">{{ event.name }}</span>
-              <span class="text-xs text-gray-500">{{ formatDate(event.date) }}</span>
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+        <label class="block text-gray-700 mb-1">Event</label>
+        <select
+          formControlName="eventId"
+          class="w-full p-2 border-2 border-[#bedafe] rounded-md focus:outline-none focus:ring-2 focus:ring-[#bedafe]"
+        >
+          <option value="">All events</option>
+          <ng-container *ngFor="let event of events">
+            <option [value]="event.id">
+              {{ event.name }} - {{ formatDate(event.date) }}
+            </option>
+          </ng-container>
+        </select>
       </div>
 
       <!-- RSVP Status -->
       <div>
-        <mat-form-field appearance="fill" class="w-full">
-          <mat-label class="text-gray-500">RSVP status</mat-label>
-          <mat-select formControlName="status">
-            <mat-option value="" class="text-gray-500">All statuses</mat-option>
-            <mat-option value="confirmed" class="flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-green-500"></span>
-              Confirmed
-            </mat-option>
-            <mat-option value="cancelled" class="flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-red-500"></span>
-              Cancelled
-            </mat-option>
-            <mat-option value="attended" class="flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-              Attended
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+        <label class="block text-gray-700 mb-1">RSVP Status</label>
+        <select
+          formControlName="status"
+          class="w-full p-2 border-2 border-[#bedafe] rounded-md focus:outline-none focus:ring-2 focus:ring-[#bedafe]"
+        >
+          <option value="">All statuses</option>
+          <option value="confirmed"> Confirmed</option>
+          <option value="cancelled">Cancelled</option>
+          <option value="attended">Attended</option>
+        </select>
       </div>
     </div>
 
     <!-- Second Row - Role, Dates -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <!-- Role Field -->
+      <!-- Role -->
       <div>
-        <mat-form-field appearance="fill" class="w-full">
-          <mat-label class="text-gray-500">Member role</mat-label>
-          <mat-select formControlName="role">
-            <mat-option value="" class="text-gray-500">All roles</mat-option>
-            <mat-option value="admin" class="flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
-              Admin
-            </mat-option>
-            <mat-option value="individual member" class="flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-green-500"></span>
-              Member
-            </mat-option>
-            <mat-option value="pending" class="flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-yellow-500"></span>
-              Pending
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+        <label class="block text-gray-700 mb-1">Member Role</label>
+        <select
+          formControlName="role"
+          class="w-full p-2 border-2 border-[#bedafe] rounded-md focus:outline-none focus:ring-2 focus:ring-[#bedafe]"
+        >
+          <option value="">All roles</option>
+          <option value="admin">Admin</option>
+          <option value="individual member">Member</option>
+          <option value="pending">Pending</option>
+        </select>
       </div>
 
       <!-- From Date -->
       <div>
-        <mat-form-field appearance="fill" class="w-full">
-          <mat-label class="text-gray-500">From date</mat-label>
-          <input
-            matInput
-            [matDatepicker]="pickerFrom"
-            formControlName="dateFrom"
-          >
-          <mat-datepicker-toggle
-            matSuffix
-            [for]="pickerFrom"
-            class="text-gray-400/80"
-          ></mat-datepicker-toggle>
-          <mat-datepicker #pickerFrom></mat-datepicker>
-        </mat-form-field>
+        <label class="block text-gray-700 mb-1">From Date</label>
+        <input
+          type="date"
+          formControlName="dateFrom"
+          class="w-full p-2 border-2 border-[#bedafe] rounded-md focus:outline-none focus:ring-2 focus:ring-[#bedafe]"
+        />
       </div>
 
       <!-- To Date -->
       <div>
-        <mat-form-field appearance="fill" class="w-full">
-          <mat-label class="text-gray-500">To date</mat-label>
-          <input
-            matInput
-            [matDatepicker]="pickerTo"
-            formControlName="dateTo"
-          >
-          <mat-datepicker-toggle
-            matSuffix
-            [for]="pickerTo"
-            class="text-gray-400/80"
-          ></mat-datepicker-toggle>
-          <mat-datepicker #pickerTo></mat-datepicker>
-        </mat-form-field>
+        <label class="block text-gray-700 mb-1">To Date</label>
+        <input
+          type="date"
+          formControlName="dateTo"
+          class="w-full p-2 border-2 border-[#bedafe] rounded-md focus:outline-none focus:ring-2 focus:ring-[#bedafe]"
+        />
       </div>
     </div>
 
-    <!-- Buttons Row -->
+    <!-- Buttons -->
     <div class="flex justify-end gap-3 pt-2">
       <button
         type="button"
         (click)="resetFilter()"
-        class="h-12 border !border-gray-300 !text-gray-600 hover:!bg-gray-50/80 flex items-center justify-center gap-2 rounded-lg transition-all px-6"
+        class="h-12 px-6 border border-gray-300 text-gray-600 hover:bg-gray-50 rounded-lg transition-all flex items-center gap-2"
       >
-        <mat-icon class="!text-gray-500 !text-xl">replay</mat-icon>
+        <i class="lucide lucide-rotate-ccw text-gray-500"></i>
         <span>Clear</span>
       </button>
+
       <button
-        color="primary"
         type="submit"
-        class="h-12 !bg-gradient-to-r !from-blue-600 !to-indigo-600 hover:!from-blue-700 hover:!to-indigo-700 !text-white !shadow-md flex items-center justify-center gap-2 rounded-lg transition-all px-6"
+        class="h-12 px-6 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md rounded-lg transition-all flex items-center gap-2"
       >
-        <mat-icon class="!text-white !text-xl">filter_list</mat-icon>
+        <i class="lucide lucide-filter text-white"></i>
         <span>Apply Filters</span>
       </button>
     </div>
   </form>
 </div>
+
 
   <!-- Loading State -->
   <div class="flex flex-col items-center justify-center py-16" *ngIf="loading">
