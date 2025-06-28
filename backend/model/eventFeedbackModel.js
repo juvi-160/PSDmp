@@ -9,7 +9,7 @@ const EventFeedback = sequelize.define(
       allowNull: false,
     },
     user_id: {
-      type: DataTypes.INTEGER,  // ✅ fixed
+      type: DataTypes.UUID,  // ✅ fixed
       allowNull: false,
     },
     rating: {

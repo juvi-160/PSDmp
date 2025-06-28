@@ -28,11 +28,11 @@ const Ticket = sequelize.define('Ticket', {
     allowNull: true
   },
   user_id: {
-    type: DataTypes.INTEGER, // ✅ changed from INTEGER to STRING
+    type: DataTypes.UUID, // ✅ changed from INTEGER to STRING
     allowNull: false
   },
   admin_id: {
-    type: DataTypes.INTEGER, // ✅ added for association with admin (optional)
+    type: DataTypes.UUID, // ✅ added for association with admin (optional)
     allowNull: true
   },
   resolved_at: {

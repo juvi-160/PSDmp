@@ -17,7 +17,7 @@ const TicketResponse = sequelize.define(
       allowNull: false,
     },
     user_id: {
-      type: DataTypes.INTEGER, // ✅ fixed from INTEGER to STRING
+      type: DataTypes.UUID, // ✅ fixed from INTEGER to STRING
       allowNull: false,
     },
     responder_email: {
