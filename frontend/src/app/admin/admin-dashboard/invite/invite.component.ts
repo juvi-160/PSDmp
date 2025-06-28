@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
@@ -7,18 +7,69 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './invite.component.html',
   styleUrl: './invite.component.css'
 })
-export class InviteComponent {
+export class InviteComponent implements OnInit {
   email: string = '';
+  password: string = '';
+  users: any[] = [];
+
+  private apiBase = 'http://localhost:3000/api/invite';
 
   constructor(private http: HttpClient) {}
 
-  sendInvite() {
-    if (!this.email) return;
+  ngOnInit() {
+    this.loadUsers();
+  }
 
-    this.http.post('http://localhost:3000/api/invite/send-invite', { email: this.email })
+  sendInvite() {
+    if (!this.email || !this.password) {
+      alert('Please enter both email and password');
+      return;
+    }
+
+    this.http.post(`${this.apiBase}/send-invite`, {
+      email: this.email,
+      password: this.password
+    }).subscribe({
+      next: () => {
+        alert('✅ Invitation sent & user created.');
+        this.email = '';
+        this.password = '';
+        this.loadUsers();
+      },
+      error: err => alert('❌ Error: ' + (err.error?.error || err.message || 'Unknown error'))
+    });
+  }
+
+  loadUsers() {
+    this.http.get(`${this.apiBase}/users`).subscribe({
+      next: (data: any) => this.users = data,
+      error: err => alert('❌ Failed to load users: ' + err.message)
+    });
+  }
+
+  updatePassword(user: any) {
+    if (!user.newPassword) return alert('Please enter a new password');
+
+    this.http.patch(`${this.apiBase}/users/${user.user_id}`, { password: user.newPassword })
       .subscribe({
-        next: () => alert('Invite sent!'),
-        error: (err) => alert('Error sending invite: ' + err.message)
+        next: () => {
+          alert('✅ Password updated');
+          user.newPassword = '';
+        },
+        error: err => alert('❌ Update failed: ' + err.message)
+      });
+  }
+
+  deleteUser(user: any) {
+    if (!confirm(`Are you sure you want to delete ${user.email}?`)) return;
+
+    this.http.delete(`${this.apiBase}/users/${user.user_id}`)
+      .subscribe({
+        next: () => {
+          alert('🗑️ User deleted');
+          this.users = this.users.filter(u => u.user_id !== user.user_id);
+        },
+        error: err => alert('❌ Delete failed: ' + err.message)
       });
   }
 }

@@ -12,7 +12,7 @@ export class AdminDashboardComponent {
     { path: "/admin/events", label: "Events" },
     { path: "/admin/event-rsvps", label: "Event RSVPs", icon: "how_to_reg" },
     { path: "/admin/tickets", label: "Support Tickets", icon: "support" },
-    { path: "/admin/invite", label: "Invite Members", icon: "drafts" },
+    // { path: "/admin/invite", label: "Invite Members", icon: "drafts" },
 
     // Add more admin sections here as needed
   ]

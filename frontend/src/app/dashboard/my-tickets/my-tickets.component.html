@@ -11,27 +11,53 @@
   </div>
 
   <!-- Filter Section -->
-  <mat-card class="filter-card">
-    <mat-card-content>
-      <div class="filter-row">
-        <mat-form-field appearance="outline">
-          <mat-label>Filter by Status</mat-label>
-          <mat-select [(value)]="statusFilter" (selectionChange)="applyStatusFilter()">
-            <mat-option value="">All Status</mat-option>
-            <mat-option value="open">Open</mat-option>
-            <mat-option value="in_progress">In Progress</mat-option>
-            <mat-option value="resolved">Resolved</mat-option>
-            <mat-option value="closed">Closed</mat-option>
-          </mat-select>
-        </mat-form-field>
+ <div class="modern-filter-container">
+  <!-- Header with gradient -->
+  <div class="filter-header">
+    <h3 class="filter-title">
+      <mat-icon class="filter-icon">tune</mat-icon>
+      <span>Filter Tickets</span>
+    </h3>
+  </div>
 
-        <button mat-stroked-button (click)="resetFilter()">
-          <mat-icon>clear</mat-icon>
-          Reset Filter
-        </button>
-      </div>
-    </mat-card-content>
-  </mat-card>
+  <!-- Filter content -->
+  <div class="filter-content">
+    <mat-card class="modern-filter-card">
+      <mat-card-content>
+        <div class="modern-filter-row">
+          <mat-form-field appearance="fill" class="modern-filter-field">
+            <mat-label class="filter-label">Filter by Status</mat-label>
+            <mat-select [(value)]="statusFilter" (selectionChange)="applyStatusFilter()" >
+              <mat-option value="" class="filter-option">All Status</mat-option>
+              <mat-option value="open" class="filter-option status-option">
+                <span class="status-indicator open"></span>
+                Open
+              </mat-option>
+              <mat-option value="in_progress" class="filter-option status-option">
+                <span class="status-indicator in-progress"></span>
+                In Progress
+              </mat-option>
+              <mat-option value="resolved" class="filter-option status-option">
+                <span class="status-indicator resolved"></span>
+                Resolved
+              </mat-option>
+              <mat-option value="closed" class="filter-option status-option">
+                <span class="status-indicator closed"></span>
+                Closed
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <button mat-stroked-button (click)="resetFilter()" class="modern-reset-button">
+            <mat-icon>clear</mat-icon>
+            <span>Reset Filter</span>
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
 
   <!-- Loading Spinner -->
   <div class="loading-container" *ngIf="loading">
