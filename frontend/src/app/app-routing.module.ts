@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { RouterModule, Routes, UrlSegment } from '@angular/router';
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password.component';
@@ -28,28 +28,23 @@ import { MyTicketsComponent } from './dashboard/my-tickets/my-tickets.component'
 import { TicketManagementComponent } from './admin/admin-dashboard/ticket-management/ticket-management.component';
 import { MembershipSelectionComponent } from './auth/membership-selection/membership-selection.component';
 import { InviteComponent } from './admin/admin-dashboard/invite/invite.component';
-import { HistoryComponent } from './dashboard/history/history.component';
 import { PaymentGuard } from './core/guards/payment.guard';
-import { AdminGuard } from './core/guards/admin.guard'; // ADDED
+import { AdminGuard } from './core/guards/admin.guard';
+import { PaymentHistoryComponent } from './dashboard/payment-history/payment-history.component';
 
 const routes: Routes = [
-  
-  { path: "", component: HomeComponent },
-  { path: "membership-selection", component: MembershipSelectionComponent },
-  { 
-    path: "payment", 
-    component: PaymentComponent, 
-    canActivate: [AuthGuard, PaymentGuard] 
-  },
-  { path: "login", component: LoginComponent },
-  { path: "register", component: RegisterComponent },
-  { path: "privacy-policy", component: PrivacyPolicyComponent },
-  { path: "terms", component: TermsConditionsComponent },
-  { path: "refund-policy", component: RefundCancellationComponent },
-  { path: "contact", component: ContactUsComponent },
-  { path: "forgot-password", component: ForgotPasswordComponent },
-  { path: "faqs", component: FaqsComponent },
-
+  { path: '', component: HomeComponent },
+  { path: 'membership-selection', component: MembershipSelectionComponent },
+  { path: 'register', component: RegisterComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'privacy-policy', component: PrivacyPolicyComponent },
+  { path: 'terms', component: TermsConditionsComponent },
+  { path: 'refund-policy', component: RefundCancellationComponent },
+  { path: 'contact', component: ContactUsComponent },
+  { path: 'profile', component: ProfileComponent },
+  { path: 'faqs', component: FaqsComponent },
+  { path: 'payment', component: PaymentComponent, canActivate: [AuthGuard, PaymentGuard] },
   {
     path: 'dashboard',
     component: DashboardComponent,
@@ -57,34 +52,54 @@ const routes: Routes = [
     children: [
       { path: '', component: DashboardHomeComponent },
       { path: 'event', component: EventsComponent },
-      { path: "my-events", component: MyEventsComponent },
-      { path: "raise-ticket", component: RaiseTicketComponent },
-      { path: "my-tickets", component: MyTicketsComponent },
+      { path: 'my-events', component: MyEventsComponent },
+      { path: 'raise-ticket', component: RaiseTicketComponent },
+      { path: 'my-tickets', component: MyTicketsComponent },
       { path: 'profile', component: ProfileComponent },
-      { path: 'history', component: HistoryComponent },
-    ]
+      { path: 'payment-history/users/:id', component: PaymentHistoryComponent },
+
+      // {
+      //   matcher: (segments: UrlSegment[]) => {
+      //     if (
+      //       segments.length === 4 &&
+      //       segments[0].path === 'dashboard' &&
+      //       segments[1].path === 'payment-history' &&
+      //       segments[2].path === 'users'
+      //     ) {
+      //       return {
+      //         consumed: segments,
+      //         posParams: {
+      //           userId: segments[3],
+      //         },
+      //       };
+      //     }
+      //     return null;
+      //   },
+      //   component: PaymentHistoryComponent,
+      // },
+    ],
   },
   {
-    path: "admin",
+    path: 'admin',
     component: AdminDashboardComponent,
     canActivate: [AuthGuard, AdminGuard],
     children: [
-      { path: "", redirectTo: "events", pathMatch: "full" },
-      { path: "events", component: EventListComponent },
-      { path: "events/add", component: EventFormComponent },
-      { path: "events/edit/:id", component: EventFormComponent },
+      { path: '', redirectTo: 'events', pathMatch: 'full' },
+      { path: 'events', component: EventListComponent },
+      { path: 'events/add', component: EventFormComponent },
+      { path: 'events/edit/:id', component: EventFormComponent },
       { path: 'users', component: UserManagementComponent },
-      { path: "users/:id", component: UserDetailsComponent },
-      { path: "event-rsvps", component: EventRsvpsComponent },
-      { path: "tickets", component: TicketManagementComponent },
-      { path: "invite", component: InviteComponent }
-    ]
+      { path: 'users/:id', component: UserDetailsComponent },
+      { path: 'event-rsvps', component: EventRsvpsComponent },
+      { path: 'tickets', component: TicketManagementComponent },
+      { path: 'invite', component: InviteComponent },
+    ],
   },
-  { path: '', redirectTo: 'home', pathMatch: 'full' }
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

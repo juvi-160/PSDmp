@@ -74,8 +74,8 @@ import { MemberComponent } from './auth/member/member.component';
 import { MembershipSelectionComponent } from './auth/membership-selection/membership-selection.component';
 
 import { InviteComponent } from './admin/admin-dashboard/invite/invite.component';
-import { HistoryComponent } from './dashboard/history/history.component';
 import { AdminGuard } from './core/guards/admin.guard';
+import { PaymentHistoryComponent } from './dashboard/payment-history/payment-history.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -100,7 +100,7 @@ const routes: Routes = [
       { path: "my-events", component: MyEventsComponent },
       { path: "raise-ticket", component: RaiseTicketComponent },
       { path: "my-tickets", component: MyTicketsComponent },
-      { path: "history", component: HistoryComponent}
+      { path: 'payment-history/users/:id', component: PaymentHistoryComponent },
     ]
   },
   {
@@ -158,7 +158,7 @@ const routes: Routes = [
     MemberComponent,
     InviteComponent,
     MemberComponent,
-    HistoryComponent
+    PaymentHistoryComponent,
   ],
   imports: [
     BrowserModule,

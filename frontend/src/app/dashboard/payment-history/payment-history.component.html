@@ -1,0 +1,27 @@
+<div *ngIf="loading" class="flex justify-center items-center mt-5">
+  <mat-spinner></mat-spinner>
+</div>
+
+<div *ngIf="error" class="text-red-500 text-lg text-center mt-5">
+  <p>{{ error }}</p>
+</div>
+
+<div *ngIf="paymentHistory" class="max-w-4xl mx-auto my-5">
+  <div class="bg-white shadow-lg rounded-lg p-6">
+    <div class="text-xl font-semibold text-center mb-4">
+      Payment History
+    </div>
+    <div class="space-y-3">
+      <p class="text-base font-medium">Total Payments: {{ paymentHistory.totalPayments }}</p>
+      <p class="text-base font-medium">Total Amount: ₹{{ paymentHistory.totalAmount }}</p>
+      <p class="text-base font-medium">Autopay: 
+        <span class="{{ paymentHistory.autopayEnabled ? 'text-green-500' : 'text-red-500' }}">
+          {{ paymentHistory.autopayEnabled ? 'Enabled' : 'Disabled' }}
+        </span>
+      </p>
+      <p class="text-base font-medium">Subscription Plan: {{ paymentHistory.subscription?.plan }}</p>
+      <p class="text-base font-medium">Status: {{ paymentHistory.subscription?.status }}</p>
+      <p class="text-base font-medium">Start Date: {{ paymentHistory.subscription?.startAt | date }}</p>
+    </div>
+  </div>
+</div>

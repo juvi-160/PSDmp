@@ -34,6 +34,10 @@
       <router-outlet></router-outlet>
     </mat-sidenav-content>
   </mat-sidenav-container>
+  <div *ngIf="!navItems?.length">
+  <p>No navigation items loaded.</p>
+</div>
+
 </div>
 
 <!-- WhatsApp button remains unchanged -->

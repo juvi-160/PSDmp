@@ -29,6 +29,7 @@ import paymentRoutes from './routes/payment.js';
 import profileRoutes from './routes/profile.js';
 import ticketRoutes from './routes/tickets.js';
 import subscriptionRoutes from "./routes/subscription.js"
+import paymenthistoryRoutes from './routes/payment-history.js';
 // import inviteRoutes from './routes/invite.js';
 
 // Get directory name
@@ -71,33 +72,16 @@ async function syncDb() {
 
 
 // Middleware
-const allowedOrigins = [
-  "https://join.psfhyd.org",
-  "http://localhost:4200",
-  "https://api.psfhyd.org",
-  "http://localhost:3000", // Add localhost for development
-  process.env.FRONTEND_URL, // Add environment variable for flexibility
-].filter(Boolean) // Remove undefined values
-
+// CHANGED CORS BLOCK STARTS HERE
 app.use(
   cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true)
-
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true)
-      } else {
-        console.log("Blocked by CORS:", origin)
-        callback(new Error("Not allowed by CORS"))
-      }
-    },
-    credentials: true,
+    origin: "*", // Wildcard to allow all origins
+    credentials: false, // Must be false when using wildcard origin
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin"],
   }),
 )
-
+// CHANGED CORS BLOCK ENDS HERE
 
 app.use(
   helmet({
@@ -134,6 +118,7 @@ app.use('/api/admin', adminRoutes);
 app.use("/api/subscription", subscriptionRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/tickets", ticketRoutes);
+app.use("/api/payment-history", paymenthistoryRoutes);
 // app.use('/api/invite', inviteRoutes);
 
 app.get("/", (req, res) => {
