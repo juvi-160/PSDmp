@@ -48,7 +48,7 @@
   <mat-card class="profile-form-card" *ngIf="!loading && !error">
     <mat-card-header>
       <mat-card-title>Profile Information</mat-card-title>
-      <mat-card-subtitle>Update your personal information and preferences</mat-card-subtitle>
+      <mat-card-subtitle class="error-message">Update your personal information and preferences</mat-card-subtitle>
     </mat-card-header>
 
     <mat-card-content>
@@ -62,7 +62,7 @@
               <mat-label>Full Name</mat-label>
               <input matInput formControlName="name" readonly>
               <mat-icon matSuffix>person</mat-icon>
-              <mat-hint>Name cannot be changed</mat-hint>
+              <mat-hint class="error-message">Name cannot be changed</mat-hint>
             </mat-form-field>
           </div>
 
@@ -71,7 +71,7 @@
               <mat-label>Email Address</mat-label>
               <input matInput formControlName="email" readonly>
               <mat-icon matSuffix>email</mat-icon>
-              <mat-hint>Email cannot be changed</mat-hint>
+              <mat-hint class="error-message">Email cannot be changed</mat-hint>
             </mat-form-field>
           </div>
 
@@ -109,7 +109,7 @@
               <mat-label>Profession</mat-label>
               <input matInput formControlName="profession" placeholder="What do you do for work?">
               <mat-icon matSuffix>work</mat-icon>
-              <mat-error *ngIf="profileForm.get('profession')?.hasError('maxlength')">
+              <mat-error *ngIf="profileForm.get('profession')?.hasError('maxlength')" class="error-message">
                 Profession cannot exceed 100 characters
               </mat-error>
             </mat-form-field>
