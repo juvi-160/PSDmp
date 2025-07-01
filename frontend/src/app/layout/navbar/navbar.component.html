@@ -1,7 +1,5 @@
 <div class="bg-blue-200 text-black shadow-md border-b border-blue-400">
-  <div
-    class="container mx-auto px-4 flex items-center justify-between h-16 w-full"
-  >
+  <div class="container mx-auto px-4 flex items-center justify-between h-16 w-full">
     <!-- Logo Container -->
     <div class="flex items-center space-x-3">
       <img
@@ -19,7 +17,7 @@
       </span> -->
     </div>
 
-    <!-- Navigation Links -->
+    <!-- Navigation Links (Desktop) -->
     <div class="hidden md:flex items-center gap-4">
       <a
         routerLink="/"
@@ -48,6 +46,13 @@
         Contact
       </a>
     </div>
+
+    <!-- Mobile Menu Button -->
+    <button
+      class="md:hidden text-black focus:outline-none"
+      (click)="isMenuOpen = !isMenuOpen">
+      <mat-icon>{{ isMenuOpen ? 'close' : 'menu' }}</mat-icon>
+    </button>
 
     <!-- Mobile / Auth Buttons -->
     <!-- Unauthenticated Links -->
@@ -89,19 +94,37 @@
         </button>
       </mat-menu>
     </ng-container> -->
-
-    <!-- Mobile Menu Button -->
-    <!-- <button
-        class="md:hidden text-white"
-        (click)="toggleMobileMenu()">
-      <mat-icon>menu</mat-icon>
-    </button> -->
   </div>
 
   <!-- Mobile Menu -->
-  <!-- <div class="md:hidden bg-blue-800" *ngIf="mobileMenuOpen">
-    <div class="flex flex-col px-4 py-2 space-y-1">
-      ...
+  <div class="md:hidden bg-blue-100 border-t border-blue-300" *ngIf="isMenuOpen">
+    <div class="flex flex-col px-4 py-2 space-y-2">
+      <a
+        routerLink="/"
+        routerLinkActive
+        #rlaMobile1="routerLinkActive"
+        [routerLinkActiveOptions]="{ exact: true }"
+        [ngClass]="{
+          'bg-blue-400 text-white': rlaMobile1.isActive,
+          'bg-blue-300/50 hover:bg-blue-300/80': !rlaMobile1.isActive
+        }"
+        class="block px-4 py-2 rounded-md transition-colors duration-200 font-medium"
+      >
+        Home
+      </a>
+      <a
+        routerLink="/contact"
+        routerLinkActive
+        #rlaMobile2="routerLinkActive"
+        [routerLinkActiveOptions]="{ exact: true }"
+        [ngClass]="{
+          'bg-blue-400 text-white': rlaMobile2.isActive,
+          'bg-blue-300/50 hover:bg-blue-300/80': !rlaMobile2.isActive
+        }"
+        class="block px-4 py-2 rounded-md transition-colors duration-200 font-medium"
+      >
+        Contact
+      </a>
     </div>
-  </div> -->
+  </div>
 </div>
