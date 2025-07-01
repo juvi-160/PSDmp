@@ -1,12 +1,12 @@
 <div class="profile-container">
   <!-- Profile Header -->
   <div class="profile-header">
-    <div class="profile-avatar">
-      <img 
-        [src]="user?.profilePicture || '/assets/images/default-avatar.png'" 
+    <!-- <div class="profile-avatar">
+      <img
+        [src]="user?.profilePicture || '/assets/images/default-avatar.png'"
         [alt]="user?.name + ' profile picture'"
         class="avatar-image">
-    </div>
+    </div> -->
     <div class="profile-info">
       <h2>{{ user?.name }}</h2>
         <p class="role-badge" [ngClass]="'role-' + (user?.role || '').replace(' ', '-')">
@@ -22,8 +22,8 @@
         <h3>Complete Your Profile</h3>
         <span class="completion-percentage">{{ getProfileCompletionPercentage() }}%</span>
       </div>
-      <mat-progress-bar 
-        mode="determinate" 
+      <mat-progress-bar
+        mode="determinate"
         [value]="getProfileCompletionPercentage()"
         class="completion-progress">
       </mat-progress-bar>
@@ -48,7 +48,7 @@
   <mat-card class="profile-form-card" *ngIf="!loading && !error">
     <mat-card-header>
       <mat-card-title>Profile Information</mat-card-title>
-      <mat-card-subtitle>Update your personal information and preferences</mat-card-subtitle>
+      <mat-card-subtitle class="error-message">Update your personal information and preferences</mat-card-subtitle>
     </mat-card-header>
 
     <mat-card-content>
@@ -56,27 +56,27 @@
         <!-- Basic Information Section -->
         <div class="form-section">
           <h3 class="section-title">Basic Information</h3>
-          
+
           <div class="form-row">
-            <mat-form-field appearance="outline" class="full-width">
+            <mat-form-field  class="full-width">
               <mat-label>Full Name</mat-label>
               <input matInput formControlName="name" readonly>
               <mat-icon matSuffix>person</mat-icon>
-              <mat-hint>Name cannot be changed</mat-hint>
+              <mat-hint class="error-message">Name cannot be changed</mat-hint>
             </mat-form-field>
           </div>
 
           <div class="form-row">
-            <mat-form-field appearance="outline" class="full-width">
+            <mat-form-field  class="full-width">
               <mat-label>Email Address</mat-label>
               <input matInput formControlName="email" readonly>
               <mat-icon matSuffix>email</mat-icon>
-              <mat-hint>Email cannot be changed</mat-hint>
+              <mat-hint class="error-message">Email cannot be changed</mat-hint>
             </mat-form-field>
           </div>
 
           <div class="form-row">
-            <mat-form-field appearance="outline" class="full-width">
+            <mat-form-field  class="full-width">
               <mat-label>Phone Number</mat-label>
               <input matInput formControlName="phone" placeholder="Enter your phone number">
               <mat-icon matSuffix>phone</mat-icon>
@@ -90,13 +90,13 @@
         <!-- Personal Details Section -->
         <div class="form-section">
           <h3 class="section-title">Personal Details</h3>
-          
+
           <div class="form-row">
-            <mat-form-field appearance="outline" class="full-width">
+            <mat-form-field  class="full-width">
               <mat-label>Age Group</mat-label>
               <mat-select formControlName="ageGroup">
                 <mat-option value="">Select age group</mat-option>
-                <mat-option *ngFor="let group of ageGroups" [value]="group.value">
+                <mat-option class="mat-option" *ngFor="let group of ageGroups" [value]="group.value">
                   {{ group.label }}
                 </mat-option>
               </mat-select>
@@ -105,18 +105,18 @@
           </div>
 
           <div class="form-row">
-            <mat-form-field appearance="outline" class="full-width">
+            <mat-form-field  class="full-width">
               <mat-label>Profession</mat-label>
               <input matInput formControlName="profession" placeholder="What do you do for work?">
               <mat-icon matSuffix>work</mat-icon>
-              <mat-error *ngIf="profileForm.get('profession')?.hasError('maxlength')">
+              <mat-error *ngIf="profileForm.get('profession')?.hasError('maxlength')" class="error-message">
                 Profession cannot exceed 100 characters
               </mat-error>
             </mat-form-field>
           </div>
 
           <div class="form-row">
-            <mat-form-field appearance="outline" class="full-width">
+            <mat-form-field  class="full-width">
               <mat-label>City</mat-label>
               <input matInput formControlName="city" placeholder="Which city do you live in?">
               <mat-icon matSuffix>location_city</mat-icon>
@@ -130,12 +130,12 @@
         <!-- Interests Section -->
         <div class="form-section">
           <h3 class="section-title">Areas of Interest</h3>
-          
+
           <div class="form-row">
-            <mat-form-field appearance="outline" class="full-width">
+            <mat-form-field  class="full-width">
               <mat-label>Add your interests</mat-label>
               <mat-chip-grid #chipGrid>
-                <mat-chip-row 
+                <mat-chip-row
                   *ngFor="let interest of areasOfInterest"
                   (removed)="removeInterest(interest)"
                   [removable]="true">
@@ -145,7 +145,7 @@
                   </button>
                 </mat-chip-row>
               </mat-chip-grid>
-              <input 
+              <input
                 placeholder="Type and press Enter to add interests..."
                 [matChipInputFor]="chipGrid"
                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
@@ -166,13 +166,13 @@
         <!-- Why PSF Section -->
         <div class="form-section">
           <h3 class="section-title">About You</h3>
-          
+
           <div class="form-row">
-            <mat-form-field appearance="outline" class="full-width">
+            <mat-form-field  class="full-width">
               <mat-label>Why PSF?</mat-label>
-              <textarea 
-                matInput 
-                formControlName="whyPsf" 
+              <textarea
+                matInput
+                formControlName="whyPsf"
                 rows="4"
                 placeholder="Tell us why you joined PSF and what you hope to achieve...">
               </textarea>
@@ -190,9 +190,9 @@
     </mat-card-content>
 
     <mat-card-actions class="form-actions">
-      <button 
-        mat-raised-button 
-        color="primary" 
+      <button
+        mat-raised-button
+        color="primary"
         (click)="onSubmit()"
         [disabled]="profileForm.invalid || saving">
         <mat-spinner diameter="20" *ngIf="saving" class="spinner"></mat-spinner>
