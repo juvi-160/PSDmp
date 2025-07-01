@@ -2,9 +2,9 @@
   padding: 20px;
   max-width: 800px;
   margin: 0 auto;
+  font-family: sans-serif;
 }
 
-/* Profile Header */
 .profile-header {
   display: flex;
   align-items: center;
@@ -42,10 +42,12 @@
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Profile Completion */
 .completion-card {
   margin-bottom: 20px;
   border-left: 4px solid #ff9800;
+  padding: 16px;
+  background-color: #fff3e0;
+  border-radius: 8px;
 }
 
 .completion-header {
@@ -55,27 +57,26 @@
   margin-bottom: 10px;
 }
 
-.completion-header h3 {
-  margin: 0;
-  color: #ff9800;
-}
-
+.completion-header h3,
 .completion-percentage {
-  font-weight: 600;
   color: #ff9800;
 }
 
 .completion-progress {
+  width: 100%;
+  height: 8px;
+  background-color: #ffe0b2;
+  border-radius: 4px;
   margin-bottom: 10px;
+  overflow: hidden;
 }
 
-.completion-text {
-  margin: 0;
-  color: #666;
-  font-size: 0.9rem;
+.progress-bar {
+  height: 100%;
+  background-color: #fb8c00;
+  transition: width 0.3s ease;
 }
 
-/* Loading and Error */
 .loading-container,
 .error-container {
   display: flex;
@@ -85,16 +86,32 @@
   padding: 40px;
 }
 
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #ccc;
+  border-top-color: #333;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .error-message {
   color: #f44336;
   margin-bottom: 20px;
   text-align: center;
 }
 
-/* Form Styling */
 .profile-form-card {
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  padding: 20px;
 }
 
 .form-section {
@@ -103,13 +120,8 @@
   border-bottom: 1px solid #eee;
 }
 
-.form-section:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-}
-
 .section-title {
-  color: var(--primary-color);
+  color: #00796b;
   font-size: 1.2rem;
   font-weight: 500;
   margin-bottom: 20px;
@@ -121,49 +133,92 @@
   content: "";
   width: 4px;
   height: 20px;
-  background-color: var(--primary-color);
+  background-color: #00796b;
   margin-right: 10px;
   border-radius: 2px;
 }
 
 .form-row {
   margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
-.full-width {
-  width: 100%;
-}
-
-/* Interests */
-.interests-display {
-  margin-top: 15px;
-  padding: 15px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-}
-
-.interests-label {
-  margin: 0 0 10px 0;
+.form-row label {
   font-weight: 500;
-  color: #666;
+  margin-bottom: 4px;
 }
 
-/* Form Actions */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+select,
+textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+textarea {
+  resize: vertical;
+}
+
+small {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.chip {
+  display: flex;
+  align-items: center;
+  background-color: #e0f2f1;
+  border-radius: 16px;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+}
+
+.chip button {
+  background: none;
+  border: none;
+  margin-left: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
 .form-actions {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  padding: 16px 24px;
-  background-color: #f8f9fa;
-  border-top: 1px solid #eee;
+  margin-top: 20px;
 }
 
-.spinner {
-  display: inline-block;
-  margin-right: 8px;
+.btn {
+  padding: 10px 16px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
-/* Responsive Design */
+.btn.primary {
+  background-color: #00796b;
+  color: white;
+}
+
+.btn.primary:disabled {
+  background-color: #b2dfdb;
+  cursor: not-allowed;
+}
+
 @media (max-width: 768px) {
   .profile-container {
     padding: 10px;
@@ -191,25 +246,4 @@
   .form-actions {
     flex-direction: column;
   }
-}
-
-/* Material Design Overrides */
-.mat-mdc-form-field {
-  margin-bottom: 16px;
-}
-
-.mat-mdc-chip-grid {
-  min-height: 48px;
-}
-
-.mat-mdc-progress-bar {
-  height: 8px;
-  border-radius: 4px;
-}
-
-
-.member-since {
-  margin-top: 4px;
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.85);
 }
