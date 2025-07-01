@@ -34,8 +34,8 @@
             <button *ngFor="let plan of presetPlans"
               mat-raised-button
               (click)="selectPresetAmount(plan.amount)"
-              [ngClass]="selectedAmount === plan.amount 
-                ? 'bg-indigo-600 text-white hover:bg-indigo-700' 
+              [ngClass]="selectedAmount === plan.amount
+                ? 'bg-indigo-600 text-white hover:bg-indigo-700'
                 : 'bg-white border border-gray-300 text-gray-800 hover:border-indigo-400'"
               class="rounded-xl py-2 px-3 text-base font-medium transition-all duration-200">
               ₹{{ plan.amount }}
@@ -114,12 +114,12 @@
 
     <!-- CTA Button -->
     <mat-card-actions class="px-8 pb-12 flex flex-col gap-4 bg-white">
-      <button 
-        mat-raised-button 
+      <button
+        mat-raised-button
         class="w-full py-3 bg-green-600 rounded-xl text-lg font-semibold flex items-center justify-center gap-2 transition-all"
         [disabled]="!isPaymentButtonEnabled()"
-        [ngClass]="isPaymentButtonEnabled() 
-          ? 'bg-gradient-to-r from-indigo-600 to-blue-500 hover:from-indigo-700 hover:to-blue-600 text-white shadow-lg' 
+        [ngClass]="isPaymentButtonEnabled()
+          ? 'bg-gradient-to-r from-indigo-600 to-blue-500 hover:from-indigo-700 hover:to-blue-600 text-white shadow-lg'
           : 'bg-gray-300 text-gray-500 cursor-not-allowed'"
         (click)="initiatePayment()">
         <mat-spinner diameter="20" *ngIf="loading || paymentProcessing"></mat-spinner>
