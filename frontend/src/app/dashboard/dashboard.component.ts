@@ -50,7 +50,7 @@ export class DashboardComponent implements OnInit {
 
   // Optional admin role check
   this.isAdmin =
-    user?.['https://api.psfhyd.org/roles']?.includes('admin') ||
+    user?.['http://localhost:3000/roles']?.includes('admin') ||
     user?.app_metadata?.roles?.includes('admin') ||
     user?.user_metadata?.role === 'admin';
 });
