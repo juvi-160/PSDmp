@@ -96,7 +96,7 @@
               <mat-label>Age Group</mat-label>
               <mat-select formControlName="ageGroup">
                 <mat-option value="">Select age group</mat-option>
-                <mat-option *ngFor="let group of ageGroups" [value]="group.value">
+                <mat-option class="mat-option" *ngFor="let group of ageGroups" [value]="group.value">
                   {{ group.label }}
                 </mat-option>
               </mat-select>

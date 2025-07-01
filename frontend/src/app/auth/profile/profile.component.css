@@ -94,7 +94,10 @@
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
-
+.mat-option {
+  width: 100%;
+  background-color: #0395af;
+}
 @keyframes spin {
   to {
     transform: rotate(360deg);
