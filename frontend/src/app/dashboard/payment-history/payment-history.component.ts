@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PaymentHistoryService } from '../../core/services/payment-history.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-payment-history',
@@ -11,50 +12,78 @@ import { PaymentHistoryService } from '../../core/services/payment-history.servi
 })
 export class PaymentHistoryComponent implements OnInit {
   userId: string | null = null;
-  paymentHistory: any = {}; // Holds payment and subscription data
+  paymentHistory: any = {};
   loading = false;
   error = '';
+  currentUser: any;
+  showPaymentIntegration = false;
+  showPaymentHistory = false;
+  cancellingAutoPay = false;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private paymentHistoryService: PaymentHistoryService, // Service for fetching data
+    private paymentHistoryService: PaymentHistoryService,
+    private authService: AuthService,
     private snackBar: MatSnackBar
   ) {}
 
- ngOnInit(): void {
-  this.route.params.subscribe((params) => {
-  const id = params['id'];
-  console.log('Extracted User ID:', id);
-
-  if (id) {
-    this.userId = id;
-    this.loadPaymentHistory();
-  } else {
-    this.handleInvalidId();
-  }
-});
-
-}
-
-
-  loadPaymentHistory(): void {
-    if (!this.userId) {
-      this.handleInvalidId();
-      return;
-    }
-
-    this.loading = true;
-    this.paymentHistoryService.getPaymentHistory(this.userId).subscribe({
-      next: (data) => {
-        this.paymentHistory = data;
-        this.loading = false;
-      },
-      error: (error) => {
-        this.loading = false;
-        this.handleError(error);  // Handle error more extensively
-      },
+  ngOnInit(): void {
+    this.route.params.subscribe((params) => {
+      const id = params['id'];
+      if (id) {
+        this.userId = id;
+        this.initComponentLogic();
+      } else {
+        this.handleInvalidId();
+      }
     });
+  }
+
+  initComponentLogic(): void {
+    this.loading = true;
+
+    // Get current user
+    this.authService.currentUser.subscribe((user) => {
+      if (!user) {
+        this.error = 'User not authenticated.';
+        this.loading = false;
+        return;
+      }
+
+      this.currentUser = user;
+
+      this.paymentHistoryService.getPaymentHistory(this.userId!).subscribe({
+        next: (data) => {
+          this.paymentHistory = data;
+
+          // Conditions
+          const isAssociate = user.role === 'associate member';
+          const hasPaid = data?.totalPayments > 0;
+
+          if (isAssociate && !hasPaid) {
+            this.showPaymentIntegration = true;
+            this.showPaymentHistory = false;
+          } else {
+            this.showPaymentIntegration = false;
+            this.showPaymentHistory = true;
+          }
+
+          this.loading = false;
+        },
+        error: (error) => {
+          this.loading = false;
+          this.handleError(error);
+        },
+      });
+    });
+  }
+
+  cancelAutoPay(): void {
+    if (!confirm('Are you sure you want to cancel AutoPay?')) return;
+
+    this.cancellingAutoPay = true;
+
   }
 
   handleInvalidId(): void {
@@ -64,27 +93,19 @@ export class PaymentHistoryComponent implements OnInit {
   }
 
   handleError(error: any): void {
-    // Detailed logging of the error
     if (error.status) {
-      // Network or server-side error (HTTP error)
-      console.error(`HTTP Error - Status: ${error.status}, Message: ${error.message}`);
       if (error.status === 404) {
-        this.error = 'User not found. Please verify the user ID.';
+        this.error = 'User not found.';
       } else if (error.status === 500) {
-        this.error = 'Internal Server Error. Please try again later.';
+        this.error = 'Internal Server Error.';
       } else {
-        this.error = `Unexpected error occurred (Status: ${error.status})`;
+        this.error = `Unexpected error (Status: ${error.status})`;
       }
     } else {
-      // Network error, may indicate no internet or other connection issues
-      console.error('Network error:', error);
-      this.error = 'Network error. Please check your internet connection.';
+      this.error = 'Network error. Please check your connection.';
     }
 
-    // Show a snackbar to the user
     this.snackBar.open(this.error, 'Dismiss', { duration: 5000 });
-
-    // For developers, log the full error to console
-    console.error('Full Error Details:', error);
+    console.error('Full Error:', error);
   }
 }
