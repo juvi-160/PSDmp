@@ -1,12 +1,12 @@
 <div class="profile-container">
   <!-- Profile Header -->
   <div class="profile-header">
-    <div class="profile-avatar">
+    <!-- <div class="profile-avatar">
       <img
         [src]="user?.profilePicture || '/assets/images/default-avatar.png'"
         [alt]="user?.name + ' profile picture'"
         class="avatar-image">
-    </div>
+    </div> -->
     <div class="profile-info">
       <h2>{{ user?.name }}</h2>
         <p class="role-badge" [ngClass]="'role-' + (user?.role || '').replace(' ', '-')">
