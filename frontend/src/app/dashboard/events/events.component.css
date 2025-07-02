@@ -40,11 +40,11 @@
 }
 
 .events-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  display: flex;
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
   gap: 1.5rem;
+  justify-content: flex-start;
 }
-
 .event-card {
   display: flex;
   flex-direction: column;
@@ -100,7 +100,7 @@ mat-card-actions button {
   font-size: 0.875rem;
   font-weight: 500;
   text-transform: none;
-  
+
 }
 
 .past-event-label {
@@ -125,5 +125,18 @@ mat-card-actions button {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
+  }
+}
+@media (max-width: 1024px) {
+  .event-card {
+    flex: 0 0 calc(50% - 1rem);
+    max-width: calc(50% - 1rem);
+  }
+}
+
+@media (max-width: 640px) {
+  .event-card {
+    flex: 0 0 100%;
+    max-width: 100%;
   }
 }
