@@ -10,8 +10,8 @@ const EventRSVP = sequelize.define(
       allowNull: false,
     },
     user_id: {
-      type: DataTypes.UUID,
-      allowNull: false,
+      type: DataTypes.STRING,
+      allowNull: false
     },
     status: {
       type: DataTypes.ENUM("confirmed", "cancelled", "attended"),

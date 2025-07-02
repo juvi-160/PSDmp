@@ -28,6 +28,7 @@ const formatUserResponse = (user) => {
     isEmailVerified: !!user.is_email_verified,
     isPhoneVerified: !!user.is_phone_verified,
     hasPaid: !!user.has_paid,
+    autopayEnabled: !!user.autopay_enabled,
     createdAt: user.created_at,
     updatedAt: user.updated_at,
     paymentRequired: user.role === 'individual member' && !user.has_paid,
@@ -202,6 +203,7 @@ export const updateUser = async (req, res) => {
       is_email_verified: isEmailVerified !== undefined ? isEmailVerified : user.is_email_verified,
       is_phone_verified: isPhoneVerified !== undefined ? isPhoneVerified : user.is_phone_verified,
       has_paid: updatedHasPaid,
+      autopay_enabled: autopayEnabled !== undefined ? autopayEnabled : user.autopay_enabled
     });
 
     res.status(200).json(formatUserResponse(await user.reload()));
@@ -358,6 +360,7 @@ export const exportUsersToExcel = async (req, res) => {
       { header: "Phone Verified", key: "is_phone_verified", width: 15 },
       { header: "Payment Status", key: "has_paid", width: 15 },
       { header: "Payment Amount", key: "payment_amount", width: 20 },
+      { header: "Autopay Enabled", key: "autopay_enabled", width: 15 },
       { header: "Registered On", key: "created_at", width: 20 },
       { header: "Last Updated", key: "updated_at", width: 20 },
     ];
@@ -387,6 +390,7 @@ export const exportUsersToExcel = async (req, res) => {
         has_paid: user.role === 'associate member' ? "Not Required" : 
                  (user.has_paid ? "Paid" : "Not Paid"),
         payment_amount: formatPaymentAmount(paymentAmount, paymentCurrency, user.role),
+        autopay_enabled: user.autopay_enabled ? "Yes" : "No",
         created_at: new Date(user.created_at).toLocaleString(),
         updated_at: new Date(user.updated_at).toLocaleString(),
       });

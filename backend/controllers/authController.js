@@ -1,67 +1,72 @@
 import User from "../model/userModel.js";
 import Order from "../model/orderModel.js";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
 import { auth } from "express-oauth2-jwt-bearer";
 import crypto from "crypto";
 import { Op } from "sequelize";
 
-// Auth0 middleware
+// Middleware
 const checkJwt = auth({
   audience: process.env.AUTH0_AUDIENCE,
   issuerBaseURL: `https://${process.env.AUTH0_DOMAIN}/`,
   tokenSigningAlg: "RS256",
 });
 
-// Admin check middleware
 const checkAdmin = (req, res, next) => {
-  if (req.auth?.payload?.roles?.includes('admin')) {
-    return next();
-  }
+  if (req.auth?.payload?.roles?.includes("admin")) return next();
   res.status(403).json({ message: "Admin access required" });
 };
 
-// Debug middleware
 const logToken = (req, res, next) => {
   console.log("Auth headers:", req.headers.authorization);
   console.log("Auth object:", req.auth);
   next();
 };
 
-// Format user response helper
-const formatUserResponse = (user) => {
-  return {
-    id: user.id,
-    auth0Id: user.auth0_id,
-    name: user.name,
-    email: user.email,
-    phone: user.phone,
-    role: user.role,
-    isEmailVerified: !!user.is_email_verified,
-    isPhoneVerified: !!user.is_phone_verified,
-    hasPaid: !!user.has_paid,
-    createdAt: user.created_at,
-    updatedAt: user.updated_at,
-    paymentRequired: user.role === 'individual member' && !user.has_paid,
-    isAssociateMember: user.role === 'associate member'
-  };
+// Format user response
+const formatUserResponse = (user) => ({
+  id: user.id,
+  auth0Id: user.auth0_id,
+  name: user.name,
+  email: user.email,
+  phone: user.phone,
+  role: user.role,
+  isEmailVerified: !!user.is_email_verified,
+  isPhoneVerified: !!user.is_phone_verified,
+  hasPaid: !!user.has_paid,
+  isAutopayEnabled: !!user.is_autopay_enabled,
+  createdAt: user.created_at,
+  updatedAt: user.updated_at,
+  paymentRequired: user.role === "individual member" && !user.has_paid,
+  isAssociateMember: user.role === "associate member",
+});
+
+// Generate custom ID: PSF_00001
+const generateCustomUserId = async () => {
+  const lastUser = await User.findOne({
+    order: [["created_at", "DESC"]],
+  });
+
+  let nextId = 1;
+  if (lastUser?.id?.startsWith("PSF_")) {
+    const lastNumber = parseInt(lastUser.id.replace("PSF_", ""), 10);
+    if (!isNaN(lastNumber)) {
+      nextId = lastNumber + 1;
+    }
+  }
+
+  return `PSF_${String(nextId).padStart(5, "0")}`;
 };
 
 // Get user profile
 const getUserProfile = async (req, res) => {
   try {
     const sub = req.auth?.sub || req.auth?.payload?.sub;
-    if (!sub) {
-      return res.status(401).json({ message: "Invalid authentication token" });
-    }
+    if (!sub) return res.status(401).json({ message: "Invalid authentication token" });
 
-    const user = await User.findOne({
-      where: { auth0_id: sub },
-    });
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    const user = await User.findOne({ where: { auth0_id: sub } });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
     res.status(200).json(formatUserResponse(user));
   } catch (error) {
@@ -74,26 +79,25 @@ const getUserProfile = async (req, res) => {
 const createUser = async (req, res) => {
   try {
     const sub = req.auth?.sub || req.auth?.payload?.sub;
-    if (!sub) {
-      return res.status(401).json({ message: "Invalid authentication token" });
-    }
+    if (!sub) return res.status(401).json({ message: "Invalid authentication token" });
 
     const { name, email } = req.body;
 
     const existingUser = await User.findOne({
       where: { [Op.or]: [{ auth0_id: sub }, { email }] },
     });
+    if (existingUser) return res.status(200).json(formatUserResponse(existingUser));
 
-    if (existingUser) {
-      return res.status(200).json(formatUserResponse(existingUser));
-    }
+    const newId = await generateCustomUserId();
 
     const newUser = await User.create({
+      id: newId,
       auth0_id: sub,
       name,
       email,
-      role: 'associate member',
-      has_paid: true // Associate members don't need payment
+      role: "associate member",
+      has_paid: true,
+      is_autopay_enabled: false,
     });
 
     res.status(201).json(formatUserResponse(newUser));
@@ -107,15 +111,12 @@ const createUser = async (req, res) => {
 const verifyPayment = async (req, res) => {
   try {
     const sub = req.auth?.sub || req.auth?.payload?.sub;
-    if (!sub) {
-      return res.status(401).json({ message: "Invalid authentication token" });
-    }
+    if (!sub) return res.status(401).json({ message: "Invalid authentication token" });
 
     const user = await User.findOne({ where: { auth0_id: sub } });
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Skip payment verification for associate members
-    if (user.role === 'associate member') {
+    if (user.role === "associate member") {
       return res.status(200).json(formatUserResponse(user));
     }
 
@@ -144,38 +145,28 @@ const verifyPayment = async (req, res) => {
   }
 };
 
-// Admin-only role change
+// Change user role (admin-only)
 const changeUserRole = async (req, res) => {
   try {
     const { userId } = req.params;
     const { newRole } = req.body;
 
-    if (!['associate member', 'individual member'].includes(newRole)) {
+    if (!["associate member", "individual member"].includes(newRole)) {
       return res.status(400).json({ message: "Invalid role specified" });
     }
 
     const user = await User.findByPk(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    if (user.role === 'associate member' && newRole === 'individual member') {
-      await user.update({
-        role: 'individual member',
-        has_paid: false // requires payment
-      });
-
-      return res.status(200).json(formatUserResponse(user));
+    if (user.role === "associate member" && newRole === "individual member") {
+      await user.update({ role: newRole, has_paid: false });
+    } else if (user.role === "individual member" && newRole === "associate member") {
+      await user.update({ role: newRole, has_paid: true });
+    } else {
+      return res.status(400).json({ message: "Role change not allowed" });
     }
 
-    if (user.role === 'individual member' && newRole === 'associate member') {
-      await user.update({
-        role: 'associate member',
-        has_paid: true // no payment needed
-      });
-
-      return res.status(200).json(formatUserResponse(user));
-    }
-
-    return res.status(400).json({ message: "Role change not allowed" });
+    return res.status(200).json(formatUserResponse(user));
   } catch (error) {
     console.error("Error changing user role:", error);
     res.status(500).json({ message: "Server error" });

@@ -10,8 +10,8 @@ const Order = sequelize.define(
       unique: true,
     },
     user_id: {
-      type: DataTypes.UUID,  // ✅ fixed from INTEGER to STRING
-      allowNull: false,
+      type: DataTypes.STRING,
+      allowNull: false
     },
     amount: {
       type: DataTypes.DECIMAL(10, 2),

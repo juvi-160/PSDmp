@@ -3,8 +3,7 @@ import { sequelize } from '../config/db.js';
 
 const User = sequelize.define('User', {
   id: {
-    type: DataTypes.UUID,
-    defaultValue: DataTypes.UUIDV4,
+    type: DataTypes.STRING,
     primaryKey: true,
     allowNull: false
   },
@@ -41,6 +40,10 @@ const User = sequelize.define('User', {
   has_paid: {
     type: DataTypes.BOOLEAN,
     defaultValue: false
+  },
+  is_autopay_enabled: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
   }
 }, {
   timestamps: true,
@@ -48,40 +51,38 @@ const User = sequelize.define('User', {
   updatedAt: 'updated_at'
 });
 
-// Set payment status for associate members
+// Auto-generate PSF ID and set default values before user is created
 User.beforeCreate(async (user) => {
   if (!user.role) {
     user.role = 'associate member';
   }
-  
-  // Associate members don't need to pay
-  if (user.role === 'associate member') {
-    user.has_paid = true;
+
+  // Generate sequential PSF ID
+  const lastUser = await User.findOne({
+    order: [['created_at', 'DESC']],
+    attributes: ['id']
+  });
+
+  let nextIdNumber = 1;
+
+  if (lastUser && lastUser.id && lastUser.id.startsWith("PSF_")) {
+    const lastNumber = parseInt(lastUser.id.split("_")[1], 10);
+    if (!isNaN(lastNumber)) {
+      nextIdNumber = lastNumber + 1;
+    }
   }
+
+  const paddedId = String(nextIdNumber).padStart(5, '0');
+  user.id = `PSF_${paddedId}`;
 });
 
-// Associations
+// Define associations
 User.associate = (models) => {
-  User.hasMany(models.Order, { 
-    foreignKey: 'user_id', 
-    as: 'orders' 
-  });
-  User.hasMany(models.EventRSVP, { 
-    foreignKey: 'user_id', 
-    as: 'rsvps' 
-  });
-  User.hasMany(models.EventFeedback, { 
-    foreignKey: 'user_id', 
-    as: 'feedbacks' 
-  });
-  User.hasMany(models.Ticket, { 
-    foreignKey: 'user_id', 
-    as: 'tickets' 
-  });
-  User.hasMany(models.TicketResponse, { 
-    foreignKey: 'user_id', 
-    as: 'responses' 
-  });
+  User.hasMany(models.Order, { foreignKey: 'user_id', as: 'orders' });
+  User.hasMany(models.EventRSVP, { foreignKey: 'user_id', as: 'rsvps' });
+  User.hasMany(models.EventFeedback, { foreignKey: 'user_id', as: 'feedbacks' });
+  User.hasMany(models.Ticket, { foreignKey: 'user_id', as: 'tickets' });
+  User.hasMany(models.TicketResponse, { foreignKey: 'user_id', as: 'responses' });
 };
 
 export default User;
