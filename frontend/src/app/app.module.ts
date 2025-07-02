@@ -77,6 +77,7 @@ import { MembershipSelectionComponent } from './auth/membership-selection/member
 import { InviteComponent } from './admin/admin-dashboard/invite/invite.component';
 import { AdminGuard } from './core/guards/admin.guard';
 import { PaymentHistoryComponent } from './dashboard/payment-history/payment-history.component';
+import { ContributeComponent } from './dashboard/contribute/contribute.component';
 import { ToastComponent } from './layout/toast/toast.component';
 
 const routes: Routes = [
@@ -104,6 +105,7 @@ const routes: Routes = [
       { path: "raise-ticket", component: RaiseTicketComponent },
       { path: "my-tickets", component: MyTicketsComponent },
       { path: 'payment-history/users/:id', component: PaymentHistoryComponent },
+      { path: 'contribute', component: ContributeComponent },
     ]
   },
   {
@@ -162,6 +164,7 @@ const routes: Routes = [
     InviteComponent,
     MemberComponent,
     PaymentHistoryComponent,
+    ContributeComponent,
     ToastComponent,
   ],
   imports: [

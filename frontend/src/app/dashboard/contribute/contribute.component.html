@@ -1,0 +1,283 @@
+<div
+  class="min-h-screen bg-gradient-to-tr from-[#eef2ff] via-[#f0fdf4] to-[#fff7ed] flex items-center justify-center px-4 py-14">
+  <mat-card class="w-full max-w-5xl bg-white rounded shadow-2xl overflow-hidden border border-gray-200">
+
+    <!-- Header -->
+    <div class="text-center  text-black bg-blue-200 rounded-t-2xl p-8">
+      <img src="PSF_Logo.png" alt="PSF Logo"
+        class="h-16 mx-auto mb-4 drop-shadow-lg transition-transform duration-300 hover:scale-110" />
+      <h1 class="text-4xl font-extrabold tracking-tight mb-2">Join the PSF Movement</h1>
+      <p class="text-sm opacity-90">Empowering professionals through unity, service & growth</p>
+    </div>
+
+    <!-- Form Body -->
+    <mat-card-content class="p-8 sm:p-12 space-y-12 bg-white">
+
+      <!-- Step 1 - Enhanced Membership Amount Section -->
+      <div
+        class="bg-white border border-gray-100 rounded-3xl p-6 sm:p-8 shadow-xs hover:shadow-sm transition-all duration-300 ease-out mt-10">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+          <span
+            class="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-indigo-600 to-indigo-400 text-white rounded-full text-sm font-medium shadow-xs">1</span>
+          <span class="bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">Membership
+            Amount</span>
+        </h2>
+
+        <!-- Custom Input -->
+        <mat-form-field  class="w-full">
+          <mat-label class="text-gray-500">Enter custom amount</mat-label>
+          <input matInput type="number" [formControl]="customAmountControl" (input)="onCustomAmountChange()"
+            placeholder="Minimum ₹300" class="mt-1">
+          <span matPrefix class="text-gray-500 font-medium">₹</span>
+          <mat-hint class="text-xs text-gray-400">Amount will be charged monthly</mat-hint>
+          <mat-error *ngIf="customAmountControl.hasError('required')" class="flex items-center gap-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Amount is required
+          </mat-error>
+          <mat-error *ngIf="customAmountControl.hasError('min') || showMinimumError" class="flex items-center gap-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Minimum ₹300 required
+          </mat-error>
+          <mat-error *ngIf="customAmountControl.hasError('pattern')" class="flex items-center gap-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Enter a valid number
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Quick Select -->
+        <div class="mt-8">
+          <p class="text-sm font-medium text-gray-500 mb-3 flex items-center gap-2">
+            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z">
+              </path>
+            </svg>
+            Or choose a quick amount:
+          </p>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <button *ngFor="let plan of presetPlans" (click)="selectPresetAmount(plan.amount)" [ngClass]="{
+          'border-blue-200 bg-blue-50 text-blue-700': selectedAmount === plan.amount,
+          'border-gray-200 hover:border-blue-300': selectedAmount !== plan.amount
+        }" class="relative rounded-xl border-2 py-3 px-4 text-base font-medium transition-all duration-200 bg-white hover:shadow-xs group">
+
+              <span class="block">₹{{ plan.amount }}</span>
+
+              <span *ngIf="plan.recommended" class="absolute -top-2 -right-2">
+                <span
+                  class="bg-blue-700 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                      d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z"
+                      clip-rule="evenodd"></path>
+                  </svg>
+                  Recommended
+                </span>
+              </span>
+
+              <span *ngIf="selectedAmount === plan.amount"
+                class="absolute bottom-0 left-0 right-0 h-1 bg-indigo-500 rounded-b-xl"></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Validation Message -->
+        <div *ngIf="showMinimumError"
+          class="mt-4 flex items-center gap-2 text-sm font-medium text-red-600 bg-red-50/60 px-3 py-2 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <span>Please enter at least ₹300 to continue</span>
+        </div>
+      </div>
+      <!-- Step 2 - Enhanced Payment Type Selection -->
+      <div *ngIf="isAmountValid"
+        class="bg-white border border-gray-100 rounded-3xl p-6 sm:p-8 shadow-xs hover:shadow-sm transition-all duration-300 ease-out">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+          <span
+            class="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-indigo-600 to-indigo-400 text-white rounded-full text-sm font-medium shadow-xs">2</span>
+          <span class="bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">Payment Type</span>
+        </h2>
+
+        <mat-radio-group [(ngModel)]="paymentType" (change)="onPaymentTypeChange($event.value)" class="grid gap-5">
+          <!-- Autopay Option -->
+          <mat-radio-button value="autopay" class="block w-full transition-transform hover:scale-[1.01]">
+            <div class="w-full rounded-xl border-2 p-5 transition-all duration-300 group"
+              [class.border-indigo-500]="paymentType === 'autopay'" [class.bg-indigo-50]="paymentType === 'autopay'"
+              [class.border-gray-200]="paymentType !== 'autopay'"
+              [class.hover:border-indigo-300]="paymentType !== 'autopay'" [class.ring-2]="paymentType === 'autopay'"
+              [class.ring-indigo-200]="paymentType === 'autopay'">
+
+              <div class="flex flex-col sm:flex-row justify-between items-start gap-4">
+                <div class="flex-1">
+                  <div class="flex flex-wrap items-center gap-2 mb-1">
+                    <p class="font-semibold text-gray-800 text-lg flex items-center gap-2">
+                      <svg class="w-5 h-5 text-indigo-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clip-rule="evenodd"></path>
+                      </svg>
+                      AutoPay Subscription
+                    </p>
+                    <span
+                      class="bg-indigo-100 text-indigo-800 text-xs px-2.5 py-1 rounded-full font-medium flex items-center gap-1">
+                      <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                          d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z"
+                          clip-rule="evenodd"></path>
+                      </svg>
+                      Recommended
+                    </span>
+                  </div>
+
+                  <p class="text-sm text-gray-600 ml-7 pl-1">₹{{ selectedAmount }} billed monthly</p>
+
+                  <div class="mt-4 ml-7 pl-1">
+                    <div class="flex items-center gap-3 bg-indigo-50/50 rounded-lg p-3 -ml-3 max-w-md">
+                      <div class="flex-shrink-0 bg-white p-2 rounded-lg shadow-xs border border-indigo-100">
+                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                      </div>
+                      <div>
+                        <p class="text-xs font-medium text-indigo-800">Save 10% on future renewals</p>
+                        <p class="text-xs text-indigo-600">₹{{ selectedAmount * 0.1 | number:'1.0-0' }} monthly savings
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-4 ml-7 pl-1 flex items-center gap-2 text-xs text-indigo-600">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span>Cancel anytime via dashboard • No hidden fees</span>
+              </div>
+            </div>
+          </mat-radio-button>
+
+          <!-- One-Time Payment Option -->
+          <mat-radio-button value="one-time" class="block w-full transition-transform hover:scale-[1.01]">
+            <div class="w-full rounded-xl border-2 p-5 transition-all duration-300 group"
+              [class.border-indigo-500]="paymentType === 'one-time'" [class.bg-indigo-50]="paymentType === 'one-time'"
+              [class.border-gray-200]="paymentType !== 'one-time'"
+              [class.hover:border-indigo-300]="paymentType !== 'one-time'" [class.ring-2]="paymentType === 'one-time'"
+              [class.ring-indigo-200]="paymentType === 'one-time'">
+
+              <div class="flex flex-col sm:flex-row justify-between items-start gap-4">
+                <div class="flex-1">
+                  <p class="font-semibold text-gray-800 text-lg flex items-center gap-2 mb-1">
+                    <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                        clip-rule="evenodd"></path>
+                    </svg>
+                    One-Time Payment
+                  </p>
+                  <p class="text-sm text-gray-600 ml-7 pl-1">₹{{ selectedAmount }} for 1-month membership only</p>
+
+                  <ul class="mt-4 ml-7 pl-1 space-y-2.5 text-sm text-gray-600">
+                    <li class="flex items-start gap-2">
+                      <svg class="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                      </svg>
+                      <span>No automatic renewals or commitments</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                      <svg class="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                      </svg>
+                      <span>Pay manually each month to continue service</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                      <svg class="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                      </svg>
+                      <span>Ideal for short-term needs</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+      <!-- Summary -->
+      <div *ngIf="isAmountValid" class="bg-indigo-50 border border-indigo-100 rounded-3xl p-6 sm:p-8 shadow-md">
+        <h2 class="text-lg font-bold text-indigo-800 mb-3">Membership Summary</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-gray-800">
+          <div><span class="font-semibold">Type:</span> {{ getSelectedPresetPlan()?.name || 'Custom Individual Member'
+            }}</div>
+          <div><span class="font-semibold">Amount:</span> ₹{{ selectedAmount }}</div>
+          <div><span class="font-semibold">Duration:</span> {{ paymentType === 'autopay' ? 'Monthly' : '1 Month Only' }}
+          </div>
+          <div *ngIf="paymentType === 'autopay'"><span class="font-semibold">Next Charge:</span> {{ getNextChargeDate()
+            }}</div>
+        </div>
+      </div>
+
+      <!-- Benefits -->
+      <div *ngIf="isAmountValid" class="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm">
+        <h2 class="text-lg font-bold text-gray-800 mb-3">Benefits</h2>
+        <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2 list-disc list-inside text-sm text-gray-700">
+          <li>Access to exclusive PSF events</li>
+          <li>Professional networking opportunities</li>
+          <li>Community service participation</li>
+          <li>Skill-building resources</li>
+          <li>Voting rights in PSF elections</li>
+          <li *ngIf="selectedAmount >= 700">Priority event registration</li>
+          <li *ngIf="selectedAmount >= 1000">Premium networking sessions</li>
+          <li *ngIf="selectedAmount >= 1000">Exclusive mentorship</li>
+        </ul>
+      </div>
+    </mat-card-content>
+
+    <!-- CTA Button -->
+    <mat-card-actions class="px-8 pb-12 flex items-center text-center justify-center gap-4 bg-white">
+      <button class="w-55 py-3 rounded-xl text-lg font-semibold flex items-center justify-center gap-2 transition-all"
+        [disabled]="!isPaymentButtonEnabled()" [ngClass]="isPaymentButtonEnabled()
+          ? 'bg-gradient-to-r from-indigo-600 to-blue-500 hover:from-indigo-700 hover:to-blue-600 text-white shadow-lg'
+          : ' cursor-not-allowed'" (click)="initiatePayment()">
+        <mat-spinner diameter="20" *ngIf="loading || paymentProcessing"></mat-spinner>
+        <span>{{ getPaymentButtonText() }}</span>
+        <mat-icon>arrow_forward</mat-icon>
+      </button>
+
+      <!-- Info Notes -->
+      <div *ngIf="isAmountValid" class="text-sm text-gray-600 space-y-2">
+        <div *ngIf="paymentType === 'autopay'" class="flex items-start gap-2 bg-indigo-50 p-3 rounded-md">
+          <mat-icon>info</mat-icon>
+          <span>Your membership will auto-renew monthly. Cancel anytime from your dashboard.</span>
+        </div>
+        <div *ngIf="paymentType === 'one-time'" class="flex items-start gap-2 bg-indigo-50 p-3 rounded-md">
+          <mat-icon class="">info</mat-icon>
+          <span>This is a one-time payment for 1-month membership only.</span>
+        </div>
+      </div>
+    </mat-card-actions>
+
+    <!-- Footer -->
+    <mat-card-footer
+      class="bg-gray-50 p-4 border-t border-gray-200 text-sm text-gray-600 flex items-center justify-center gap-2">
+      <mat-icon class="text-green-500">lock</mat-icon>
+      <span>Secure payment powered by</span>
+      <img src="https://razorpay.com/assets/razorpay-glyph.svg" alt="Razorpay" class="h-5 ml-1">
+    </mat-card-footer>
+
+  </mat-card>
+</div>

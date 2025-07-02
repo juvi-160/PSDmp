@@ -2,19 +2,19 @@ import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { FormControl, Validators } from "@angular/forms";
-import { SubscriptionService, PresetPlan, DynamicPlan, SubscriptionWithPayment } from "../core/services/subscription.service";
-import { AuthService } from "../core/services/auth.service";
-import { environment } from "../environments/environment";
-import { ToastService } from "../core/services/toast.service";
+import { SubscriptionService, PresetPlan, DynamicPlan, SubscriptionWithPayment } from "../../core/services/subscription.service";
+import { AuthService } from "../../core/services/auth.service";
+import { environment } from "../../environments/environment";
+
 declare var Razorpay: any
 
 @Component({
-  selector: 'app-payment',
+  selector: 'app-contribute',
   standalone: false,
-  templateUrl: './payment.component.html',
-  styleUrl: './payment.component.css'
+  templateUrl: './contribute.component.html',
+  styleUrl: './contribute.component.css'
 })
-export class PaymentComponent implements OnInit {
+export class ContributeComponent implements OnInit {
   loading = false;
   paymentProcessing = false;
   userName = "";
@@ -37,7 +37,6 @@ export class PaymentComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private snackBar: MatSnackBar,
-    private toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -150,8 +149,7 @@ export class PaymentComponent implements OnInit {
 
   initiatePayment(): void {
     if (!this.isAmountValid) {
-      //this.snackBar.open("Please enter a valid amount (minimum ₹300)", "Close", { duration: 5000 });
-      this.toast.show("Please enter a valid amount (minimum ₹300)", "error");
+      this.snackBar.open("Please enter a valid amount (minimum ₹300)", "Close", { duration: 5000 });
       return;
     }
 
@@ -183,16 +181,14 @@ export class PaymentComponent implements OnInit {
             error: (error) => {
               this.loading = false;
               console.error("Error creating subscription:", error);
-              //this.snackBar.open("Failed to setup AutoPay. Please try again.", "Close", { duration: 5000 });
-              this.toast.show("Failed to setup AutoPay. Please try again.", "error");
+              this.snackBar.open("Failed to setup AutoPay. Please try again.", "Close", { duration: 5000 });
             },
           });
       },
       error: (error) => {
         this.loading = false;
         console.error("Error creating dynamic plan:", error);
-        //this.snackBar.open("Failed to create subscription plan. Please try again.", "Close", { duration: 5000 });
-        this.toast.show("Failed to create subscription plan. Please try again.", "error");
+        this.snackBar.open("Failed to create subscription plan. Please try again.", "Close", { duration: 5000 });
       },
     });
   }
@@ -211,8 +207,7 @@ export class PaymentComponent implements OnInit {
         error: (error) => {
           this.loading = false;
           console.error("Error creating one-time order:", error);
-          //this.snackBar.open("Failed to initiate payment. Please try again.", "Close", { duration: 5000 });
-          this.toast.show("Failed to initiate payment. Please try again.", "error");
+          this.snackBar.open("Failed to initiate payment. Please try again.", "Close", { duration: 5000 });
         },
       });
   }
@@ -238,8 +233,7 @@ export class PaymentComponent implements OnInit {
       },
       modal: {
         ondismiss: () => {
-         // this.snackBar.open("Payment cancelled. You can try again later.", "Close", { duration: 5000 });
-          this.toast.show("Payment cancelled. You can try again later.", "info");
+          this.snackBar.open("Payment cancelled. You can try again later.", "Close", { duration: 5000 });
         },
       },
     };
@@ -269,8 +263,7 @@ export class PaymentComponent implements OnInit {
       },
       modal: {
         ondismiss: () => {
-          //this.snackBar.open("AutoPay setup cancelled. You can try again later.", "Close", { duration: 5000 });
-          this.toast.show("AutoPay setup cancelled. You can try again later.", "info");
+          this.snackBar.open("AutoPay setup cancelled. You can try again later.", "Close", { duration: 5000 });
         },
       },
     };
@@ -291,15 +284,13 @@ export class PaymentComponent implements OnInit {
     this.authService.updateUserAfterPayment(paymentDetails).subscribe({
       next: (result) => {
         this.paymentProcessing = false;
-        //this.snackBar.open("Payment successful! Welcome to PSF (1-month membership).", "Close", { duration: 5000 });
-        this.toast.show("Payment successful! Welcome to PSF (1-month membership).", "success");
+        this.snackBar.open("Payment successful! Welcome to PSF (1-month membership).", "Close", { duration: 5000 });
         this.router.navigate(["/dashboard"]);
       },
       error: (error) => {
         this.paymentProcessing = false;
         console.error("Payment verification failed:", error);
-        //this.snackBar.open("Payment verification failed. Please contact support.", "Close", { duration: 5000 });
-        this.toast.show("Payment verification failed. Please contact support.", "error");
+        this.snackBar.open("Payment verification failed. Please contact support.", "Close", { duration: 5000 });
       },
     });
   }
@@ -317,19 +308,17 @@ export class PaymentComponent implements OnInit {
     this.authService.updateUserAfterPayment(paymentDetails).subscribe({
       next: (result) => {
         this.paymentProcessing = false;
-        // this.snackBar.open(
-        //   `Payment successful! AutoPay setup complete. Next charge: ${this.getNextChargeDate()}`,
-        //   "Close",
-        //   { duration: 7000 },
-        // );
-        this.toast.show(`Payment successful! AutoPay setup complete. Next charge: ${this.getNextChargeDate()}`, "success");
+        this.snackBar.open(
+          `Payment successful! AutoPay setup complete. Next charge: ${this.getNextChargeDate()}`,
+          "Close",
+          { duration: 7000 },
+        );
         this.router.navigate(["/dashboard"]);
       },
       error: (error) => {
         this.paymentProcessing = false;
         console.error("Payment verification failed:", error);
-        //this.snackBar.open("Payment verification failed. Please contact support.", "Close", { duration: 5000 });
-        this.toast.show("Payment verification failed. Please contact support.", "error");
+        this.snackBar.open("Payment verification failed. Please contact support.", "Close", { duration: 5000 });
       },
     });
   }

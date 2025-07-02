@@ -31,6 +31,7 @@ import { InviteComponent } from './admin/admin-dashboard/invite/invite.component
 import { PaymentGuard } from './core/guards/payment.guard';
 import { AdminGuard } from './core/guards/admin.guard';
 import { PaymentHistoryComponent } from './dashboard/payment-history/payment-history.component';
+import { ContributeComponent } from './dashboard/contribute/contribute.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -57,6 +58,7 @@ const routes: Routes = [
       { path: 'my-tickets', component: MyTicketsComponent },
       { path: 'profile', component: ProfileComponent },
       { path: 'payment-history/users/:id', component: PaymentHistoryComponent },
+      { path: 'contribute', component: ContributeComponent },
 
       // {
       //   matcher: (segments: UrlSegment[]) => {

@@ -35,12 +35,13 @@ export class DashboardComponent implements OnInit {
 
         this.navItems = [
           { icon: 'dashboard', label: 'Dashboard', link: '/dashboard' },
+          { icon: 'money', label: 'Contribute', link: '/dashboard/contribute' },
           { icon: 'newspaper', label: 'Events', link: '/dashboard/event' },
           { icon: 'event_note', label: 'My Events', link: '/dashboard/my-events' },
           { icon: 'support', label: 'Raise Query/Ticket', link: '/dashboard/raise-ticket' },
           { icon: 'confirmation_number', label: 'My Tickets', link: '/dashboard/my-tickets' },
           { icon: 'account_circle', label: 'Profile', link: '/dashboard/profile' },
-          { icon: 'money', label: 'Payment History', link: `/dashboard/payment-history/users/${uuid}` }
+          { icon: 'money', label: 'Payment History', link: `/dashboard/payment-history/users/${uuid}` },
         ];
       },
       error: (err) => {
