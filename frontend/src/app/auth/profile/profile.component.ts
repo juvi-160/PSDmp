@@ -131,19 +131,20 @@ export class ProfileComponent implements OnInit {
   }
 }
 
-  getProfileCompletionPercentage(): number {
-     if (!this.user) return 0
+    getProfileCompletionPercentage(): number {
+    if (!this.profileForm) return 0;
 
     const fields = [
-      this.user.phone,
-      this.user.ageGroup,
-      this.user.profession,
-      this.user.city,
-      this.user.areasOfInterest?.length,
-      this.user.whyPsf,
-    ]
+      this.profileForm.get('phone')?.value,
+      this.profileForm.get('ageGroup')?.value,
+      this.profileForm.get('profession')?.value,
+      this.profileForm.get('city')?.value,
+      this.profileForm.get('whyPsf')?.value,
+      this.areasOfInterest.length > 0 ? 'yes' : '', // count as filled if interests are added
+    ];
 
-    const completedFields = fields.filter((field) => field).length
-    return Math.round((completedFields / fields.length) * 100)
+    const completedFields = fields.filter((field) => !!field && field.toString().trim().length > 0).length;
+    return Math.round((completedFields / fields.length) * 100);
   }
+
 }
