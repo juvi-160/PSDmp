@@ -51,29 +51,24 @@ const User = sequelize.define('User', {
   updatedAt: 'updated_at'
 });
 
-// Auto-generate PSF ID and set default values before user is created
+// Auto-generate PSF ID
 User.beforeCreate(async (user) => {
-  if (!user.role) {
-    user.role = 'associate member';
-  }
+  if (!user.id) { // Only generate if not provided
+    const lastUser = await User.findOne({
+      order: [['created_at', 'DESC']],
+      attributes: ['id']
+    });
 
-  // Generate sequential PSF ID
-  const lastUser = await User.findOne({
-    order: [['created_at', 'DESC']],
-    attributes: ['id']
-  });
-
-  let nextIdNumber = 1;
-
-  if (lastUser && lastUser.id && lastUser.id.startsWith("PSF_")) {
-    const lastNumber = parseInt(lastUser.id.split("_")[1], 10);
-    if (!isNaN(lastNumber)) {
-      nextIdNumber = lastNumber + 1;
+    let nextIdNumber = 1;
+    if (lastUser?.id?.startsWith("PSF_")) {
+      const lastNumber = parseInt(lastUser.id.split("_")[1], 10);
+      if (!isNaN(lastNumber)) {
+        nextIdNumber = lastNumber + 1;
+      }
     }
-  }
 
-  const paddedId = String(nextIdNumber).padStart(5, '0');
-  user.id = `PSF_${paddedId}`;
+    user.id = `PSF_${String(nextIdNumber).padStart(5, '0')}`;
+  }
 });
 
 // Define associations

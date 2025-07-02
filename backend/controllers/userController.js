@@ -189,7 +189,7 @@ export const getUserPaymentHistory = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const userId = req.params.id;
-    const { role, isEmailVerified, isPhoneVerified, hasPaid } = req.body;
+    const { role, isEmailVerified, isPhoneVerified, hasPaid, autopayEnabled } = req.body;
 
     const user = await User.findByPk(userId);
     if (!user) return res.status(404).json({ message: "User not found" });

@@ -96,7 +96,7 @@ const createUser = async (req, res) => {
       name,
       email,
       role: "associate member",
-      has_paid: true,
+      has_paid: false,
       is_autopay_enabled: false,
     });
 
