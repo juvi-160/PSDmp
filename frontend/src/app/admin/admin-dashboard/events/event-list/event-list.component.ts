@@ -8,7 +8,7 @@ import  { Router } from "@angular/router"
 import { EventService } from "../../../../core/services/event.service"
 import { Event } from "../../../../core/models/event.model"
 import { ConfirmDialogComponent } from "../../shared/confirm-dialog/confirm-dialog.component"
-
+import { ToastService } from "../../../../core/services/toast.service";
 @Component({
   selector: 'app-event-list',
   standalone: false,
@@ -29,6 +29,7 @@ export class EventListComponent implements OnInit {
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private router: Router,
+    private toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -50,14 +51,14 @@ export class EventListComponent implements OnInit {
       error: (error) => {
         this.error = "Failed to load events"
         this.loading = false
-        this.snackBar.open(this.error, "Close", { duration: 5000 })
+        this.toast.show(this.error, "error");
       },
     })
   }
   applyFilter(event: KeyboardEvent): void {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
-  
+
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
@@ -84,15 +85,15 @@ export class EventListComponent implements OnInit {
       if (result && event.id) {
         this.eventService.deleteEvent(event.id).subscribe({
           next: () => {
-            this.snackBar.open("Event deleted successfully", "Close", {
-              duration: 3000,
-            })
+            this.toast.show("Event deleted successfully", "success");
             this.loadEvents()
           },
           error: (error) => {
-            this.snackBar.open("Failed to delete event", "Close", {
-              duration: 5000,
-            })
+            // this.snackBar.open("Failed to delete event", "Close", {
+            //   duration: 5000,
+            // })
+            this.toast.show("Failed to delete event", "error");
+
           },
         })
       }

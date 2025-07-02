@@ -22,42 +22,40 @@ export class DashboardComponent implements OnInit {
     private http: HttpClient
   ) {}
 
- ngOnInit(): void {
- this.auth.user$.subscribe((user: any) => {
-  if (!user?.email) return;
+  ngOnInit(): void {
+    this.auth.user$.subscribe((user: any) => {
+      if (!user?.email) return;
 
-  const email = user.email; // ✅ Define email
+      const email = user.email;
 
-  this.http.get<any>(`${environment.apiUrl}/payment-history/users/by-email/${email}`)
-    .subscribe({
-      next: (userData) => {
-        const uuid = userData.id;
+      this.http.get<any>(`${environment.apiUrl}/payment-history/users/by-email/${email}`)
+        .subscribe({
+          next: (userData) => {
+            const uuid = userData.id;
 
-        this.navItems = [
-          { icon: 'dashboard', label: 'Dashboard', link: '/dashboard' },
-          { icon: 'newspaper', label: 'Events', link: '/dashboard/event' },
-          { icon: 'event_note', label: 'My Events', link: '/dashboard/my-events' },
-          { icon: 'support', label: 'Raise Query/Ticket', link: '/dashboard/raise-ticket' },
-          { icon: 'confirmation_number', label: 'My Tickets', link: '/dashboard/my-tickets' },
-          { icon: 'account_circle', label: 'Profile', link: '/dashboard/profile' },
-          { icon: 'money', label: 'Payment History', link: `/dashboard/payment-history/users/${uuid}` }
-        ];
-      },
-      error: (err) => {
-        console.error('Failed to load user by email:', err);
-      }
+            this.navItems = [
+              { icon: 'dashboard', label: 'Dashboard', link: '/dashboard' },
+              { icon: 'money', label: 'Contribute', link: '/dashboard/contribute' },
+              { icon: 'newspaper', label: 'Events', link: '/dashboard/event' },
+              { icon: 'event_note', label: 'My Events', link: '/dashboard/my-events' },
+              { icon: 'support', label: 'Raise Query/Ticket', link: '/dashboard/raise-ticket' },
+              { icon: 'confirmation_number', label: 'My Tickets', link: '/dashboard/my-tickets' },
+              { icon: 'account_circle', label: 'Profile', link: '/dashboard/profile' },
+              { icon: 'money', label: 'Payment History', link: `/dashboard/payment-history/users/${uuid}` },
+            ];
+          },
+          error: (err) => {
+            console.error('Failed to load user by email:', err);
+          }
+        });
+
+      // ✅ Admin check logic (DO NOT REMOVE)
+      this.isAdmin =
+        user?.['http://localhost:3000/roles']?.includes('admin') || // custom claim
+        user?.app_metadata?.roles?.includes('admin') ||              // Auth0 app_metadata
+        user?.user_metadata?.role === 'admin';                      // fallback check
     });
-
-  // Optional admin role check
-  this.isAdmin =
-    user?.['http://localhost:3000/roles']?.includes('admin') ||
-    user?.app_metadata?.roles?.includes('admin') ||
-    user?.user_metadata?.role === 'admin';
-});
-
-
-}
-
+  }
 
   toggleSidenav(): void {
     this.sidenav.toggle();

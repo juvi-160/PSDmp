@@ -3,8 +3,8 @@ import {  FormBuilder,  FormGroup, Validators } from "@angular/forms"
 import  { ActivatedRoute, Router } from "@angular/router"
 import  { MatSnackBar } from "@angular/material/snack-bar"
 import { EventService } from "../../../../core/services/event.service"
-import { Event as AppEvent } from "../../../../core/models/event.model"; 
-
+import { Event as AppEvent } from "../../../../core/models/event.model";
+import { ToastService } from "../../../../core/services/toast.service"
 @Component({
   selector: 'app-event-form',
   standalone: false,
@@ -27,6 +27,7 @@ export class EventFormComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private snackBar: MatSnackBar,
+    private toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -68,7 +69,8 @@ export class EventFormComponent implements OnInit {
         this.loading = false
       },
       error: (error) => {
-        this.snackBar.open("Failed to load event", "Close", { duration: 5000 })
+        //this.snackBar.open("Failed to load event", "Close", { duration: 5000 })
+        this.toast.show('Failed to load event', 'error');
         this.loading = false
         this.router.navigate(["/admin/events"])
       },
@@ -79,7 +81,7 @@ export class EventFormComponent implements OnInit {
     const fileInput = event.target as HTMLInputElement;
     if (fileInput.files && fileInput.files.length > 0) {
       this.imageFile = fileInput.files[0];
-  
+
       // Preview the selected image
       const reader = new FileReader();
       reader.onload = () => {
@@ -110,24 +112,28 @@ export class EventFormComponent implements OnInit {
     if (this.isEditMode && this.eventId) {
       this.eventService.updateEvent(this.eventId, eventData, this.imageFile || undefined).subscribe({
         next: () => {
-          this.snackBar.open("Event updated successfully", "Close", { duration: 3000 })
+          // this.snackBar.open("Event updated successfully", "Close", { duration: 3000 })
+          this.toast.show('Event updated successfully!', 'success');
           this.loading = false
           this.router.navigate(["/admin/events"])
         },
         error: (error) => {
-          this.snackBar.open("Failed to update event", "Close", { duration: 5000 })
+          // this.snackBar.open("Failed to update event", "Close", { duration: 5000 })
+          this.toast.show('Something went wrong!', 'error');
           this.loading = false
         },
       })
     } else {
       this.eventService.createEvent(eventData, this.imageFile || undefined).subscribe({
         next: () => {
-          this.snackBar.open("Event created successfully", "Close", { duration: 3000 })
+          //this.snackBar.open("Event created successfully", "Close", { duration: 3000 })
+          this.toast.show('Event created successfully!', 'success');
           this.loading = false
           this.router.navigate(["/admin/events"])
         },
         error: (error) => {
-          this.snackBar.open("Failed to create event", "Close", { duration: 5000 })
+          //this.snackBar.open("Failed to create event", "Close", { duration: 5000 })
+          this.toast.show('Something went wrong!', 'error');
           this.loading = false
         },
       })

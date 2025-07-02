@@ -3,6 +3,7 @@ import {  FormBuilder,  FormGroup, Validators } from "@angular/forms"
 import {  MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog"
 import  { MatSnackBar } from "@angular/material/snack-bar"
 import  { RsvpService } from "../../../core/services/rsvp.service"
+import { ToastService } from "../../../core/services/toast.service"
 
 interface FeedbackDialogData {
   eventId: number
@@ -23,6 +24,7 @@ export class FeedbackDialogComponent {
     private fb: FormBuilder,
     private rsvpService: RsvpService,
     private snackBar: MatSnackBar,
+    private toast: ToastService,
     public dialogRef: MatDialogRef<FeedbackDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: FeedbackDialogData
   ) {
@@ -46,13 +48,14 @@ export class FeedbackDialogComponent {
 
     this.rsvpService.submitFeedback(this.data.eventId, feedback).subscribe({
       next: () => {
-        this.snackBar.open("Thank you for your feedback!", "Close", { duration: 3000 })
-        this.dialogRef.close(true)
-        this.loading = false
+        this.toast.show("Thank you for your feedback!", "success");
+        this.dialogRef.close(true);
+        this.loading = false;
       },
       error: (error) => {
         console.error("Error submitting feedback:", error)
-        this.snackBar.open("Failed to submit feedback", "Close", { duration: 3000 })
+        //this.snackBar.open("Failed to submit feedback", "Close", { duration: 3000 })
+        this.toast.show("Failed to submit feedback. Please try again.", "error");
         this.loading = false
       },
     })

@@ -4,6 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { UserService } from "../../../../core/services/user.service";
 import { User } from "../../../../core/models/user.model";
+import { ToastService } from "../../../../core/services/toast.service";
 
 @Component({
   selector: 'app-user-edit-dialog',
@@ -26,6 +27,7 @@ export class UserEditDialogComponent implements OnInit {
     private formBuilder: FormBuilder,
     private userService: UserService,
     private snackBar: MatSnackBar,
+    private toast: ToastService,
     public dialogRef: MatDialogRef<UserEditDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { user: User }
   ) {
@@ -60,13 +62,13 @@ export class UserEditDialogComponent implements OnInit {
           this.userService.updateUserRole(userId, newRole).subscribe({
             next: (res) => {
               this.loading = false;
-              this.snackBar.open("User updated successfully", "Close", { duration: 3000 });
+              this.toast.show("User updated successfully", "success");
 
               if (previousRole === 'associate member' && newRole === 'individual member') {
                 if (res.emailSent) {
-                  this.snackBar.open("Email sent to user successfully.", "Close", { duration: 3000 });
+                  this.toast.show("Email sent to user successfully.", "success");
                 } else {
-                  this.snackBar.open("Failed to send email to user.", "Close", { duration: 3000 });
+                  this.toast.show("Failed to send email to user.", "error");
                 }
               }
 
@@ -75,21 +77,22 @@ export class UserEditDialogComponent implements OnInit {
             error: (err) => {
               this.loading = false;
               console.error("Error updating role:", err);
-              this.snackBar.open("User updated, but role change failed.", "Close", { duration: 4000 });
+              //this.snackBar.open("User updated, but role change failed.", "Close", { duration: 4000 });
+              this.toast.show("User updated, but role change failed.", "error");
               this.dialogRef.close();
             }
           });
         } else {
           // No role change — done
           this.loading = false;
-          this.snackBar.open("User updated successfully", "Close", { duration: 3000 });
+          this.toast.show("User updated successfully", "success");
           this.dialogRef.close();
         }
       },
       error: (err) => {
         this.loading = false;
         console.error("Error updating user:", err);
-        this.snackBar.open("Failed to update user", "Close", { duration: 5000 });
+        this.toast.show("Failed to update user", "error");
       }
     });
   }

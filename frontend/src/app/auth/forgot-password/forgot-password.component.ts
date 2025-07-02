@@ -3,6 +3,7 @@ import {  FormBuilder,  FormGroup, Validators } from "@angular/forms"
 import  { Router } from "@angular/router"
 import  { AuthService } from "../../core/services/auth.service"
 import  { MatSnackBar } from "@angular/material/snack-bar"
+import { ToastService } from "../../core/services/toast.service"
 
 @Component({
   selector: 'app-forgot-password',
@@ -20,6 +21,7 @@ export class ForgotPasswordComponent{}
 //     private router: Router,
 //     private authService: AuthService,
 //     private snackBar: MatSnackBar,
+//     private toastService: ToastService
 //   ) {}
 
 //   ngOnInit(): void {
@@ -38,14 +40,16 @@ export class ForgotPasswordComponent{}
 
 //     this.authService.forgotPassword(email).subscribe({
 //       next: (response) => {
-//         this.snackBar.open(response.message, "Close", {
-//           duration: 5000,
-//         })
+//         this.toastService.show(response.message, "success")
 //         this.router.navigate(["/login"])
 //       },
 //       error: (error) => {
-//         this.snackBar.open(error.error?.message || "Request failed", "Close", {
-//           duration: 5000,
+//         this.toastService.show(error.error?.message || "Request failed", "error")
+//       },
+//     })
+//   }
+// }
+  
 //         })
 //         this.loading = false
 //       },

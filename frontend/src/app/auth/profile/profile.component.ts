@@ -5,7 +5,7 @@ import  { MatChipInputEvent } from "@angular/material/chips"
 import { COMMA, ENTER } from "@angular/cdk/keycodes"
 import  { ProfileService } from "../../core/services/profile.service"
 import  { User, ProfileUpdateData } from "../../core/models/user.model"
-
+import { ToastService } from "../../core/services/toast.service"
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
@@ -35,6 +35,7 @@ export class ProfileComponent implements OnInit {
    private formBuilder: FormBuilder,
     private profileService: ProfileService,
     private snackBar: MatSnackBar,
+    private toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -104,12 +105,12 @@ export class ProfileComponent implements OnInit {
       next: (updatedUser) => {
         this.user = updatedUser
         this.saving = false
-        this.snackBar.open("Profile updated successfully!", "Close", { duration: 3000 })
+        this.toast.show("Profile updated successfully!", "success")
       },
  error: (error) => {
         this.saving = false
         console.error("Error updating profile:", error)
-        this.snackBar.open("Failed to update profile. Please try again.", "Close", { duration: 5000 })
+        this.toast.show("Failed to update profile. Please try again.", "error")
       },
     })
   }
@@ -145,4 +146,4 @@ export class ProfileComponent implements OnInit {
     const completedFields = fields.filter((field) => field).length
     return Math.round((completedFields / fields.length) * 100)
   }
-} 
+}
