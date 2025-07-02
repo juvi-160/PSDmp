@@ -9,6 +9,8 @@ import {
   verifyOneTimePayment,
   verifySubscriptionFirstPayment,
   handleSubscriptionWebhook,
+  enableAutoPay,
+  disableAutoPay
 } from "../controllers/subscriptionController.js"
 
 const router = express.Router()
@@ -36,5 +38,9 @@ router.post("/verify-subscription-payment", checkJwt, verifySubscriptionFirstPay
 
 // Webhook for subscription events
 router.post("/webhook", handleSubscriptionWebhook)
+
+// Enable/disable auto-pay routes
+router.post("/enable-auto-pay", checkJwt, enableAutoPay);
+router.post("/disable-auto-pay", checkJwt, disableAutoPay);
 
 export default router

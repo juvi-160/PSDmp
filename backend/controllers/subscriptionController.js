@@ -92,7 +92,7 @@ export const createSubscriptionWithImmediatePayment = async (req, res) => {
     }
 
     const { planId, amount, customerNotify = true, notes = {} } = req.body;
-console.log(sub,'Message: line 96')
+
     // Step 1: Create immediate payment order for first month
     const firstPaymentOrder = await razorpay.orders.create({
       amount: amount * 100,
@@ -676,5 +676,106 @@ const handleSubscriptionCompleted = async (subscription) => {
     }
   } catch (error) {
     console.error("Error handling subscription completed:", error);
+  }
+};
+
+
+// Enable auto-pay for a subscription
+export const enableAutoPay = async (req, res) => {
+  try {
+    const sub = req.auth?.sub || req.auth?.payload?.sub;
+    if (!sub) {
+      return res.status(401).json({ message: "Invalid authentication token" });
+    }
+
+    const user = await User.findOne({
+      where: { auth0_id: sub },
+      attributes: ["id", "subscription_id"],
+    });
+
+    if (!user || !user.subscription_id) {
+      return res.status(404).json({ message: "No active subscription found" });
+    }
+
+    // Update Razorpay subscription
+    await razorpay.subscriptions.resume(user.subscription_id);
+
+    // Update our database
+    await Subscription.update(
+      {
+        status: "active",
+      },
+      {
+        where: { subscription_id: user.subscription_id },
+      }
+    );
+
+    await User.update(
+      {
+        auto_pay_enabled: true,
+        subscription_status: "active",
+      },
+      {
+        where: { id: user.id },
+      }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Auto-pay enabled successfully",
+    });
+  } catch (error) {
+    console.error("Error enabling auto-pay:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// Disable auto-pay for a subscription
+export const disableAutoPay = async (req, res) => {
+  try {
+    const sub = req.auth?.sub || req.auth?.payload?.sub;
+    if (!sub) {
+      return res.status(401).json({ message: "Invalid authentication token" });
+    }
+
+    const user = await User.findOne({
+      where: { auth0_id: sub },
+      attributes: ["id", "subscription_id"],
+    });
+
+    if (!user || !user.subscription_id) {
+      return res.status(404).json({ message: "No active subscription found" });
+    }
+
+    // Update Razorpay subscription
+    await razorpay.subscriptions.cancel(user.subscription_id);
+
+    // Update our database
+    await Subscription.update(
+      {
+        status: "cancelled",
+      },
+      {
+        where: { subscription_id: user.subscription_id },
+      }
+    );
+
+    await User.update(
+      {
+        auto_pay_enabled: false,
+        subscription_status: "cancelled",
+      },
+      {
+        where: { id: user.id },
+      }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Auto-pay disabled successfully",
+    });
+  } catch (error) {
+    console.error("Error disabling auto-pay:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
