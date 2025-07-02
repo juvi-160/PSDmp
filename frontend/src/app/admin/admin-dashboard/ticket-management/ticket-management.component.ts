@@ -129,9 +129,19 @@ export class TicketManagementComponent implements OnInit {
     this.router.navigate(["/admin/tickets", ticket.id])
   }
 
-  formatDate(date: Date): string {
-    return date.toLocaleDateString()
-  }
+  formatDate(date: Date | string): string {
+  if (!date) return 'N/A';
+
+  const d = new Date(date);
+  return isNaN(d.getTime())
+    ? 'Invalid Date'
+    : d.toLocaleDateString('en-IN', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });}
 
   getStatusClass(status: string): string {
     switch (status) {
