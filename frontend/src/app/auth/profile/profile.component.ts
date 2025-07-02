@@ -145,4 +145,4 @@ export class ProfileComponent implements OnInit {
     const completedFields = fields.filter((field) => field).length
     return Math.round((completedFields / fields.length) * 100)
   }
-}
+} 

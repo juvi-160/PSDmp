@@ -1,84 +1,117 @@
-<div class="profile-container">
+<div class="w-full max-w-3xl mx-auto p-5 font-sans">
   <!-- Profile Header -->
-  <div class="profile-header">
-    <!-- <div class="profile-avatar">
-      <img
-        [src]="user?.profilePicture || '/assets/images/default-avatar.png'"
-        [alt]="user?.name + ' profile picture'"
-        class="avatar-image">
+  <div
+    class="flex flex-col sm:flex-row items-center sm:items-start mb-6 p-6 bg-gradient-to-r from-teal-700 to-teal-900 text-white rounded-xl"
+  >
+    <!-- <div class="mr-5 mb-4 sm:mb-0">
+      <img [src]="user?.profilePicture || '/assets/images/default-avatar.png'"
+           [alt]="user?.name + ' profile picture'"
+           class="w-20 h-20 rounded-full object-cover border-4 border-white/30">
     </div> -->
-    <div class="profile-info">
-      <h2>{{ user?.name }}</h2>
-        <p class="role-badge" [ngClass]="'role-' + (user?.role || '').replace(' ', '-')">
-          {{ user?.role }}
-        </p>
-      </div>
+    <div>
+      <h2 class="text-2xl font-semibold">{{ user?.name }}</h2>
+      <p
+        class="inline-block px-3 py-1 rounded-full text-sm font-medium bg-white/20"
+        [ngClass]="'role-' + (user?.role || '').replace(' ', '-')"
+      >
+        {{ user?.role }}
+      </p>
+    </div>
   </div>
 
   <!-- Profile Completion Progress -->
-  <mat-card class="completion-card" *ngIf="user && !user.profileCompleted">
+  <mat-card
+    class=""
+    *ngIf="user && !user.profileCompleted"
+  >
+  <div class="mb-5 border-l-4 border-amber-500 p-4 bg-gradient-to-r from-amber-50 to-amber-100 rounded-md">
     <mat-card-content>
-      <div class="completion-header">
-        <h3>Complete Your Profile</h3>
-        <span class="completion-percentage">{{ getProfileCompletionPercentage() }}%</span>
+      <div
+        class="flex flex-col sm:flex-row justify-between  items-start sm:items-center mb-2"
+      >
+        <h3 class="text-amber-600 text-lg font-semibold">
+          Complete Your Profile
+        </h3>
+        <span class="text-amber-600 font-bold"
+          >{{ getProfileCompletionPercentage() }}%</span
+        >
       </div>
       <mat-progress-bar
         mode="determinate"
         [value]="getProfileCompletionPercentage()"
-        class="completion-progress">
-      </mat-progress-bar>
-      <p class="completion-text">
+        class="h-2 rounded overflow-hidden bg-amber-200"
+      ></mat-progress-bar>
+      <p class="text-sm mt-2 text-gray-800">
         Complete your profile to get the most out of your PSF membership!
       </p>
     </mat-card-content>
+    </div>
   </mat-card>
 
   <!-- Loading Spinner -->
-  <div class="loading-container" *ngIf="loading">
+  <div class="flex justify-center items-center py-10" *ngIf="loading">
     <mat-spinner diameter="40"></mat-spinner>
   </div>
 
   <!-- Error Message -->
-  <div class="error-container" *ngIf="error && !loading">
-    <p class="error-message">{{ error }}</p>
-    <button mat-raised-button color="primary" (click)="loadProfile()">Retry</button>
+  <div class="text-center py-10" *ngIf="error && !loading">
+    <p class="text-red-600 text-base font-medium mb-4">{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="loadProfile()">
+      Retry
+    </button>
   </div>
 
   <!-- Profile Form -->
-  <mat-card class="profile-form-card" *ngIf="!loading && !error">
+  <mat-card
+    class="bg-white rounded-xl shadow-md p-6"
+    *ngIf="!loading && !error"
+  >
     <mat-card-header>
-      <mat-card-title>Profile Information</mat-card-title>
-      <mat-card-subtitle class="error-message">Update your personal information and preferences</mat-card-subtitle>
+      <mat-card-title class="text-xl font-semibold"
+        >Profile Information</mat-card-title
+      >
+      <mat-card-subtitle class="text-red-500"
+        >Update your personal information and preferences</mat-card-subtitle
+      >
     </mat-card-header>
 
     <mat-card-content>
       <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
         <!-- Basic Information Section -->
-        <div class="form-section">
-          <h3 class="section-title">Basic Information</h3>
+        <div class="mb-8 border-b border-gray-200 pb-6">
+          <h3 class="text-lg font-medium text-teal-700 mb-4 flex items-center">
+            <span
+              class="inline-block w-1.5 h-5 bg-teal-700 rounded mr-3"
+            ></span>
+            Basic Information
+          </h3>
 
-          <div class="form-row">
-            <mat-form-field  class="full-width">
+          <div class="mb-4">
+            <mat-form-field class="w-full">
               <mat-label>Full Name</mat-label>
-              <input matInput formControlName="name" readonly>
+              <input matInput formControlName="name" readonly />
               <mat-icon matSuffix>person</mat-icon>
-              <mat-hint class="error-message">Name cannot be changed</mat-hint>
+              <mat-hint class="text-red-500">Name cannot be changed</mat-hint>
             </mat-form-field>
           </div>
 
-          <div class="form-row">
-            <mat-form-field  class="full-width">
+          <div class="mb-4">
+            <mat-form-field class="w-full">
               <mat-label>Email Address</mat-label>
-              <input matInput formControlName="email" readonly>
+              <input matInput formControlName="email" readonly />
               <mat-icon matSuffix>email</mat-icon>
-              <mat-hint class="error-message">Email cannot be changed</mat-hint>
+              <mat-hint class="text-red-500">Email cannot be changed</mat-hint>
             </mat-form-field>
           </div>
 
-          <div class="form-row">
-            <mat-form-field  class="full-width">
+          <div class="mb-4">
+            <mat-form-field class="w-full">
               <mat-label>Phone Number</mat-label>
-              <input matInput formControlName="phone" placeholder="Enter your phone number">
+              <input
+                matInput
+                formControlName="phone"
+                placeholder="Enter your phone number"
+              />
               <mat-icon matSuffix>phone</mat-icon>
               <mat-error *ngIf="profileForm.get('phone')?.hasError('pattern')">
                 Please enter a valid phone number
@@ -88,37 +121,63 @@
         </div>
 
         <!-- Personal Details Section -->
-        <div class="form-section">
-          <h3 class="section-title">Personal Details</h3>
+        <div class="mb-8 border-b border-gray-200 pb-6">
+          <h3 class="text-lg font-medium text-teal-700 mb-4 flex items-center">
+            <span
+              class="inline-block w-1.5 h-5 bg-teal-700 rounded mr-3"
+            ></span>
+            Personal Details
+          </h3>
 
-          <div class="form-row">
-            <mat-form-field  class="full-width">
-              <mat-label>Age Group</mat-label>
-              <mat-select formControlName="ageGroup">
-                <mat-option value="">Select age group</mat-option>
-                <mat-option class="mat-option" *ngFor="let group of ageGroups" [value]="group.value">
+          <div class="mb-4">
+            <label
+              for="ageGroup"
+              class="block text-sm font-medium text-gray-700 mb-1"
+              >Age Group</label
+            >
+            <div class="relative">
+              <select
+                id="ageGroup"
+                formControlName="ageGroup"
+                class="block w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 pr-10 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-1 focus:ring-teal-600"
+              >
+                <option value="">Select age group</option>
+                <option
+                  *ngFor="let group of ageGroups"
+                  [value]="group.value"
+                  class="bg-cyan-600 text-white"
+                >
                   {{ group.label }}
-                </mat-option>
-              </mat-select>
-              <mat-icon matSuffix>cake</mat-icon>
-            </mat-form-field>
+                </option>
+              </select>
+            </div>
           </div>
 
-          <div class="form-row">
-            <mat-form-field  class="full-width">
+          <div class="mb-4">
+            <mat-form-field class="w-full">
               <mat-label>Profession</mat-label>
-              <input matInput formControlName="profession" placeholder="What do you do for work?">
+              <input
+                matInput
+                formControlName="profession"
+                placeholder="What do you do for work?"
+              />
               <mat-icon matSuffix>work</mat-icon>
-              <mat-error *ngIf="profileForm.get('profession')?.hasError('maxlength')" class="error-message">
+              <mat-error
+                *ngIf="profileForm.get('profession')?.hasError('maxlength')"
+              >
                 Profession cannot exceed 100 characters
               </mat-error>
             </mat-form-field>
           </div>
 
-          <div class="form-row">
-            <mat-form-field  class="full-width">
+          <div class="mb-4">
+            <mat-form-field class="w-full">
               <mat-label>City</mat-label>
-              <input matInput formControlName="city" placeholder="Which city do you live in?">
+              <input
+                matInput
+                formControlName="city"
+                placeholder="Which city do you live in?"
+              />
               <mat-icon matSuffix>location_city</mat-icon>
               <mat-error *ngIf="profileForm.get('city')?.hasError('maxlength')">
                 City name cannot exceed 50 characters
@@ -127,18 +186,24 @@
           </div>
         </div>
 
-        <!-- Interests Section -->
-        <div class="form-section">
-          <h3 class="section-title">Areas of Interest</h3>
+        <!-- Areas of Interest -->
+        <div class="mb-8 border-b border-gray-200 pb-6">
+          <h3 class="text-lg font-medium text-teal-700 mb-4 flex items-center">
+            <span
+              class="inline-block w-1.5 h-5 bg-teal-700 rounded mr-3"
+            ></span>
+            Areas of Interest
+          </h3>
 
-          <div class="form-row">
-            <mat-form-field  class="full-width">
+          <div class="mb-4">
+            <mat-form-field class="w-full">
               <mat-label>Add your interests</mat-label>
               <mat-chip-grid #chipGrid>
                 <mat-chip-row
                   *ngFor="let interest of areasOfInterest"
                   (removed)="removeInterest(interest)"
-                  [removable]="true">
+                  [removable]="true"
+                >
                   {{ interest }}
                   <button matChipRemove>
                     <mat-icon>cancel</mat-icon>
@@ -149,38 +214,56 @@
                 placeholder="Type and press Enter to add interests..."
                 [matChipInputFor]="chipGrid"
                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                (matChipInputTokenEnd)="addInterest($event)">
+                (matChipInputTokenEnd)="addInterest($event)"
+              />
               <mat-icon matSuffix>interests</mat-icon>
-              <mat-hint>Add topics you're passionate about (e.g., Technology, Healthcare, Education)</mat-hint>
+              <mat-hint
+                >Add topics you're passionate about (e.g., Technology,
+                Healthcare, Education)</mat-hint
+              >
             </mat-form-field>
           </div>
 
-          <div class="interests-display" *ngIf="areasOfInterest.length > 0">
-            <p class="interests-label">Your interests:</p>
+          <div *ngIf="areasOfInterest.length > 0">
+            <p class="text-sm font-medium text-gray-600 mb-2">
+              Your interests:
+            </p>
             <mat-chip-set>
-              <mat-chip *ngFor="let interest of areasOfInterest">{{ interest }}</mat-chip>
+              <mat-chip *ngFor="let interest of areasOfInterest">{{
+                interest
+              }}</mat-chip>
             </mat-chip-set>
           </div>
         </div>
 
         <!-- Why PSF Section -->
-        <div class="form-section">
-          <h3 class="section-title">About You</h3>
+        <div class="mb-6">
+          <h3 class="text-lg font-medium text-teal-700 mb-4 flex items-center">
+            <span
+              class="inline-block w-1.5 h-5 bg-teal-700 rounded mr-3"
+            ></span>
+            About You
+          </h3>
 
-          <div class="form-row">
-            <mat-form-field  class="full-width">
+          <div>
+            <mat-form-field class="w-full">
               <mat-label>Why PSF?</mat-label>
               <textarea
                 matInput
                 formControlName="whyPsf"
                 rows="4"
-                placeholder="Tell us why you joined PSF and what you hope to achieve...">
+                placeholder="Tell us why you joined PSF and what you hope to achieve..."
+              >
               </textarea>
               <mat-icon matSuffix>edit</mat-icon>
-              <mat-hint align="end">
-                {{ profileForm.get('whyPsf')?.value?.length || 0 }}/500
-              </mat-hint>
-              <mat-error *ngIf="profileForm.get('whyPsf')?.hasError('maxlength')">
+              <mat-hint align="end"
+                >{{
+                  profileForm.get("whyPsf")?.value?.length || 0
+                }}/500</mat-hint
+              >
+              <mat-error
+                *ngIf="profileForm.get('whyPsf')?.hasError('maxlength')"
+              >
                 Description cannot exceed 500 characters
               </mat-error>
             </mat-form-field>
@@ -189,16 +272,22 @@
       </form>
     </mat-card-content>
 
-    <mat-card-actions class="form-actions">
+    <mat-card-actions class="flex flex-col sm:flex-row justify-end gap-4 mt-6">
       <button
         mat-raised-button
         color="primary"
         (click)="onSubmit()"
-        [disabled]="profileForm.invalid || saving">
-        <mat-spinner diameter="20" *ngIf="saving" class="spinner"></mat-spinner>
+        [disabled]="profileForm.invalid || saving"
+      >
+        <mat-spinner diameter="20" *ngIf="saving" class="mr-2"></mat-spinner>
         <span *ngIf="!saving">Save Profile</span>
       </button>
-      <button mat-button type="button" (click)="loadProfile()" [disabled]="saving">
+      <button
+        mat-button
+        type="button"
+        (click)="loadProfile()"
+        [disabled]="saving"
+      >
         Reset
       </button>
     </mat-card-actions>
