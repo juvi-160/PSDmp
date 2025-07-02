@@ -19,8 +19,13 @@ export const createTicket = async (req, res) => {
     });
     if (!user) return res.status(404).json({ message: "User not found" });
 
+    // 🔧 Get the first available admin
+    const admin = await User.findOne({ where: { role: "admin" }, attributes: ["id"] });
+    if (!admin) return res.status(500).json({ message: "No admin available to assign this ticket" });
+
     const ticket = await Ticket.create({
       user_id: user.id,
+      admin_id: admin.id, // ✅ Assign admin_id
       subject,
       description,
       priority: priority || "medium",
@@ -37,14 +42,14 @@ export const createTicket = async (req, res) => {
   }
 };
 
-// GET USER TICKETS
+// (No changes needed in the rest of the file)
+
 export const getUserTickets = async (req, res) => {
   try {
     const sub = req.auth?.sub || req.auth?.payload?.sub;
     if (!sub) return res.status(401).json({ message: "Invalid authentication token" });
 
     const user = await User.findAll({ where: { auth0_id: sub }, attributes: ["id"] });
-    console.log(user);
     if (!user) return res.status(404).json({ message: "User not found" });
 
     const { status, page = 1, limit = 10 } = req.query;
@@ -74,18 +79,13 @@ export const getUserTickets = async (req, res) => {
   }
 };
 
-// GET ALL TICKETS (ADMIN)
 export const getAllTickets = async (req, res) => {
   try {
-
     const sub = req.auth?.sub || req.auth?.payload?.sub;
     if (!sub) return res.status(401).json({ message: "Invalid authentication token" });
 
     const user = await User.findOne({ where: { auth0_id: sub }, attributes: ["id", "role"] });
-    console.log(user);
-    
     if (!user || user.role !== "admin") return res.status(403).json({ message: "Unauthorized" });
-
 
     const { status, priority, category, search, page = 1, limit = 10 } = req.query;
     const whereClause = {};
@@ -123,7 +123,6 @@ export const getAllTickets = async (req, res) => {
   }
 };
 
-// GET TICKET BY ID
 export const getTicketById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -153,7 +152,6 @@ export const getTicketById = async (req, res) => {
   }
 };
 
-// UPDATE TICKET (ADMIN)
 export const updateTicket = async (req, res) => {
   try {
     const { id } = req.params;
@@ -190,7 +188,6 @@ export const updateTicket = async (req, res) => {
   }
 };
 
-// ADD RESPONSE TO TICKET
 export const addTicketResponse = async (req, res) => {
   try {
     const { id } = req.params;
@@ -224,7 +221,6 @@ export const addTicketResponse = async (req, res) => {
   }
 };
 
-// GET TICKET STATS (ADMIN)
 export const getTicketStats = async (req, res) => {
   try {
     const sub = req.auth?.sub || req.auth?.payload?.sub;
@@ -266,7 +262,6 @@ export const getTicketStats = async (req, res) => {
   }
 };
 
-// DELETE TICKET (ADMIN)
 export const deleteTicket = async (req, res) => {
   try {
     const { id } = req.params;
@@ -277,16 +272,14 @@ export const deleteTicket = async (req, res) => {
     const ticket = await Ticket.findByPk(id);
     if (!ticket) return res.status(404).json({ message: "Ticket not found" });
     await TicketResponse.destroy({ where: { ticket_id: id } });
-    await ticket.destroy();                                   
+    await ticket.destroy();
     res.status(200).json({ message: "Ticket deleted successfully" });
-  }
-  catch (error) {
+  } catch (error) {
     console.error("Error deleting ticket:", error);
     res.status(500).json({ message: "Server error" });
   }
-}
+};
 
-// Export all functions
 export default {
   createTicket,
   getUserTickets,

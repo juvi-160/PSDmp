@@ -197,5 +197,23 @@ export class TicketManagementComponent implements OnInit {
     this.pageSize = event.pageSize
     this.loadTickets()
   }
+  markAsSolved(ticket: Ticket): void {
+      if (confirm(`Mark ticket #${ticket.id} as resolved?`)) {
+        this.ticketService.updateTicket(ticket.id.toString(), { status: 'resolved' }).subscribe({
+          next: () => this.loadTickets(), // Reload the table
+          error: (err) => console.error('Failed to resolve ticket', err),
+        });
+      }
+    }
+
+    deleteTicket(ticket: Ticket): void {
+      if (confirm(`Are you sure you want to delete ticket #${ticket.id}?`)) {
+        this.ticketService.deleteTicket(ticket.id).subscribe({
+          next: () => this.loadTickets(), // Refresh the data
+          error: (err) => console.error('Failed to delete ticket', err),
+        });
+      }
+    }
+
 }
 

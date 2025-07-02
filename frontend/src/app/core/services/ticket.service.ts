@@ -109,7 +109,7 @@ export class TicketService {
     );
   }
 
-  getTicketById(id: number): Observable<Ticket> {
+  getTicketById(id: string | number): Observable<Ticket> {
     return this.authService.getAccessToken().pipe(
       switchMap((token) =>
         this.http.get<Ticket>(`${this.apiUrl}/${id}`, {
@@ -130,7 +130,7 @@ export class TicketService {
   }
 
   updateTicket(
-    id: number,
+    id: string | number,
     updateData: {
       status?: string;
       priority?: string;
@@ -155,7 +155,7 @@ export class TicketService {
     );
   }
 
-  addTicketResponse(id: number, message: string): Observable<{ message: string }> {
+  addTicketResponse(id: string | number, message: string): Observable<{ message: string }> {
     return this.authService.getAccessToken().pipe(
       switchMap((token) =>
         this.http.post<{ message: string }>(
@@ -173,6 +173,16 @@ export class TicketService {
     return this.authService.getAccessToken().pipe(
       switchMap((token) =>
         this.http.get<TicketStats>(`${this.apiUrl}/admin/stats`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+      )
+    );
+  }
+
+  deleteTicket(id: string | number): Observable<any> {
+    return this.authService.getAccessToken().pipe(
+      switchMap((token) =>
+        this.http.delete(`${this.apiUrl}/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
       )

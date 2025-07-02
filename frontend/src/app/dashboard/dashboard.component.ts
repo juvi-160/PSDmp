@@ -51,7 +51,7 @@ export class DashboardComponent implements OnInit {
 
       // ✅ Admin check logic (DO NOT REMOVE)
       this.isAdmin =
-        user?.['http://localhost:3000/roles']?.includes('admin') || // custom claim
+        user?.['https://api.psfhyd.org/roles']?.includes('admin') || // custom claim
         user?.app_metadata?.roles?.includes('admin') ||              // Auth0 app_metadata
         user?.user_metadata?.role === 'admin';                      // fallback check
     });

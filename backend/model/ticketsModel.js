@@ -33,7 +33,7 @@ const Ticket = sequelize.define('Ticket', {
   },
   admin_id: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: true
   },
   resolved_at: {
     type: DataTypes.DATE,

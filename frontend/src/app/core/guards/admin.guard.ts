@@ -13,7 +13,7 @@ export class AdminGuard implements CanActivate {
     return this.auth.user$.pipe(
       map((user: any) => {
         // Checking if the user has an admin role
-        const isAdmin = user?.['http://localhost:3000/roles']?.includes('admin') || 
+        const isAdmin = user?.['https://api.psfhyd.org/roles']?.includes('admin') || 
                        user?.app_metadata?.roles?.includes('admin') ||
                        user?.user_metadata?.role === 'admin';
 
