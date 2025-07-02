@@ -8,6 +8,7 @@ import  { MatSnackBar } from "@angular/material/snack-bar"
 import  { Router } from "@angular/router"
 import  { TicketService } from "../../../core/services/ticket.service"
 import  { Ticket, TicketFilter, TicketStats } from "../../../core/models/ticket.model"
+import { ToastService } from "../../../core/services/toast.service"
 
 @Component({
   selector: 'app-ticket-management',
@@ -52,6 +53,7 @@ export class TicketManagementComponent implements OnInit {
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private router: Router,
+    private toast: ToastService
   ) {
     this.filterForm = this.formBuilder.group({
       search: [""],

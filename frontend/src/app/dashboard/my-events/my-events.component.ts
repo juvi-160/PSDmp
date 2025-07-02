@@ -4,6 +4,7 @@ import  { MatSnackBar } from "@angular/material/snack-bar"
 import  { RsvpService, EventRsvp, EventStats } from "../../core/services/rsvp.service"
 import { FeedbackDialogComponent } from "./feedback-dialog/feedback-dialog.component"
 import { ConfirmDialogComponent } from "../../admin/admin-dashboard/shared/confirm-dialog/confirm-dialog.component"
+import { ToastService } from "../../core/services/toast.service"
 @Component({
   selector: 'app-my-events',
   standalone: false,
@@ -28,6 +29,7 @@ export class MyEventsComponent implements OnInit {
     private rsvpService: RsvpService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
+    private toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -82,13 +84,13 @@ export class MyEventsComponent implements OnInit {
       if (result) {
         this.rsvpService.cancelRsvp(event.event.id!).subscribe({
           next: () => {
-            this.snackBar.open("RSVP cancelled successfully", "Close", { duration: 3000 })
-            this.loadRsvps()
-            this.loadStats()
+            this.toast.show("RSVP cancelled successfully", "success");
+            this.loadRsvps();
+            this.loadStats();
           },
           error: (error) => {
-            console.error("Error cancelling RSVP:", error)
-            this.snackBar.open("Failed to cancel RSVP", "Close", { duration: 3000 })
+            console.error("Error cancelling RSVP:", error);
+            this.toast.show("Failed to cancel RSVP", "error");
           },
         })
       }

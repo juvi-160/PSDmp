@@ -9,6 +9,7 @@ import  { AdminService, EventRsvp, EventRsvpFilter } from "../../core/services/a
 import  { EventService } from "../../core/services/event.service"
 import  { Event } from "../../core/models/event.model"
 import { ConfirmDialogComponent } from "../admin-dashboard/shared/confirm-dialog/confirm-dialog.component"
+import { ToastService } from "../../core/services/toast.service"
 
 @Component({
   selector: 'app-event-rsvps',
@@ -44,6 +45,7 @@ export class EventRsvpsComponent implements OnInit {
     private formBuilder: FormBuilder,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
+    private toast: ToastService
   ) {
     this.filterForm = this.formBuilder.group({
       eventId: [""],
@@ -72,7 +74,7 @@ export class EventRsvpsComponent implements OnInit {
       },
       error: (error) => {
         console.error("Error loading events:", error)
-        this.snackBar.open("Failed to load events", "Close", { duration: 5000 })
+        this.toast.show("Failed to load events", "error")
       },
     })
   }
@@ -145,12 +147,12 @@ export class EventRsvpsComponent implements OnInit {
         window.URL.revokeObjectURL(url)
         document.body.removeChild(a)
 
-        this.snackBar.open("Export successful", "Close", { duration: 3000 })
+        this.toast.show("Export successful", "success")
       },
       error: (error) => {
         this.loading = false
         console.error("Error exporting RSVPs:", error)
-        this.snackBar.open("Failed to export RSVPs", "Close", { duration: 5000 })
+        this.toast.show("Failed to export RSVPs", "error")
       },
     })
   }
@@ -168,12 +170,12 @@ export class EventRsvpsComponent implements OnInit {
       if (result) {
         this.adminService.updateRsvpStatus(rsvp.id, newStatus).subscribe({
           next: () => {
-            this.snackBar.open("RSVP status updated successfully", "Close", { duration: 3000 })
+            this.toast.show("RSVP status updated successfully", "success")
             this.loadRsvps()
           },
           error: (error) => {
             console.error("Error updating RSVP status:", error)
-            this.snackBar.open("Failed to update RSVP status", "Close", { duration: 5000 })
+            this.toast.show("Failed to update RSVP status", "error")
           },
         })
       }

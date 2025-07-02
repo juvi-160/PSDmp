@@ -6,6 +6,7 @@ import  { RsvpService } from "../../core/services/rsvp.service"
 import  { Event } from "../../core/models/event.model"
 import { ConfirmDialogComponent } from "../../admin/admin-dashboard/shared/confirm-dialog/confirm-dialog.component"
 import { AuthService } from "../../core/services/auth.service"
+import { ToastService } from "../../core/services/toast.service"
 
 @Component({
   selector: 'app-events',
@@ -26,6 +27,7 @@ export class EventsComponent implements OnInit {
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private authService: AuthService,
+    private toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -51,7 +53,7 @@ export class EventsComponent implements OnInit {
 
   rsvpToEvent(event: Event): void {
   if (event.id == null) {
-    this.snackBar.open("Invalid event", "Close", { duration: 3000 })
+    this.toast.show("Invalid event", "error")
     return
   }
   const eventId = event.id // eventId is now always a number
@@ -71,17 +73,13 @@ export class EventsComponent implements OnInit {
 
       this.rsvpService.rsvpToEvent(eventId).subscribe({
         next: (response) => {
-          this.snackBar.open("RSVP successful! The event has been added to your calendar.", "Close", {
-            duration: 3000,
-          })
+          this.toast.show("RSVP successful! The event has been added to your calendar.", "success");
           this.rsvpLoading = false
           this.processingEventId = null
         },
         error: (error) => {
           console.error("RSVP error:", error)
-          this.snackBar.open(error.message || "Failed to RSVP. Please try again.", "Close", {
-            duration: 5000,
-          })
+          this.toast.show(error.message || "Failed to RSVP. Please try again.", "error");
           this.rsvpLoading = false
           this.processingEventId = null
         },

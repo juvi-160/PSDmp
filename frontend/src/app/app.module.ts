@@ -73,9 +73,11 @@ import { TicketManagementComponent } from './admin/admin-dashboard/ticket-manage
 import { MemberComponent } from './auth/member/member.component';
 import { MembershipSelectionComponent } from './auth/membership-selection/membership-selection.component';
 
+
 import { InviteComponent } from './admin/admin-dashboard/invite/invite.component';
 import { AdminGuard } from './core/guards/admin.guard';
 import { PaymentHistoryComponent } from './dashboard/payment-history/payment-history.component';
+import { ToastComponent } from './layout/toast/toast.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -90,6 +92,7 @@ const routes: Routes = [
   { path: 'profile', component: ProfileComponent },
   { path: 'faqs', component: FaqsComponent },
   { path: "payment", component: PaymentComponent },
+  { path: 'toast', component: ToastComponent },
   {
     path: 'dashboard',
     component: DashboardComponent,
@@ -159,6 +162,7 @@ const routes: Routes = [
     InviteComponent,
     MemberComponent,
     PaymentHistoryComponent,
+    ToastComponent,
   ],
   imports: [
     BrowserModule,

@@ -3,6 +3,7 @@ import  { ActivatedRoute, Router } from "@angular/router"
 import  { MatSnackBar } from "@angular/material/snack-bar"
 import { UserService } from "../../../../core/services/user.service"
 import { User } from "../../../../core/models/user.model"
+import { ToastService } from "../../../../core/services/toast.service"
 
 @Component({
   selector: 'app-user-details',
@@ -21,6 +22,7 @@ export class UserDetailsComponent implements OnInit {
     private router: Router,
     private userService: UserService,
     private snackBar: MatSnackBar,
+    private toast: ToastService
   ) {}
 
   ngOnInit(): void {

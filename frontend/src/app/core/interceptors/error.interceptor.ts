@@ -5,6 +5,7 @@ import { catchError } from "rxjs/operators"
 import  { AuthService } from "../services/auth.service"
 import  { MatSnackBar } from "@angular/material/snack-bar"
 import  { Router } from "@angular/router"
+import { ToastService } from "../services/toast.service"
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
@@ -12,6 +13,7 @@ export class ErrorInterceptor implements HttpInterceptor {
     private authService: AuthService,
     private snackBar: MatSnackBar,
     private router: Router,
+    private toast: ToastService
   ) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
@@ -29,6 +31,7 @@ export class ErrorInterceptor implements HttpInterceptor {
           horizontalPosition: "center",
           verticalPosition: "bottom",
         })
+        this.toast.show(errorMessage, "error")
 
         return throwError(() => error)
       }),

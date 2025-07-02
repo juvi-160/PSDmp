@@ -10,6 +10,7 @@ import { UserService } from "../../../../core/services/user.service"
 import  { User, UserFilter } from "../../../../core/models/user.model"
 import { UserEditDialogComponent } from "../user-edit-dialog/user-edit-dialog.component"
 import { ConfirmDialogComponent } from "../../shared/confirm-dialog/confirm-dialog.component"
+import { ToastService } from "../../../../core/services/toast.service"
 
 @Component({
   selector: 'app-user-management',
@@ -50,6 +51,7 @@ export class UserManagementComponent implements OnInit {
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private router: Router,
+    private toast: ToastService
   ) {
     this.filterForm = this.formBuilder.group({
       search: [""],
@@ -156,7 +158,8 @@ export class UserManagementComponent implements OnInit {
 
   deleteUser(user: User): void {
     if (user.role === "admin") {
-      this.snackBar.open("Cannot delete admin users", "Close", { duration: 3000 })
+
+      this.toast.show("Cannot delete admin users", "error")
       return
     }
 
@@ -174,13 +177,13 @@ export class UserManagementComponent implements OnInit {
       if (result) {
         this.userService.deleteUser(user.id!).subscribe({
           next: () => {
-            this.snackBar.open("User deleted successfully", "Close", { duration: 3000 })
+            this.toast.show("User deleted successfully", "success")
             this.loadUsers()
             this.loadStats()
           },
           error: (error) => {
             console.error("Error deleting user:", error)
-            this.snackBar.open("Failed to delete user", "Close", { duration: 5000 })
+            this.toast.show("Failed to delete user", "error")
           },
         })
       }
@@ -216,12 +219,12 @@ export class UserManagementComponent implements OnInit {
         window.URL.revokeObjectURL(url)
         document.body.removeChild(a)
 
-        this.snackBar.open("Export successful", "Close", { duration: 3000 })
+        this.toast.show("Export successful", "success")
       },
       error: (error) => {
         this.loading = false
         console.error("Error exporting users:", error)
-        this.snackBar.open("Failed to export users", "Close", { duration: 5000 })
+        this.toast.show("Failed to export users", "error" )
       },
     })
   }

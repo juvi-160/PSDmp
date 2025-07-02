@@ -6,6 +6,7 @@ import { AuthService as Auth0Service } from '@auth0/auth0-angular';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
+import { ToastService } from './toast.service';
 
 export interface User {
   id?: string;
@@ -33,7 +34,8 @@ export class AuthService {
     private http: HttpClient,
     private auth0: Auth0Service,
     private snackBar: MatSnackBar,
-    private router: Router
+    private router: Router,
+    private toast: ToastService
   ) {
     this.currentUserSubject = new BehaviorSubject<User | null>(null);
     this.currentUser = this.currentUserSubject.asObservable();
@@ -78,17 +80,16 @@ export class AuthService {
                     },
                     error: (err) => {
                       console.error('Error creating user:', err);
-                      this.snackBar.open(
-                        'Error creating user profile',
-                        'Close',
-                        { duration: 5000 }
-                      );
+                      // this.snackBar.open(
+                      //   'Error creating user profile',
+                      //   'Close',
+                      //   { duration: 5000 }
+                      // );
+                      this.toast.show('Error creating user profile', 'error');
                     },
                   });
                 } else {
-                  this.snackBar.open('Error fetching user profile', 'Close', {
-                    duration: 5000,
-                  });
+                  this.toast.show('Error fetching user profile', 'error');
                 }
               },
             });
@@ -119,8 +120,8 @@ export class AuthService {
   checkUserPaymentStatus(): Observable<{ needsPayment: boolean, role: string }> {
     return this.getUserProfile().pipe(
       map(user => {
-        const needsPayment = 
-          (user.role === 'individual member' && !user.hasPaid) || 
+        const needsPayment =
+          (user.role === 'individual member' && !user.hasPaid) ||
           user.role === 'pending';
         return { needsPayment, role: user.role };
       }),

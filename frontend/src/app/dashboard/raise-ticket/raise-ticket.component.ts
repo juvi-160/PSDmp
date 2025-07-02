@@ -4,7 +4,7 @@ import  { MatSnackBar } from "@angular/material/snack-bar"
 import  { Router } from "@angular/router"
 import  { TicketService } from "../../core/services/ticket.service"
 import  { CreateTicketRequest } from "../../core/models/ticket.model"
-
+import { ToastService } from "../../core/services/toast.service"
 @Component({
   selector: 'app-raise-ticket',
   standalone: false,
@@ -36,6 +36,7 @@ export class RaiseTicketComponent implements OnInit {
     private ticketService: TicketService,
     private snackBar: MatSnackBar,
     private router: Router,
+    private toast: ToastService
   ) {
     this.ticketForm = this.formBuilder.group({
       subject: ["", [Validators.required, Validators.minLength(5), Validators.maxLength(255)]],
@@ -61,13 +62,15 @@ export class RaiseTicketComponent implements OnInit {
       this.ticketService.createTicket(ticketData).subscribe({
         next: (response) => {
           this.loading = false
-          this.snackBar.open("Ticket created successfully!", "Close", { duration: 3000 })
+          //this.snackBar.open("Ticket created successfully!", "Close", { duration: 3000 })
+          this.toast.show("Ticket created successfully!", "success")
           this.router.navigate(["/dashboard/my-tickets"])
         },
         error: (error) => {
           this.loading = false
           console.error("Error creating ticket:", error)
-          this.snackBar.open("Failed to create ticket. Please try again.", "Close", { duration: 5000 })
+          //this.snackBar.open("Failed to create ticket. Please try again.", "Close", { duration: 5000 })
+          this.toast.show("Failed to create ticket. Please try again.", "error")
         },
       })
     } else {
