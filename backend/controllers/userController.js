@@ -16,7 +16,7 @@ function formatPaymentAmount(amount, currency = "INR", role) {
   return formatter.format(amount);
 }
 
-// Helper function to format user response
+// Updated helper function to format user response
 const formatUserResponse = (user) => {
   return {
     id: user.id,
@@ -28,7 +28,12 @@ const formatUserResponse = (user) => {
     isEmailVerified: !!user.is_email_verified,
     isPhoneVerified: !!user.is_phone_verified,
     hasPaid: !!user.has_paid,
-    autopayEnabled: !!user.autopay_enabled,
+    autoPayEnabled: !!user.auto_pay_enabled,
+    subscriptionId: user.subscription_id || null,
+    subscriptionStatus: user.subscription_status || null,
+    subscriptionStartDate: user.subscription_start_date || null,
+    subscriptionEndDate: user.subscription_end_date || null,
+    lastPaymentDate: user.last_payment_date || null,
     createdAt: user.created_at,
     updatedAt: user.updated_at,
     paymentRequired: user.role === 'individual member' && !user.has_paid,
@@ -39,7 +44,7 @@ const formatUserResponse = (user) => {
 export const getUsers = async (req, res) => {
   try {
     const whereClause = {};
-    const { search, role, hasPaid, dateFrom, dateTo } = req.query;
+    const { search, role, hasPaid, dateFrom, dateTo, subscriptionStatus } = req.query;
 
     if (search) {
       whereClause[Op.or] = [
@@ -50,6 +55,7 @@ export const getUsers = async (req, res) => {
     }
     if (role) whereClause.role = role;
     if (hasPaid !== undefined) whereClause.has_paid = hasPaid === "true";
+    if (subscriptionStatus) whereClause.subscription_status = subscriptionStatus;
     if (dateFrom) whereClause.created_at = { [Op.gte]: new Date(dateFrom) };
     if (dateTo) {
       if (whereClause.created_at) whereClause.created_at[Op.lte] = new Date(dateTo);
@@ -89,6 +95,7 @@ export const getUsers = async (req, res) => {
           paymentId: latestOrder.payment_id,
           paymentDate: latestOrder.created_at,
           formattedAmount: formatPaymentAmount(paymentAmount, paymentCurrency),
+          isSubscription: latestOrder.is_subscription || false
         } : null)
       };
     });
@@ -127,6 +134,7 @@ export const getUserById = async (req, res) => {
         paymentId: latestPaidOrder.payment_id,
         paymentDate: latestPaidOrder.created_at,
         formattedAmount: formatPaymentAmount(latestPaidOrder.amount, latestPaidOrder.currency),
+        isSubscription: latestPaidOrder.is_subscription || false
       } : null),
       paymentHistory: user.orders.map(order => ({
         id: order.id,
@@ -137,6 +145,7 @@ export const getUserById = async (req, res) => {
         paymentId: order.payment_id,
         paymentDate: order.created_at,
         formattedAmount: formatPaymentAmount(order.amount, order.currency),
+        isSubscription: order.is_subscription || false,
         notes: order.notes ? JSON.parse(order.notes) : null,
       }))
     });
@@ -151,7 +160,7 @@ export const getUserPaymentHistory = async (req, res) => {
     const userId = req.params.id;
 
     const user = await User.findByPk(userId, {
-      attributes: ["auth0_id", "role"],
+      attributes: ["id", "role", "subscription_id", "subscription_status"],
     });
 
     if (!user) {
@@ -163,7 +172,7 @@ export const getUserPaymentHistory = async (req, res) => {
     }
 
     const paymentHistory = await Order.findAll({
-      where: { user_id: user.auth0_id },
+      where: { user_id: user.id },
       order: [["created_at", "DESC"]],
     });
 
@@ -176,6 +185,8 @@ export const getUserPaymentHistory = async (req, res) => {
       paymentId: payment.payment_id,
       paymentDate: payment.created_at,
       formattedAmount: formatPaymentAmount(payment.amount, payment.currency),
+      isSubscription: payment.is_subscription || false,
+      subscriptionId: payment.is_subscription ? user.subscription_id : null,
       notes: payment.notes ? JSON.parse(payment.notes) : null,
     }));
 
@@ -189,7 +200,15 @@ export const getUserPaymentHistory = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const userId = req.params.id;
-    const { role, isEmailVerified, isPhoneVerified, hasPaid, autopayEnabled } = req.body;
+    const { 
+      role, 
+      isEmailVerified, 
+      isPhoneVerified, 
+      hasPaid, 
+      autoPayEnabled,
+      subscriptionStatus,
+      subscriptionId
+    } = req.body;
 
     const user = await User.findByPk(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
@@ -203,13 +222,15 @@ export const updateUser = async (req, res) => {
       is_email_verified: isEmailVerified !== undefined ? isEmailVerified : user.is_email_verified,
       is_phone_verified: isPhoneVerified !== undefined ? isPhoneVerified : user.is_phone_verified,
       has_paid: updatedHasPaid,
-      autopay_enabled: autopayEnabled !== undefined ? autopayEnabled : user.autopay_enabled
+      auto_pay_enabled: autoPayEnabled !== undefined ? autoPayEnabled : user.auto_pay_enabled,
+      subscription_status: subscriptionStatus || user.subscription_status,
+      subscription_id: subscriptionId || user.subscription_id
     });
 
     res.status(200).json(formatUserResponse(await user.reload()));
   } catch (error) {
     console.error("Error updating user:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
@@ -242,6 +263,8 @@ export const updateUserRole = async (req, res) => {
     // Automatically set payment status based on role
     if (role === 'associate member') {
       updateData.has_paid = true;
+      updateData.auto_pay_enabled = false;
+      updateData.subscription_status = null;
     } else if (role === 'individual member') {
       updateData.has_paid = false;
     }
@@ -310,7 +333,7 @@ export const deleteUser = async (req, res) => {
 export const exportUsersToExcel = async (req, res) => {
   try {
     const whereClause = {};
-    const { search, role, hasPaid, dateFrom, dateTo } = req.query;
+    const { search, role, hasPaid, dateFrom, dateTo, subscriptionStatus } = req.query;
 
     if (search) {
       whereClause[Op.or] = [
@@ -322,6 +345,7 @@ export const exportUsersToExcel = async (req, res) => {
 
     if (role) whereClause.role = role;
     if (hasPaid !== undefined) whereClause.has_paid = hasPaid === "true";
+    if (subscriptionStatus) whereClause.subscription_status = subscriptionStatus;
     if (dateFrom) whereClause.created_at = { [Op.gte]: new Date(dateFrom) };
     if (dateTo) {
       if (whereClause.created_at) {
@@ -360,7 +384,9 @@ export const exportUsersToExcel = async (req, res) => {
       { header: "Phone Verified", key: "is_phone_verified", width: 15 },
       { header: "Payment Status", key: "has_paid", width: 15 },
       { header: "Payment Amount", key: "payment_amount", width: 20 },
-      { header: "Autopay Enabled", key: "autopay_enabled", width: 15 },
+      { header: "Auto Pay Enabled", key: "auto_pay_enabled", width: 15 },
+      { header: "Subscription ID", key: "subscription_id", width: 30 },
+      { header: "Subscription Status", key: "subscription_status", width: 20 },
       { header: "Registered On", key: "created_at", width: 20 },
       { header: "Last Updated", key: "updated_at", width: 20 },
     ];
@@ -390,7 +416,9 @@ export const exportUsersToExcel = async (req, res) => {
         has_paid: user.role === 'associate member' ? "Not Required" : 
                  (user.has_paid ? "Paid" : "Not Paid"),
         payment_amount: formatPaymentAmount(paymentAmount, paymentCurrency, user.role),
-        autopay_enabled: user.autopay_enabled ? "Yes" : "No",
+        auto_pay_enabled: user.auto_pay_enabled ? "Yes" : "No",
+        subscription_id: user.subscription_id || "N/A",
+        subscription_status: user.subscription_status || "N/A",
         created_at: new Date(user.created_at).toLocaleString(),
         updated_at: new Date(user.updated_at).toLocaleString(),
       });
@@ -421,6 +449,12 @@ export const getUserStats = async (req, res) => {
     });
     const associateMembers = await User.count({ where: { role: "associate member" } });
     const pendingUsers = await User.count({ where: { role: "pending" } });
+    const activeSubscriptions = await User.count({ 
+      where: { 
+        subscription_status: "active",
+        auto_pay_enabled: true
+      } 
+    });
 
     const orders = await Order.findAll({
       where: { status: "paid" },
@@ -434,6 +468,7 @@ export const getUserStats = async (req, res) => {
       paidUsers,
       associateMembers,
       pendingUsers,
+      activeSubscriptions,
       totalRevenue,
     });
   } catch (error) {
