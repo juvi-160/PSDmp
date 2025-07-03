@@ -8,16 +8,33 @@ import { environment } from '../../environments/environment';
   providedIn: 'root',
 })
 export class PaymentHistoryService {
-  private apiUrl = `${environment.apiUrl}/payment-history/by-email`; // ✅ FIXED here
+  private baseUrl = `${environment.apiUrl}`;
 
   constructor(private http: HttpClient) {}
 
-  getPaymentHistory(userId: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${userId}`).pipe(
-      catchError((error) => {
-        console.error('Error fetching payment history:', error);
-        return throwError(() => new Error('Failed to fetch payment history. Please try again later.'));
-      })
+  getPaymentHistory(userEmail: string): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/payment-history/by-email/${userEmail}`).pipe(
+      catchError((error) => throwError(() => new Error('Failed to fetch payment history')))
+    );
+  }
+
+  getSubscriptionById(subscriptionId: string): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/subscription/razorpay/subscriptions/${subscriptionId}`);
+  }
+
+  getSubscriptionInvoicesById(subscriptionId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/subscription/razorpay/subscriptions/${subscriptionId}/invoices`);
+  }
+
+  enableAutoPay(): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/subscrition/enable-auto-pay`, {}).pipe(
+      catchError((error) => throwError(() => error))
+    );
+  }
+
+  disableAutoPay(): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/subscription/disable-auto-pay`, {}).pipe(
+      catchError((error) => throwError(() => error))
     );
   }
 }

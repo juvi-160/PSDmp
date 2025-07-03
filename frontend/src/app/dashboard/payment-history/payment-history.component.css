@@ -1,1 +1,12 @@
-    
+.toast-success {
+  background-color: #16a34a; /* green */
+  color: white;
+}
+.toast-error {
+  background-color: #dc2626; /* red */
+  color: white;
+}
+.toast-info {
+  background-color: #2563eb; /* blue */
+  color: white;
+}

@@ -10,7 +10,9 @@ import {
   verifySubscriptionFirstPayment,
   handleSubscriptionWebhook,
   enableAutoPay,
-  disableAutoPay
+  disableAutoPay,
+  getSubscription,
+  getSubscriptionInvoices
 } from "../controllers/subscriptionController.js"
 
 const router = express.Router()
@@ -40,7 +42,11 @@ router.post("/verify-subscription-payment", checkJwt, verifySubscriptionFirstPay
 router.post("/webhook", handleSubscriptionWebhook)
 
 // Enable/disable auto-pay routes
-router.post("/enable-auto-pay", checkJwt, enableAutoPay);
-router.post("/disable-auto-pay", checkJwt, disableAutoPay);
+router.post("/enable-auto-pay",  enableAutoPay);
+router.post("/disable-auto-pay", disableAutoPay);
+
+//subscriptions finder through razorpay
+router.get("/razorpay/subscriptions/:subscriptionId", getSubscription);
+router.get("/razorpay/subscriptions/:subscriptionId/invoices", getSubscriptionInvoices);
 
 export default router

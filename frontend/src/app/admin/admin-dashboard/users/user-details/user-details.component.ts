@@ -16,6 +16,7 @@ export class UserDetailsComponent implements OnInit {
   user: User | null = null;
   loading = false;
   error = "";
+  togglingAutoPay = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -40,7 +41,7 @@ export class UserDetailsComponent implements OnInit {
     this.loading = true;
     this.error = "";
 
-    this.userService.getUserById(Number(this.userId)).subscribe({
+    this.userService.getUserById((this.userId)).subscribe({
       next: (user) => {
         this.user = user;
         this.loading = false;
@@ -50,6 +51,28 @@ export class UserDetailsComponent implements OnInit {
         this.loading = false;
         console.error("Error loading user details:", error);
       },
+    });
+  }
+
+  toggleAutoPay(): void {
+    if (!this.user) return;
+    this.togglingAutoPay = true;
+
+    const action = this.user.autoPayEnabled
+      ? this.userService.disableAutoPay()
+      : this.userService.enableAutoPay();
+
+    action.subscribe({
+      next: (res) => {
+        this.user!.autoPayEnabled = !this.user!.autoPayEnabled;
+        this.toast.show(`AutoPay ${this.user!.autoPayEnabled ? 'enabled' : 'disabled'} successfully`, 'success');
+        this.togglingAutoPay = false;
+      },
+      error: (err) => {
+        this.toast.show('Failed to update AutoPay status', 'error');
+        console.error('AutoPay toggle error:', err);
+        this.togglingAutoPay = false;
+      }
     });
   }
 

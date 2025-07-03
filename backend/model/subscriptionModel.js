@@ -9,55 +9,51 @@ const Subscription = sequelize.define(
       allowNull: false,
       unique: true,
     },
-
+    customer_id: {
+      type: DataTypes.STRING,
+      allowNull: true, // This allows you to recover subscriptions using Razorpay's API
+    },
     user_id: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
     },
-
     plan_id: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-
     status: {
       type: DataTypes.STRING(50),
       allowNull: false,
       defaultValue: "created",
     },
-
     start_at: {
       type: DataTypes.DATE,
       allowNull: false,
     },
-
     current_start: {
       type: DataTypes.DATE,
       allowNull: true,
     },
-
     current_end: {
       type: DataTypes.DATE,
       allowNull: true,
     },
-
     paid_count: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
     },
-
     notes: {
       type: DataTypes.JSON,
       allowNull: true,
     },
   },
-
   {
     timestamps: true,
     createdAt: "created_at",
     updatedAt: "updated_at",
   }
 );
+
 
 // ✅ Associations
 Subscription.associate = (models) => {

@@ -148,6 +148,7 @@ console.log({
       subscription_id: subscription.id,
       user_id: user.id, // Database ID
       plan_id: PID.id,
+      razorpay_plan_id: planId,
       status: subscription.status,
       start_at: new Date(subscription.start_at * 1000),
       notes: JSON.stringify(subscription.notes),
@@ -160,6 +161,7 @@ console.log({
       status: subscription.status,
       start_at: new Date(subscription.start_at * 1000),
       notes: JSON.stringify(subscription.notes),
+      customer_id: subscription.customer_id,
     });
     
 
@@ -217,6 +219,7 @@ export const createSubscription = async (req, res) => {
       status: subscription.status,
       start_at: new Date(subscription.start_at * 1000),
       notes: JSON.stringify(subscription.notes),
+      customer_id: subscription.customer_id,
     });
 
     res.status(200).json(subscription);
@@ -777,5 +780,29 @@ export const disableAutoPay = async (req, res) => {
   } catch (error) {
     console.error("Error disabling auto-pay:", error);
     res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// Fetch a single subscription by ID
+export const getSubscription = async (req, res) => {
+  try {
+    const { subscriptionId } = req.params;
+    const subscription = await razorpay.subscriptions.fetch(subscriptionId);
+    return res.json(subscription);
+  } catch (err) {
+    console.error("Error fetching subscription:", err);
+    return res.status(500).json({ message: err.message });
+  }
+};
+
+// Fetch all invoices/payments for a subscription
+export const getSubscriptionInvoices = async (req, res) => {
+  try {
+    const { subscriptionId } = req.params;
+    const invoices = await razorpay.invoices.all({ subscription_id: subscriptionId });
+    return res.json(invoices);
+  } catch (err) {
+    console.error("Error fetching invoices:", err);
+    return res.status(500).json({ message: err.message });
   }
 };

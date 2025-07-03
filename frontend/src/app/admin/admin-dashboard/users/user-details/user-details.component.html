@@ -1,204 +1,97 @@
-<div class="user-details-container bg-gray-50 min-h-screen p-6">
-  <!-- Page Header -->
-  <div class="page-header flex items-center mb-6">
-    <button
-      mat-icon-button
-      (click)="goBack()"
-      class="back-button mr-4 text-gray-600 hover:bg-gray-100 rounded-full"
-    >
-      <mat-icon class="text-gray-700">arrow_back</mat-icon>
-    </button>
-    <h2 class="text-2xl font-bold text-gray-800">User Details</h2>
-  </div>
+<div *ngIf="loading" class="text-center py-10">
+  <mat-spinner></mat-spinner>
+</div>
 
-  <!-- Loading Spinner -->
-  <div class="loading-container flex justify-center items-center py-12" *ngIf="loading">
-    <mat-spinner diameter="40" class="text-indigo-600"></mat-spinner>
-  </div>
+<div *ngIf="!loading && user" class="user-details-container px-6 py-6 bg-white rounded shadow-md">
+  <h2 class="text-2xl font-semibold mb-4">User Details</h2>
 
-  <!-- Error Message -->
-  <div class="error-container bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded" *ngIf="error && !loading">
-    <div class="flex items-center">
-      <mat-icon class="text-red-500 mr-2">error</mat-icon>
-      <p class="error-message text-red-700 font-medium">{{ error }}</p>
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <!-- User ID -->
+    <div class="detail-item">
+      <span class="detail-label text-sm font-medium text-gray-500">User ID:</span>
+      <span class="detail-value text-sm font-medium text-gray-900">{{ user.id || 'N/A' }}</span>
     </div>
-    <button
-      mat-raised-button
-      color="primary"
-      (click)="loadUserDetails()"
-      class="mt-3 bg-indigo-600 hover:bg-indigo-700 text-white"
-    >
-      Retry
-    </button>
-  </div>
 
-  <!-- User Details -->
-  <div class="user-details-content" *ngIf="user && !loading && !error">
-    <div class="user-details-grid grid grid-cols-1 md:grid-cols-2 gap-6">
-      <!-- Basic Information Card -->
-      <mat-card class="details-card bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
-        <mat-card-header class="border-b border-gray-200 px-6 py-4">
-          <mat-card-title class="text-lg font-semibold text-gray-800">Basic Information</mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="px-6 py-4">
-          <div class="detail-item grid grid-cols-3 gap-4 py-3">
-            <span class="detail-label col-span-1 text-sm font-medium text-gray-500">User ID:</span>
-            <span class="detail-value col-span-2 text-sm text-gray-800 font-mono">{{ user.id }}</span>
-          </div>
-          <div class="detail-item grid grid-cols-3 gap-4 py-3">
-            <span class="detail-label col-span-1 text-sm font-medium text-gray-500">Auth0 ID:</span>
-            <span class="detail-value col-span-2 text-sm text-gray-800 font-mono truncate">{{ user.auth0Id }}</span>
-          </div>
-          <div class="detail-item grid grid-cols-3 gap-4 py-3">
-            <span class="detail-label col-span-1 text-sm font-medium text-gray-500">Name:</span>
-            <span class="detail-value col-span-2 text-sm text-gray-800">{{ user.name }}</span>
-          </div>
-          <div class="detail-item grid grid-cols-3 gap-4 py-3">
-            <span class="detail-label col-span-1 text-sm font-medium text-gray-500">Email:</span>
-            <span class="detail-value col-span-2 text-sm text-gray-800">{{ user.email }}</span>
-          </div>
-          <div class="detail-item grid grid-cols-3 gap-4 py-3">
-            <span class="detail-label col-span-1 text-sm font-medium text-gray-500">Phone:</span>
-            <span class="detail-value col-span-2 text-sm text-gray-800">{{ user.phone || 'Not provided' }}</span>
-          </div>
-          <div class="detail-item grid grid-cols-3 gap-4 py-3">
-            <span class="detail-label col-span-1 text-sm font-medium text-gray-500">Role:</span>
-            <span class="detail-value col-span-2">
-              <span class="role-badge px-2 py-1 rounded-full text-xs font-medium" [ngClass]="getRoleClass(user.role)">
-                {{ user.role }}
-              </span>
-            </span>
-          </div>
-          <div class="detail-item grid grid-cols-3 gap-4 py-3">
-            <span class="detail-label col-span-1 text-sm font-medium text-gray-500">Registered On:</span>
-            <span class="detail-value col-span-2 text-sm text-gray-800">{{ formatDate(user.createdAt) }}</span>
-          </div>
-          <div class="detail-item grid grid-cols-3 gap-4 py-3">
-            <span class="detail-label col-span-1 text-sm font-medium text-gray-500">Last Updated:</span>
-            <span class="detail-value col-span-2 text-sm text-gray-800">{{ formatDate(user.updatedAt) }}</span>
-          </div>
-        </mat-card-content>
-      </mat-card>
+    <!-- Email -->
+    <div class="detail-item">
+      <span class="detail-label text-sm font-medium text-gray-500">Email:</span>
+      <span class="detail-value text-sm font-medium text-gray-900">{{ user.email }}</span>
+    </div>
 
-      <!-- Verification Status Card -->
-      <mat-card class="details-card bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
-        <mat-card-header class="border-b border-gray-200 px-6 py-4">
-          <mat-card-title class="text-lg font-semibold text-gray-800">Verification Status</mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="px-6 py-4">
-          <div class="detail-item grid grid-cols-3 gap-4 py-3">
-            <span class="detail-label col-span-1 text-sm font-medium text-gray-500">Email Verified:</span>
-            <span class="detail-value col-span-2 text-sm flex items-center">
-              <mat-icon *ngIf="user.isEmailVerified" class="verified-icon text-green-500 mr-1">check_circle</mat-icon>
-              <mat-icon *ngIf="!user.isEmailVerified" class="unverified-icon text-red-500 mr-1">cancel</mat-icon>
-              {{ user.isEmailVerified ? 'Verified' : 'Not Verified' }}
-            </span>
-          </div>
-          <div class="detail-item grid grid-cols-3 gap-4 py-3">
-            <span class="detail-label col-span-1 text-sm font-medium text-gray-500">Phone Verified:</span>
-            <span class="detail-value col-span-2 text-sm flex items-center">
-              <mat-icon *ngIf="user.isPhoneVerified" class="verified-icon text-green-500 mr-1">check_circle</mat-icon>
-              <mat-icon *ngIf="!user.isPhoneVerified" class="unverified-icon text-red-500 mr-1">cancel</mat-icon>
-              {{ user.isPhoneVerified ? 'Verified' : 'Not Verified' }}
-            </span>
-          </div>
-          <div class="detail-item grid grid-cols-3 gap-4 py-3">
-            <span class="detail-label col-span-1 text-sm font-medium text-gray-500">Payment Status:</span>
-            <span class="detail-value col-span-2">
-              <span class="status-badge px-2 py-1 rounded-full text-xs font-medium" [ngClass]="getPaymentStatusClass(user.hasPaid)">
-                {{ user.hasPaid ? 'Paid' : 'Not Paid' }}
-              </span>
-            </span>
-          </div>
-          <div class="detail-item grid grid-cols-3 gap-4 py-3">
-            <span class="detail-label col-span-1 text-sm font-medium text-gray-500">Auto Pay:</span>
-            <span class="detail-value col-span-2">
-              <span class="autopay-badge inline-flex items-center px-2 py-2 rounded-full text-xs font-medium" [ngClass]="getAutoPayStatusClass(user.autoPayEnabled)">
-                <mat-icon class="autopay-icon mt-2 mr-1 text-xs">{{ getAutoPayIcon(user.autoPayEnabled) }}</mat-icon>
-                {{ getAutoPayStatusText(user.autoPayEnabled) }}
-              </span>
-            </span>
-          </div>
-        </mat-card-content>
-      </mat-card>
+    <!-- Role -->
+    <div class="detail-item">
+      <span class="detail-label text-sm font-medium text-gray-500">Role:</span>
+      <span class="detail-value">
+        <span [ngClass]="getRoleClass(user.role)">
+          {{ user.role }}
+        </span>
+      </span>
+    </div>
 
-      <!-- Payment Summary Card -->
-      <mat-card class="details-card bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
-        <mat-card-header class="border-b border-gray-200 px-6 py-4">
-          <mat-card-title class="text-lg font-semibold text-gray-800">Payment Summary</mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="px-6 py-4">
-          <div class="detail-item grid grid-cols-3 gap-4 py-3">
-            <span class="detail-label col-span-1 text-sm font-medium text-gray-500">Total Amount Paid:</span>
-            <span class="detail-value col-span-2 text-sm font-semibold text-indigo-600">
-              {{ user.formattedPaymentAmount || '₹0' }}
-            </span>
-          </div>
-          <div class="detail-item grid grid-cols-3 gap-4 py-3" *ngIf="user.subscriptionId">
-            <span class="detail-label col-span-1 text-sm font-medium text-gray-500">Subscription ID:</span>
-            <span class="detail-value col-span-2 text-sm text-gray-800 font-mono truncate">{{ user.subscriptionId }}</span>
-          </div>
-          <div class="detail-item grid grid-cols-3 gap-4 py-3" *ngIf="user.subscriptionStatus">
-            <span class="detail-label col-span-1 text-sm font-medium text-gray-500">Subscription Status:</span>
-            <span class="detail-value col-span-2">
-              <span class="status-badge px-2 py-1 rounded-full text-xs font-medium" [ngClass]="getSubscriptionStatusClass(user.subscriptionStatus)">
-                {{ user.subscriptionStatus | titlecase }}
-              </span>
-            </span>
-          </div>
-        </mat-card-content>
-      </mat-card>
+    <!-- Payment Status -->
+    <div class="detail-item">
+      <span class="detail-label text-sm font-medium text-gray-500">Payment Status:</span>
+      <span class="detail-value">
+        <span [ngClass]="getPaymentStatusClass(user.hasPaid)">
+          {{ user.hasPaid ? 'Paid' : 'Pending' }}
+        </span>
+      </span>
+    </div>
 
-      <!-- Payment History Card -->
-      <mat-card class="details-card payment-history-card bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow col-span-1 md:col-span-2">
-        <mat-card-header class="border-b mb-2 border-gray-200 px-6 py-4">
-          <mat-card-title class="text-lg font-semibold text-gray-800 ">Payment History</mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="px-6 py-4 ">
-          <div *ngIf="user.paymentHistory && user.paymentHistory.length > 0; else noPaymentHistory">
-            <div class="payment-history-list space-y-4">
-              <div *ngFor="let payment of user.paymentHistory" class="payment-item border border-gray-200 rounded-lg p-4 hover:bg-gray-50">
-                <div class="payment-header flex justify-between items-center mb-2">
-                  <span class="payment-order-id text-sm font-medium text-gray-700">{{ payment.orderId }}</span>
-                  <span class="payment-amount text-sm font-semibold text-indigo-600">{{ payment.formattedAmount }}</span>
-                </div>
-                <div class="payment-details grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-                  <div class="payment-detail">
-                    <span class="label text-xs text-gray-500 block">Date:</span>
-                    <span class="value text-sm text-gray-800">{{ formatDate(payment.paymentDate) }}</span>
-                  </div>
-                  <div class="payment-detail">
-                    <span class="label text-xs text-gray-500 block">Status:</span>
-                    <span class="value text-sm">
-                      <span class="status-badge px-2 py-1 rounded-full text-xs font-medium" [ngClass]="getPaymentStatusClassByStatus(payment.status)">
-                        {{ payment.status | titlecase }}
-                      </span>
-                    </span>
-                  </div>
-                  <div class="payment-detail" *ngIf="payment.paymentId">
-                    <span class="label text-xs text-gray-500 block">Payment ID:</span>
-                    <span class="value text-sm text-gray-800 font-mono truncate">{{ payment.paymentId }}</span>
-                  </div>
-                  <div class="payment-detail" *ngIf="payment.isSubscription">
-                    <span class="label text-xs text-gray-500 block">Type:</span>
-                    <span class="value text-sm">
-                      <span class="subscription-badge px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                        Subscription
-                      </span>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <ng-template #noPaymentHistory>
-            <div class="no-payment-history flex flex-col items-center justify-center py-8 text-center">
-              <mat-icon class="text-gray-400 mb-2" style="font-size: 48px;">payment</mat-icon>
-              <p class="text-gray-500">No payment history available for this user.</p>
-            </div>
-          </ng-template>
-        </mat-card-content>
-      </mat-card>
+    <!-- AutoPay Status with Toggle -->
+    <div class="detail-item grid grid-cols-3 gap-4 py-3 items-center">
+      <span class="detail-label col-span-1 text-sm font-medium text-gray-500">Auto Pay:</span>
+      <span class="detail-value col-span-2 flex flex-col sm:flex-row sm:items-center gap-2">
+        <span class="autopay-badge inline-flex items-center px-2 py-2 rounded-full text-xs font-medium"
+          [ngClass]="getAutoPayStatusClass(user.autoPayEnabled)">
+          <mat-icon class="autopay-icon mt-2 mr-1 text-xs">
+            {{ getAutoPayIcon(user.autoPayEnabled) }}
+          </mat-icon>
+          {{ getAutoPayStatusText(user.autoPayEnabled) }}
+        </span>
+
+        <button mat-raised-button color="primary" class="text-xs px-3 py-1 rounded ml-2" (click)="toggleAutoPay()"
+          [disabled]="togglingAutoPay">
+          {{ user.autoPayEnabled ? 'Disable AutoPay' : 'Enable AutoPay' }}
+        </button>
+      </span>
+    </div>
+
+    <!-- Subscription Status -->
+    <div class="detail-item">
+      <span class="detail-label text-sm font-medium text-gray-500">Subscription Status:</span>
+      <span class="detail-value">
+        <span [ngClass]="getSubscriptionStatusClass(user.subscriptionStatus ?? 'inactive')">
+          {{ user.subscriptionStatus || 'N/A' }}
+        </span>
+      </span>
+    </div>
+ 
+
+    <!-- Created At -->
+    <div class="detail-item">
+      <span class="detail-label text-sm font-medium text-gray-500">Created At:</span>
+      <span class="detail-value text-sm font-medium text-gray-900">
+        {{ formatDate(user.createdAt) }}
+      </span>
+    </div>
+
+    <!-- Updated At -->
+    <div class="detail-item">
+      <span class="detail-label text-sm font-medium text-gray-500">Updated At:</span>
+      <span class="detail-value text-sm font-medium text-gray-900">
+        {{ formatDate(user.updatedAt) }}
+      </span>
     </div>
   </div>
+
+  <!-- Back Button -->
+  <div class="mt-6">
+    <button mat-stroked-button color="accent" (click)="goBack()">Back to Users</button>
+  </div>
+</div>
+
+<!-- Error Message -->
+<div *ngIf="!loading && error" class="text-red-600 text-center mt-4">
+  {{ error }}
 </div>
