@@ -42,17 +42,18 @@ export const createTicket = async (req, res) => {
   }
 };
 
-// (No changes needed in the rest of the file)
 
 export const getUserTickets = async (req, res) => {
   try {
     const sub = req.auth?.sub || req.auth?.payload?.sub;
     if (!sub) return res.status(401).json({ message: "Invalid authentication token" });
 
-    const user = await User.findAll({ where: { auth0_id: sub }, attributes: ["id"] });
+    // ✅ FIXED: Use findOne instead of findAll
+    const user = await User.findOne({ where: { auth0_id: sub }, attributes: ["id"] });
     if (!user) return res.status(404).json({ message: "User not found" });
 
     const { status, page = 1, limit = 10 } = req.query;
+
     const whereClause = { user_id: user.id };
     if (status) whereClause.status = status;
 

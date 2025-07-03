@@ -19,10 +19,29 @@ router.put("/users/:id/role", updateUserRole);
 router.delete("/users/:id", deleteUser);
 
 // Event RSVP management routes
-router.get("/events/rsvps", getEventRsvps)
-router.get("/events/rsvps/export", exportEventRsvpsToExcel)
-router.get("/events/:eventId/rsvps/stats", getEventRsvpStats)
-router.put("/events/rsvps/:rsvpId", updateRsvpStatus) // Fixed route path
-router.get("/events/with-rsvp-counts", getEventsWithRsvpCounts)
+router.get("/events/rsvps", getEventRsvps);
+router.get("/events/rsvps/export", exportEventRsvpsToExcel);
+router.get("/events/:eventId/rsvps/stats", getEventRsvpStats);
+router.put("/rsvps/:rsvpId", updateRsvpStatus);  // Fixed route path
+router.get("/events/with-rsvp-counts", getEventsWithRsvpCounts);
+
+router.get('/check-user-role/:email', async (req, res) => {
+  const { email } = req.params; // Get email from URL
+
+  try {
+    // Query the Users table to find the user by email
+    const user = await User.findOne({ where: { email: email } });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Return the user's role
+    return res.json({ role: user.role });  // Send back the role (e.g., 'admin', 'individual member', etc.)
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
 
 export default router;
