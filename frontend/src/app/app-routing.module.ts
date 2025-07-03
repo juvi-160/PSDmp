@@ -57,7 +57,7 @@ const routes: Routes = [
       { path: 'raise-ticket', component: RaiseTicketComponent },
       { path: 'my-tickets', component: MyTicketsComponent },
       { path: 'profile', component: ProfileComponent },
-      { path: 'payment-history/users/:id', component: PaymentHistoryComponent },
+      { path: 'payment-history/:email', component: PaymentHistoryComponent },
       { path: 'contribute', component: ContributeComponent },
 
       // {

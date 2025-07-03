@@ -29,31 +29,37 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-// Endpoint to fetch payment history
-router.get('/users/:userId', async (req, res) => {
-  const { userId } = req.params;
-
-  console.log('Received userId:', userId);
-
-  if (!userId) {
-    return res.status(400).send('Invalid user ID provided');
-  }
+// Endpoint to fetch payment history by email
+router.get('/by-email/:email', async (req, res) => {
+  const { email } = req.params;
 
   try {
-    const user = await User.findOne({ where: { id: userId } });
+    // Find user by email
+    const user = await User.findOne({ where: { email } });
+
     if (!user) {
-      return res.status(404).send('User not found');
+      return res.status(404).json({ message: 'User not found' });
     }
 
+    // Fetch payments for the user
     const payments = await Order.findAll({
-      where: { user_id: userId, status: 'paid' }
+      where: { user_id: user.id, status: 'paid' },
     });
 
     const totalAmount = payments.reduce((total, payment) => total + parseFloat(payment.amount), 0);
     const totalPayments = payments.length;
 
+    // Assuming you also want to send details like transaction IDs, dates, etc.
+    const paymentDetails = payments.map(payment => ({
+      amount: payment.amount,
+      transactionId: payment.transactionId,
+      paymentDate: payment.createdAt,  // Assuming createdAt holds the payment date
+      paymentMethod: payment.method,  // Assuming method is stored in the payment model
+    }));
+
+    // Assuming you have a subscription model linked to the user
     const subscription = await Subscription.findOne({
-      where: { user_id: userId },
+      where: { user_id: user.id },
       include: [
         {
           model: SubscriptionPlan,
@@ -62,35 +68,24 @@ router.get('/users/:userId', async (req, res) => {
       ],
     });
 
-    // Razorpay doesn't support fetch by customer ID this way — this will likely throw
-    // Keeping for your structure, but be aware it may need `.list()` instead of `.fetch()`
-    let autopayEnabled = false;
-    try {
-      const razorpaySubscriptions = await razorpay.subscriptions.all({
-        customer_id: userId // Assuming customer_id is stored as userId
-      });
-      autopayEnabled = razorpaySubscriptions.items.length > 0;
-    } catch (err) {
-      console.warn('Razorpay subscription fetch failed:', err.message);
-    }
-
     const response = {
       totalPayments,
       totalAmount,
-      autopayEnabled,
+      payments: paymentDetails, // Additional payment details
+      autopayEnabled: false,    // You can change this to fetch from Razorpay if needed
       subscription: {
         plan: subscription?.plan?.name || 'No plan',
         status: subscription?.status || 'Inactive',
         startAt: subscription?.start_at || 'N/A',
-        paidCount: subscription?.paid_count || 0,
-      }
+      },
     };
 
-    res.status(200).json(response);
+    res.json(response);
   } catch (error) {
     console.error('Error fetching payment history:', error);
     res.status(500).send('Internal Server Error');
   }
 });
+
 
 export default router;

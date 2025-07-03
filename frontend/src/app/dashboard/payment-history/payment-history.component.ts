@@ -1,3 +1,4 @@
+// payment-history.component.ts
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -30,19 +31,20 @@ export class PaymentHistoryComponent implements OnInit {
     private toast: ToastService
   ) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.route.params.subscribe((params) => {
-      const id = params['id'];
-      if (id) {
-        this.userId = id;
-        this.initComponentLogic();
+      const email = params['email'];  // Getting email from route
+      console.log('Extracted email:', email);  // Log email to check if it's correctly extracted
+      if (email) {
+        this.initComponentLogic(email);  // Pass email to backend service
       } else {
-        this.handleInvalidId();
+        this.handleInvalidId();  // Handle invalid email or missing email
       }
     });
   }
 
-  initComponentLogic(): void {
+
+  initComponentLogic(userEmail: string): void {
     this.loading = true;
 
     // Get current user
@@ -55,7 +57,8 @@ export class PaymentHistoryComponent implements OnInit {
 
       this.currentUser = user;
 
-      this.paymentHistoryService.getPaymentHistory(this.userId!).subscribe({
+      // Fetch payment history using the email instead of userId
+      this.paymentHistoryService.getPaymentHistory(userEmail).subscribe({
         next: (data) => {
           this.paymentHistory = data;
 
@@ -85,11 +88,10 @@ export class PaymentHistoryComponent implements OnInit {
     if (!confirm('Are you sure you want to cancel AutoPay?')) return;
 
     this.cancellingAutoPay = true;
-
   }
 
   handleInvalidId(): void {
-    this.error = 'Invalid user ID provided';
+    this.error = 'Invalid email provided';
     this.toast.show(this.error, 'error');
     console.error(`Payment History Error: ${this.error}`);
   }
