@@ -63,7 +63,6 @@ import { RefundCancellationComponent } from './layout/refund-cancellation/refund
 import { ContactUsComponent } from './layout/contact-us/contact-us.component';
 import { UserManagementComponent } from './admin/admin-dashboard/users/user-management/user-management.component';
 import { UserDetailsComponent } from './admin/admin-dashboard/users/user-details/user-details.component';
-import { EventRsvpsComponent } from './admin/event-rsvps/event-rsvps.component';
 import { FaqsComponent } from './layout/faqs/faqs.component';
 import { UserEditDialogComponent } from './admin/admin-dashboard/users/user-edit-dialog/user-edit-dialog.component';
 import { DashboardHomeComponent } from './dashboard/dashboard-home/dashboard-home.component';
@@ -79,6 +78,7 @@ import { AdminGuard } from './core/guards/admin.guard';
 import { PaymentHistoryComponent } from './dashboard/payment-history/payment-history.component';
 import { ContributeComponent } from './dashboard/contribute/contribute.component';
 import { ToastComponent } from './layout/toast/toast.component';
+import { EventRsvpsComponent } from './admin/event-rsvps/event-rsvps.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -151,13 +151,13 @@ const routes: Routes = [
     ContactUsComponent,
     UserManagementComponent,
     UserDetailsComponent,
-    EventRsvpsComponent,
     FaqsComponent,
     UserEditDialogComponent,
     DashboardHomeComponent,
     RaiseTicketComponent,
     MyTicketsComponent,
     TicketManagementComponent,
+    EventRsvpsComponent,
 
     MembershipSelectionComponent,
     MemberComponent,
