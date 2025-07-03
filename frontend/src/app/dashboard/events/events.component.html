@@ -1,8 +1,9 @@
 <div class="events-container">
   <div class="header">
     <h2>Upcoming Events</h2>
-  </div>
 
+  </div>
+<div class="underline"></div>
   <!-- Loading indicator -->
   <div class="loading-container" *ngIf="loading">
     <mat-spinner diameter="40"></mat-spinner>
@@ -40,9 +41,9 @@
   (click)="rsvpToEvent(event)"
   [disabled]="event.id == null || isProcessing(event.id) || isPastEvent(event.date)">
   <mat-spinner diameter="20" *ngIf="event.id != null && isProcessing(event.id)" class="spinner"></mat-spinner>
-  <span *ngIf="event.id == null || !isProcessing(event.id)">
-    <mat-icon>event_available</mat-icon>
-    RSVP
+  <span *ngIf="event.id == null || !isProcessing(event.id)" >
+    <!-- <mat-icon class="">event_available</mat-icon> -->
+    Click here to RSVP
   </span>
 </button>
         <div class="past-event-label" *ngIf="isPastEvent(event.date)">
