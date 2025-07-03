@@ -1,11 +1,14 @@
+<!-- Spinner for loading -->
 <div *ngIf="loading" class="flex justify-center items-center mt-5">
   <mat-spinner></mat-spinner>
 </div>
 
+<!-- Error message display -->
 <div *ngIf="error" class="text-red-500 text-lg text-center mt-5">
   <p>{{ error }}</p>
 </div>
 
+<!-- Payment History display -->
 <div *ngIf="paymentHistory" class="max-w-4xl mx-auto my-5">
   <div class="bg-white shadow-lg rounded-lg p-6">
     <div class="text-xl font-semibold text-center mb-4">
@@ -21,11 +24,16 @@
       </p>
       <p class="text-base font-medium">Subscription Plan: {{ paymentHistory.subscription?.plan }}</p>
       <p class="text-base font-medium">Status: {{ paymentHistory.subscription?.status }}</p>
-      <p class="text-base font-medium">Start Date: {{ paymentHistory.subscription?.startAt | date }}</p>
+      
+      <!-- Handling the start date with a check for 'N/A' -->
+      <p class="text-base font-medium">Start Date: 
+        <span *ngIf="paymentHistory.subscription?.startAt !== 'N/A'; else noDate">
+          {{ paymentHistory.subscription?.startAt | date }}
+        </span>
+        <ng-template #noDate>
+          <span>{{ paymentHistory.subscription?.startAt }}</span> <!-- Display 'N/A' if it's not a valid date -->
+        </ng-template>
+      </p>
     </div>
   </div>
 </div>
-
-
-
-

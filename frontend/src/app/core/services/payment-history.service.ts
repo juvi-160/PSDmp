@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
   providedIn: 'root',
 })
 export class PaymentHistoryService {
-  private apiUrl = `${environment.apiUrl}/payment-history/users`; // ✅ FIXED here
+  private apiUrl = `${environment.apiUrl}/payment-history/by-email`; // ✅ FIXED here
 
   constructor(private http: HttpClient) {}
 

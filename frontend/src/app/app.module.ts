@@ -104,7 +104,7 @@ const routes: Routes = [
       { path: "my-events", component: MyEventsComponent },
       { path: "raise-ticket", component: RaiseTicketComponent },
       { path: "my-tickets", component: MyTicketsComponent },
-      { path: 'payment-history/users/:id', component: PaymentHistoryComponent },
+      { path: 'payment-history/:email', component: PaymentHistoryComponent },
       { path: 'contribute', component: ContributeComponent },
     ]
   },
@@ -112,7 +112,7 @@ const routes: Routes = [
     path: "admin",
     component: AdminDashboardComponent,
     children: [
-      { path: "", redirectTo: "events", pathMatch: "full" },
+      { path: "", redirectTo: "users", pathMatch: "full" },
       { path: "events", component: EventListComponent },
       { path: "events/add", component: EventFormComponent },
       { path: "events/edit/:id", component: EventFormComponent },

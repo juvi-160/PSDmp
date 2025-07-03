@@ -9,7 +9,7 @@
 
     <!-- Stats Cards Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" *ngIf="!statsLoading">
-      <!-- Upcoming Events -->
+      <!-- Card Component (repeat for each stat) -->
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 hover:shadow-md transition">
         <div class="flex justify-between items-center">
           <div>
@@ -17,12 +17,11 @@
             <h3 class="text-3xl font-extrabold text-blue-600">{{ stats.upcoming_events }}</h3>
           </div>
           <div class="p-3 rounded-full bg-blue-100 text-blue-600">
-            <mat-icon class="!w-6 !h-6">event_available</mat-icon>
+            <span class="material-icons !w-6 !h-6">event_available</span>
           </div>
         </div>
         <div class="mt-3 h-1 rounded-full bg-gradient-to-r from-blue-100 to-blue-300"></div>
       </div>
-
       <!-- Attended Events -->
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 hover:shadow-md transition">
         <div class="flex justify-between items-center">
@@ -31,7 +30,7 @@
             <h3 class="text-3xl font-extrabold text-green-600">{{ stats.attended_events }}</h3>
           </div>
           <div class="p-3 rounded-full bg-green-100 text-green-600">
-            <mat-icon class="!w-6 !h-6">check_circle</mat-icon>
+            <span class="material-icons !w-6 !h-6">check_circle</span>
           </div>
         </div>
         <div class="mt-3 h-1 rounded-full bg-gradient-to-r from-green-100 to-green-300"></div>
@@ -45,7 +44,7 @@
             <h3 class="text-3xl font-extrabold text-amber-600">{{ stats.cancelled_events }}</h3>
           </div>
           <div class="p-3 rounded-full bg-amber-100 text-amber-600">
-            <mat-icon class="!w-6 !h-6">cancel</mat-icon>
+            <span class="material-icons !w-6 !h-6">cancel</span>
           </div>
         </div>
         <div class="mt-3 h-1 rounded-full bg-gradient-to-r from-amber-100 to-amber-300"></div>
@@ -59,7 +58,7 @@
             <h3 class="text-3xl font-extrabold text-red-600">{{ stats.missed_events }}</h3>
           </div>
           <div class="p-3 rounded-full bg-red-100 text-red-600">
-            <mat-icon class="!w-6 !h-6">warning</mat-icon>
+            <span class="material-icons !w-6 !h-6">warning</span>
           </div>
         </div>
         <div class="mt-3 h-1 rounded-full bg-gradient-to-r from-red-100 to-red-300"></div>
@@ -78,163 +77,136 @@
   <div>
     <h2 class="text-3xl font-extrabold text-blue-900 mb-6">My Events</h2>
 
-    <mat-tab-group [(selectedIndex)]="activeTab" animationDuration="300ms" class="shadow-md rounded-xl bg-white">
-      <!-- Upcoming Events Tab -->
-      <mat-tab label="Upcoming Events ({{ upcomingEvents.length }})">
-        <div class="p-6 bg-gray-50 rounded-b-xl">
-          <div class="flex justify-center py-10" *ngIf="loading">
-            <mat-spinner diameter="40" class="text-blue-500"></mat-spinner>
-          </div>
+    <!-- Custom Tabs -->
+    <div class="bg-white shadow-md rounded-xl">
+      <div class="flex border-b">
+        <button class="px-6 py-3 font-semibold border-b-2" [class.border-blue-600]="activeTab === 0" [class.text-blue-600]="activeTab === 0" (click)="activeTab = 0">
+          Upcoming Events ({{ upcomingEvents.length }})
+        </button>
+        <button class="px-6 py-3 font-semibold border-b-2" [class.border-blue-600]="activeTab === 1" [class.text-blue-600]="activeTab === 1" (click)="activeTab = 1">
+          Past Events ({{ pastEvents.length }})
+        </button>
+      </div>
 
-          <div class="bg-red-100 border-l-4 border-red-500 p-5 mb-6 rounded-lg shadow-sm" *ngIf="error && !loading">
-            <div class="flex items-center">
-              <mat-icon class="text-red-500 mr-3 text-2xl">error</mat-icon>
-              <p class="text-red-800 font-medium">{{ error }}</p>
+      <!-- Upcoming Events -->
+      <div *ngIf="activeTab === 0" class="p-6 bg-gray-50 rounded-b-xl">
+        <div class="flex justify-center py-10" *ngIf="loading">
+          <div class="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+
+        <div class="bg-red-100 border-l-4 border-red-500 p-5 mb-6 rounded-lg shadow-sm" *ngIf="error && !loading">
+          <div class="flex items-center">
+            <span class="material-icons text-red-500 mr-3 text-2xl">error</span>
+            <p class="text-red-800 font-medium">{{ error }}</p>
+          </div>
+          <button (click)="loadRsvps()" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium shadow-md">
+            Try Again
+          </button>
+        </div>
+
+        <div class="text-center py-12" *ngIf="!loading && !error && upcomingEvents.length === 0">
+          <div class="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-4">
+            <span class="material-icons text-blue-400 text-4xl">event_busy</span>
+          </div>
+          <p class="text-lg text-gray-600 mb-4">You don't have any upcoming events</p>
+          <a routerLink="/dashboard/event" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-lg font-semibold shadow-md">
+            Find Events
+          </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6" *ngIf="!loading && !error && upcomingEvents.length > 0">
+          <div *ngFor="let rsvp of upcomingEvents" class="flex flex-col md:flex-row overflow-hidden rounded-xl shadow hover:shadow-lg transition">
+            <div class="w-full  md:w-1/3 rounded-2xl h-48 md:h-auto">
+              <img [src]="rsvp.event.image" [alt]="rsvp.event.name" class="w-full h-full object-cover">
             </div>
-            <button mat-raised-button (click)="loadRsvps()" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium shadow-md">
-              Try Again
-            </button>
-          </div>
 
-          <div class="text-center py-12" *ngIf="!loading && !error && upcomingEvents.length === 0">
-            <div class="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-4">
-              <mat-icon class="text-blue-400 text-4xl">event_busy</mat-icon>
+            <div class="p-6 flex flex-col justify-between w-full md:w-2/3 space-y-4">
+              <div>
+                <h3 class="text-black text-xl font-bold">{{ rsvp.event.name }}</h3>
+                <p class="text-blue-600 font-medium flex items-center mt-1">
+                  <span class="material-icons mr-1">event</span>
+                  {{ formatDate(rsvp.event.date) }}
+                </p>
+              </div>
+
+              <div>
+                <p class="text-gray-600 mb-2">{{ rsvp.event.description }}</p>
+                <div class="flex justify-between w-86 items-center h-24 bg-gray-100 px-3 py-2 rounded-lg text-sm">
+                  <span class="text-blue-500 flex items-center">
+                    <span class="material-icons mr-2">schedule</span>
+                    RSVP'd on {{ formatDate(rsvp.rsvpDate) }}
+                  </span>
+                  <span [class]="'text-xs text-blue-500 font-semibold px-3 py-1 rounded-full ' + getStatusClass(rsvp.status)">
+                    {{ getStatusText(rsvp.status) }}
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <button (click)="cancelRsvp(rsvp)" class="mt-3 flex items-center text-red-600 bg-red-100 hover:bg-red-200 px-4 py-2 rounded-lg font-medium transition">
+                  <span class="material-icons mr-2">cancel</span>
+                  CANCEL RSVP
+                </button>
+              </div>
             </div>
-            <p class="text-lg text-gray-600 mb-4">You don't have any upcoming events</p>
-            <a routerLink="/dashboard/event" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-lg font-semibold shadow-md">
-              Find Events
-            </a>
-          </div>
-
-          <div class="grid grid-cols-1 gap-6" *ngIf="!loading && !error && upcomingEvents.length > 0">
-            <mat-card *ngFor="let rsvp of upcomingEvents" class="event-card flex flex-col md:flex-row overflow-hidden border border-gray-200 rounded-xl shadow hover:shadow-lg transition">
-              <div class="md:w-1/3 h-48 md:h-auto" *ngIf="rsvp.event.image">
-                <img [src]="rsvp.event.image" [alt]="rsvp.event.name" class="w-full h-full object-cover">
-              </div>
-              <div class="p-6 md:w-2/3 space-y-4">
-                <mat-card-header class="p-0">
-                  <mat-card-title class="text-xl font-bold text-gray-900">{{ rsvp.event.name }}</mat-card-title>
-                  <mat-card-subtitle class="text-blue-600 font-medium">
-                    <mat-icon class="align-middle mr-1">event</mat-icon>
-                    {{ formatDate(rsvp.event.date) }}
-                  </mat-card-subtitle>
-                </mat-card-header>
-
-                <mat-card-content class="p-0">
-                  <p class="text-gray-600 mb-2">{{ rsvp.event.description }}</p>
-                  <div class="flex justify-between items-center bg-gray-100 px-3 py-2 rounded-lg text-sm">
-                    <span class="text-gray-500">
-                      <mat-icon class="align-middle mr-1">schedule</mat-icon>
-                      RSVP'd on {{ formatDate(rsvp.rsvpDate) }}
-                    </span>
-                    <span [class]="'text-xs font-semibold px-3 py-1 rounded-full ' + getStatusClass(rsvp.status)">
-                      {{ getStatusText(rsvp.status) }}
-                    </span>
-                  </div>
-                </mat-card-content>
-
-                <mat-card-actions class="p-0">
-                  <button mat-button color="warn" (click)="cancelRsvp(rsvp)"
-                    class="mt-3 flex items-center text-red-600 bg-red-100 hover:bg-red-200 px-4 py-2 rounded-lg font-medium transition">
-                    <mat-icon class="mr-2">cancel</mat-icon>
-                    CANCEL RSVP
-                  </button>
-                </mat-card-actions>
-              </div>
-            </mat-card>
           </div>
         </div>
-      </mat-tab>
+      </div>
 
-      
-
-      <!-- Past Events Tab -->
-      <mat-tab label="Past Events ({{ pastEvents.length }})">
-        <div class="p-6 bg-gray-50 rounded-b-xl">
-          <div class="flex justify-center py-12" *ngIf="loading">
-            <mat-spinner diameter="40" class="text-blue-500"></mat-spinner>
+      <!-- Past Events -->
+      <div *ngIf="activeTab === 1" class="p-6 bg-gray-50 rounded-b-xl">
+        <div class="text-center py-12" *ngIf="!loading && !error && pastEvents.length === 0">
+          <div class="bg-blue-50 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+            <span class="material-icons text-blue-400 text-4xl">history</span>
           </div>
+          <p class="text-gray-600 text-lg mb-6">You haven't attended any events yet</p>
+          <a routerLink="/dashboard/event" class="bg-blue-600 p-3 rounded text-white font-medium shadow-md hover:shadow-lg transition-shadow">
+            Find Events
+          </a>
+        </div>
 
-          <div class="bg-gradient-to-r from-red-50 to-red-100 border-l-4 border-red-500 p-5 mb-6 rounded-r-lg shadow-sm" *ngIf="error && !loading">
-            <div class="flex items-center">
-              <mat-icon class="text-red-500 mr-3 text-2xl">error</mat-icon>
-              <p class="text-red-800 font-medium">{{ error }}</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6" *ngIf="!loading && !error && pastEvents.length > 0">
+          <div *ngFor="let rsvp of pastEvents" class="flex flex-col md:flex-row overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 rounded-xl">
+            <div class="w-full md:w-1/3 h-48 md:h-auto flex-shrink-0">
+              <img [src]="rsvp.event.image" [alt]="rsvp.event.name" class="w-full h-full object-cover">
             </div>
-            <button
-              mat-raised-button
-              color="primary"
-              (click)="loadRsvps()"
-              class="mt-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium shadow-md hover:shadow-lg transition-shadow">
-              Try Again
-            </button>
-          </div>
 
-          <div class="text-center py-12" *ngIf="!loading && !error && pastEvents.length === 0">
-            <div class="bg-blue-50 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
-              <mat-icon class="text-blue-400 text-4xl">history</mat-icon>
-            </div>
-            <p class="text-gray-600 text-lg mb-6">You haven't attended any events yet</p>
-            <a
-              color="primary"
-              routerLink="/dashboard/event"
-              class="bg-blue-600 p-3 rounded text-white font-medium shadow-md hover:shadow-lg transition-shadow">
-              Find Events
-            </a>
-          </div>
-
-          <div class="grid grid-cols-1 gap-6" *ngIf="!loading && !error && pastEvents.length > 0">
-            <mat-card *ngFor="let rsvp of pastEvents" class="event-card flex flex-col md:flex-row overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 rounded-xl">
-              <div class="event-image md:w-1/3 h-48 md:h-auto" *ngIf="rsvp.event.image">
-                <img
-                  [src]="rsvp.event.image"
-                  [alt]="rsvp.event.name"
-                  class="w-full h-full object-cover">
+            <div class="p-6 flex flex-col justify-between w-full md:w-2/3 space-y-4">
+              <div>
+                <h3 class="text-2xl font-bold text-gray-900">{{ rsvp.event.name }}</h3>
+                <p class="text-blue-600 font-medium mt-1 flex items-center">
+                  <span class="material-icons text-lg align-middle mr-1">event</span>
+                  {{ formatDate(rsvp.event.date) }}
+                </p>
               </div>
 
-              <div class="event-content p-6 md:w-2/3">
-                <mat-card-header class="p-0 mb-4">
-                  <mat-card-title class="text-2xl font-bold text-gray-900">{{ rsvp.event.name }}</mat-card-title>
-                  <mat-card-subtitle class="text-blue-600 font-medium mt-1">
-                    <mat-icon class="text-lg align-middle">event</mat-icon>
-                    {{ formatDate(rsvp.event.date) }}
-                  </mat-card-subtitle>
-                </mat-card-header>
-
-                <mat-card-content class="p-0 mb-4">
-                  <p class="event-description text-gray-600 mb-4">{{ rsvp.event.description }}</p>
-                  <div class="rsvp-info flex flex-wrap justify-between items-center bg-gray-50 px-3 py-2 rounded-lg">
-                    <span class="rsvp-date text-sm text-gray-500">
-                      <mat-icon class="text-sm align-middle">schedule</mat-icon>
-                      RSVP'd on {{ formatDate(rsvp.rsvpDate) }}
-                    </span>
-                    <span [class]="'rsvp-status text-xs font-semibold px-3 py-1 rounded-full ' + getStatusClass(rsvp.status)">
-                      {{ getStatusText(rsvp.status) }}
-                    </span>
-                  </div>
-                </mat-card-content>
-
-                <mat-card-actions class="p-0">
-                  <button
-                    *ngIf="rsvp.status === 'attended' && !rsvp.feedbackProvided"
-                    mat-button
-                    color="primary"
-                    (click)="provideFeedback(rsvp)"
-                    class="flex items-center bg-blue-50 text-blue-600 hover:bg-blue-100 px-4 py-2 rounded-lg font-medium transition-colors">
-                    <mat-icon class="mr-2">feedback</mat-icon>
-                    PROVIDE FEEDBACK
-                  </button>
-                  <div
-                    *ngIf="rsvp.status === 'attended' && rsvp.feedbackProvided"
-                    class="feedback-provided flex items-center bg-green-50 text-green-600 px-4 py-2 rounded-lg font-medium">
-                    <mat-icon class="mr-2">check_circle</mat-icon>
-                    Feedback provided
-                  </div>
-                </mat-card-actions>
+              <div>
+                <p class="text-gray-600 mb-4">{{ rsvp.event.description }}</p>
+                <div class="flex flex-wrap justify-between items-center bg-gray-50 px-3 py-2 rounded-lg text-sm">
+                  <span class="text-gray-500 flex items-center">
+                    <span class="material-icons text-sm align-middle mr-1">schedule</span>
+                    RSVP'd on {{ formatDate(rsvp.rsvpDate) }}
+                  </span>
+                  <span [class]="'text-xs font-semibold px-3 py-1 rounded-full ' + getStatusClass(rsvp.status)">
+                    {{ getStatusText(rsvp.status) }}
+                  </span>
+                </div>
               </div>
-            </mat-card>
+
+              <div>
+                <button *ngIf="rsvp.status === 'attended' && !rsvp.feedbackProvided" (click)="provideFeedback(rsvp)" class="flex items-center bg-blue-50 text-blue-600 hover:bg-blue-100 px-4 py-2 rounded-lg font-medium transition-colors">
+                  <span class="material-icons mr-2">feedback</span>
+                  PROVIDE FEEDBACK
+                </button>
+                <div *ngIf="rsvp.status === 'attended' && rsvp.feedbackProvided" class="flex items-center bg-green-50 text-green-600 px-4 py-2 rounded-lg font-medium">
+                  <span class="material-icons mr-2">check_circle</span>
+                  Feedback provided
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </mat-tab>
-    </mat-tab-group>
+      </div>
+    </div>
   </div>
 </div>
