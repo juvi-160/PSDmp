@@ -55,7 +55,7 @@ const User = sequelize.define('User', {
     type: DataTypes.BOOLEAN,
     defaultValue: false
   },
-  auto_pay_enabled: {  // Changed from is_autopay_enabled for consistency
+  auto_pay_enabled: {  
     type: DataTypes.BOOLEAN,
     defaultValue: false
   },

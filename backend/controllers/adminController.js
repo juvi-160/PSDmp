@@ -273,29 +273,24 @@ export const updateRsvpStatus = async (req, res) => {
     const { rsvpId } = req.params;
     const { status } = req.body;
 
-    // Validate status
     if (!["confirmed", "cancelled", "attended"].includes(status)) {
-      return res
-        .status(400)
-        .json({
-          message:
-            "Invalid status. Must be 'confirmed', 'cancelled', or 'attended'",
-        });
+      return res.status(400).json({
+        message: "Invalid status. Must be 'confirmed', 'cancelled', or 'attended'",
+      });
     }
 
-    // Check if RSVP exists
+    console.log("Looking for RSVP with ID:", rsvpId);
     const rsvp = await EventRSVP.findByPk(rsvpId);
     if (!rsvp) {
       return res.status(404).json({ message: "RSVP not found" });
     }
 
-    // Update RSVP status
     await rsvp.update({ status });
 
-    res.status(200).json({ message: "RSVP status updated successfully" });
+    return res.status(200).json({ message: "RSVP status updated successfully" });
   } catch (error) {
     console.error("Error updating RSVP status:", error);
-    res.status(500).json({ message: "Server error", error: error.message });
+    return res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 

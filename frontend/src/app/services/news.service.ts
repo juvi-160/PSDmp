@@ -14,7 +14,7 @@ export interface NewsItem {
   providedIn: 'root'
 })
 export class NewsService {
-  private apiUrl = 'https://api.psfhyd.org/api';
+  private apiUrl = 'http://localhost:3000/api';
 
   constructor(private http: HttpClient) { }
 
@@ -30,7 +30,7 @@ export class NewsService {
     return this.http.put<NewsItem>(`${this.apiUrl}/news/${news.id}`, news);
   }
 
-  deleteNews(id: number): Observable<any> {
+  deleteNews(id: number | string): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/news/${id}`);
   }
 }

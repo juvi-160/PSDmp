@@ -37,7 +37,7 @@ router.delete("/users/:id", deleteUser)
 router.get("/events/rsvps", getEventRsvps)
 router.get("/events/rsvps/export", exportEventRsvpsToExcel)
 router.get("/events/:eventId/rsvps/stats", getEventRsvpStats)
-router.put("/rsvps/:rsvpId/status", updateRsvpStatus) // Fixed route path
+router.put("/events/rsvps/:rsvpId", updateRsvpStatus) // Fixed route path
 router.get("/events/with-rsvp-counts", getEventsWithRsvpCounts)
 
 export default router

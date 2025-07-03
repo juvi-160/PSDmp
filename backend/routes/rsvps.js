@@ -6,6 +6,7 @@ import {
   markAttended,
   getUserRsvps,
   getUserEventStats,
+  // updateRsvpStatus
 } from "../controllers/rsvpController.js"
 import { submitFeedback, getEventFeedback } from "../controllers/feedbackController.js"
 import dotenv from "dotenv"
@@ -42,6 +43,7 @@ const logToken = (req, res, next) => {
 // RSVP routes - Fixed parameter syntax
 router.post("/events/:eventId/rsvp", checkJwt, logToken, rsvpToEvent)
 router.put("/events/:eventId/cancel", checkJwt, logToken, cancelRsvp)
+// router.put('/rsvps/:rsvpId',checkJwt, logToken, updateRsvpStatus);
 // Fixed: Split the complex route into a simpler one
 router.put("/events/:eventId/attend/:userId", checkJwt, logToken, markAttended)
 router.get("/my-events", checkJwt, logToken, getUserRsvps)

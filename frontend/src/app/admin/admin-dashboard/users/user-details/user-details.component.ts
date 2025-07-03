@@ -1,21 +1,21 @@
-import { Component,  OnInit } from "@angular/core"
-import  { ActivatedRoute, Router } from "@angular/router"
-import  { MatSnackBar } from "@angular/material/snack-bar"
-import { UserService } from "../../../../core/services/user.service"
-import { User } from "../../../../core/models/user.model"
-import { ToastService } from "../../../../core/services/toast.service"
+import { Component, OnInit } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { UserService } from "../../../../core/services/user.service";
+import { User } from "../../../../core/models/user.model";
+import { ToastService } from "../../../../core/services/toast.service";
 
 @Component({
   selector: 'app-user-details',
-  standalone: false,
   templateUrl: './user-details.component.html',
-  styleUrl: './user-details.component.css'
+  standalone: false,
+  styleUrls: ['./user-details.component.css']
 })
 export class UserDetailsComponent implements OnInit {
-  userId!: number
-  user: User | null = null
-  loading = false
-  error = ""
+  userId!: string; // e.g., PSF_00001
+  user: User | null = null;
+  loading = false;
+  error = "";
 
   constructor(
     private route: ActivatedRoute,
@@ -27,91 +27,97 @@ export class UserDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
-      this.userId = +params["id"]
-      this.loadUserDetails()
-    })
+      this.userId = params["id"];
+      if (this.userId) {
+        this.loadUserDetails();
+      } else {
+        this.error = "Invalid user ID.";
+      }
+    });
   }
 
   loadUserDetails(): void {
-    this.loading = true
-    this.error = ""
+    this.loading = true;
+    this.error = "";
 
-    this.userService.getUserById(this.userId).subscribe({
+    this.userService.getUserById(Number(this.userId)).subscribe({
       next: (user) => {
-        this.user = user
-        this.loading = false
+        this.user = user;
+        this.loading = false;
       },
       error: (error) => {
-        this.error = "Failed to load user details. Please try again."
-        this.loading = false
-        console.error("Error loading user details:", error)
+        this.error = "Failed to load user details. Please try again.";
+        this.loading = false;
+        console.error("Error loading user details:", error);
       },
-    })
+    });
   }
 
   goBack(): void {
-    this.router.navigate(["/admin/users"])
+    this.router.navigate(["/admin/users"]);
   }
 
-  formatDate(date: Date | undefined): string {
-    if (!date) return "N/A"
-    return new Date(date).toLocaleDateString()
+  formatDate(date: Date | string | undefined): string {
+    if (!date) return "N/A";
+    return new Date(date).toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
   }
 
   getPaymentStatusClass(hasPaid: boolean): string {
-    return hasPaid ? "status-paid" : "status-pending"
+    return hasPaid ? "status-paid" : "status-pending";
   }
 
   getPaymentStatusClassByStatus(status: string): string {
     switch (status) {
       case "paid":
-        return "status-paid"
+        return "status-paid";
       case "created":
-        return "status-pending"
+        return "status-pending";
       case "failed":
-        return "status-failed"
+        return "status-failed";
       default:
-        return "status-pending"
+        return "status-pending";
     }
   }
 
   getRoleClass(role: string): string {
     switch (role) {
       case "admin":
-        return "role-admin"
+        return "role-admin";
       case "individual member":
-        return "role-member"
+        return "role-member";
       case "associate member":
-        return "role-associate"
+        return "role-associate";
       case "pending":
-        return "role-pending"
+        return "role-pending";
       default:
-        return ""
+        return "";
     }
   }
 
   getAutoPayStatusClass(autoPayEnabled?: boolean): string {
-    return autoPayEnabled ? "autopay-active" : "autopay-inactive"
+    return autoPayEnabled ? "autopay-active" : "autopay-inactive";
   }
 
   getAutoPayIcon(autoPayEnabled?: boolean): string {
-    return autoPayEnabled ? "check_circle" : "cancel"
+    return autoPayEnabled ? "check_circle" : "cancel";
   }
 
   getAutoPayStatusText(autoPayEnabled?: boolean): string {
-    return autoPayEnabled ? "Yes" : "No"
+    return autoPayEnabled ? "Yes" : "No";
   }
 
   getSubscriptionStatusClass(status: string): string {
     switch (status) {
       case "active":
-        return "status-active"
+        return "status-active";
       case "cancelled":
-        return "status-cancelled"
+        return "status-cancelled";
       default:
-        return "status-inactive"
+        return "status-inactive";
     }
   }
 }
-
-
