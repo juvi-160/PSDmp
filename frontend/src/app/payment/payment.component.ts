@@ -52,7 +52,7 @@ export class PaymentComponent implements OnInit {
       this.userEmail = user.email;
 
       // Redirect associate members and paid individual members to dashboard
-      if ((user.role === 'individual member' && user.hasPaid)) {
+      if (user.role === 'associate member' || (user.role === 'individual member' && user.hasPaid)) {
         this.router.navigate(["/dashboard"]);
       }
     });

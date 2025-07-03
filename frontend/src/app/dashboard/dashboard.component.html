@@ -7,20 +7,22 @@
     <span class="header-title"><img src="PSF_Logo.png" alt="" class="logo"></span>
     <div class="spacer"></div>
     <div class="header-actions">
-      <!-- ADDED ADMIN BUTTON -->
+      <!-- Admin button appears only for Admin -->
       <button *ngIf="isAdmin" mat-icon-button routerLink="/admin" matTooltip="Admin Dashboard">
         <mat-icon>admin_panel_settings</mat-icon>
       </button>
+      <!-- Logout button -->
       <button mat-icon-button (click)="logout()">
         <mat-icon>logout</mat-icon>
       </button>
     </div>
   </mat-toolbar>
 
-  <!-- Rest of existing template remains exactly the same -->
+  <!-- Sidebar (Navigation) -->
   <mat-sidenav-container class="sidenav-container">
     <mat-sidenav #sidenav mode="over" class="sidenav">
       <mat-nav-list>
+        <!-- Loop through the navItems array and display each link dynamically -->
         <a mat-list-item *ngFor="let item of navItems"
            [routerLink]="item.link"
            routerLinkActive="active-link">
@@ -34,13 +36,9 @@
       <router-outlet></router-outlet>
     </mat-sidenav-content>
   </mat-sidenav-container>
-  <div *ngIf="!navItems?.length">
-  <p>No navigation items loaded.</p>
-</div>
 
+  <!-- WhatsApp button remains unchanged -->
+  <a class="whatsapp-float" href="https://wa.me/+919988773493" target="_blank">
+    <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp" />
+  </a>
 </div>
-
-<!-- WhatsApp button remains unchanged -->
-<a class="whatsapp-float" href="https://wa.me/+919988773493" target="_blank">
-  <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp" />
-</a>

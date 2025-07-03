@@ -86,7 +86,7 @@ const routes: Routes = [
     component: AdminDashboardComponent,
     canActivate: [AuthGuard, AdminGuard],
     children: [
-      { path: '', redirectTo: 'events', pathMatch: 'full' },
+      { path: '', redirectTo: 'users', pathMatch: 'full' },
       { path: 'events', component: EventListComponent },
       { path: 'events/add', component: EventFormComponent },
       { path: 'events/edit/:id', component: EventFormComponent },

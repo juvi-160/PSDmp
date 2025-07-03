@@ -11,6 +11,7 @@ import { environment } from '../environments/environment';
   styleUrls: ['./dashboard.component.css'],
   standalone: false
 })
+
 export class DashboardComponent implements OnInit {
   @ViewChild('sidenav') sidenav!: MatSidenav;
   isAdmin = false;
@@ -28,32 +29,34 @@ export class DashboardComponent implements OnInit {
 
       const email = user.email;
 
-      this.http.get<any>(`${environment.apiUrl}/payment-history/users/by-email/${email}`)
-        .subscribe({
-          next: (userData) => {
-            const uuid = userData.id;
+      // Fetch the user's role based on the email
+      this.http.get<any>(`${environment.apiUrl}/admin/check-user-role/${email}`).subscribe({
+        next: (roleData) => {
+          // Check if the user is an admin based on the role
+          this.isAdmin = roleData.role === 'admin';  // Set isAdmin based on the role
+          localStorage.setItem('isAdmin', JSON.stringify(this.isAdmin));  // Store in localStorage
 
-            this.navItems = [
-              { icon: 'dashboard', label: 'Dashboard', link: '/dashboard' },
-              { icon: 'money', label: 'Contribute', link: '/dashboard/contribute' },
-              { icon: 'newspaper', label: 'Events', link: '/dashboard/event' },
-              { icon: 'event_note', label: 'My Events', link: '/dashboard/my-events' },
-              { icon: 'support', label: 'Raise Query/Ticket', link: '/dashboard/raise-ticket' },
-              { icon: 'confirmation_number', label: 'My Tickets', link: '/dashboard/my-tickets' },
-              { icon: 'account_circle', label: 'Profile', link: '/dashboard/profile' },
-              { icon: 'money', label: 'Payment History', link: `/dashboard/payment-history/users/${uuid}` },
-            ];
-          },
-          error: (err) => {
-            console.error('Failed to load user by email:', err);
-          }
-        });
+          // Set navigation items
+          this.navItems = [
+            { icon: 'dashboard', label: 'Dashboard', link: '/dashboard' },
+            { icon: 'money', label: 'Contribute', link: '/dashboard/contribute' },
+            { icon: 'newspaper', label: 'Events', link: '/dashboard/event' },
+            { icon: 'event_note', label: 'My Events', link: '/dashboard/my-events' },
+            { icon: 'support', label: 'Raise Query/Ticket', link: '/dashboard/raise-ticket' },
+            { icon: 'confirmation_number', label: 'My Tickets', link: '/dashboard/my-tickets' },
+            { icon: 'account_circle', label: 'Profile', link: '/dashboard/profile' },
+            { icon: 'money', label: 'Payment History', link: `/dashboard/payment-history/users/${email}` },
+          ];
+          
+        },
+        error: (err) => {
+          console.error('Failed to fetch user role:', err);
+        }
+      });
 
-      // ✅ Admin check logic (DO NOT REMOVE)
-      this.isAdmin =
-        user?.['https://api.psfhyd.org/roles']?.includes('admin') || // custom claim
-        user?.app_metadata?.roles?.includes('admin') ||              // Auth0 app_metadata
-        user?.user_metadata?.role === 'admin';                      // fallback check
+      // Retrieve admin status from localStorage (in case of page reload)
+      const storedIsAdmin = JSON.parse(localStorage.getItem('isAdmin') || 'false');
+      this.isAdmin = storedIsAdmin;
     });
   }
 
