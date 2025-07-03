@@ -158,175 +158,107 @@
     </div>
   </div>
 
-  <!-- RSVPs Table -->
-  <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100" *ngIf="!loading && !error">
-    <div class="overflow-x-auto">
-      <table mat-table [dataSource]="dataSource" matSort class="w-full">
-        <!-- ID Column -->
-        <ng-container matColumnDef="id">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50">
-            ID
-          </th>
-          <td mat-cell *matCellDef="let rsvp" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-            {{ rsvp.id }}
-          </td>
-        </ng-container>
 
-        <!-- Event Name Column -->
-        <ng-container matColumnDef="eventName">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50">
-            Event
-          </th>
-          <td mat-cell *matCellDef="let rsvp" class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-            {{ rsvp.eventName }}
-          </td>
-        </ng-container>
-
-        <!-- Event Date Column -->
-        <ng-container matColumnDef="eventDate">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50">
-            Event Date
-          </th>
-          <td mat-cell *matCellDef="let rsvp" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-            {{ formatDate(rsvp.eventDate) }}
-          </td>
-        </ng-container>
-
-        <!-- User Name Column -->
-        <ng-container matColumnDef="userName">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50">
-            Name
-          </th>
-          <td mat-cell *matCellDef="let rsvp" class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-            {{ rsvp.userName }}
-          </td>
-        </ng-container>
-
-        <!-- User Email Column -->
-        <ng-container matColumnDef="userEmail">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50">
-            Email
-          </th>
-          <td mat-cell *matCellDef="let rsvp" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-            {{ rsvp.userEmail }}
-          </td>
-        </ng-container>
-
-        <!-- User Phone Column -->
-        <ng-container matColumnDef="userPhone">
-          <th mat-header-cell *matHeaderCellDef class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50">
-            Phone
-          </th>
-          <td mat-cell *matCellDef="let rsvp" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-            {{ rsvp.userPhone || '-' }}
-          </td>
-        </ng-container>
-
-        <!-- User Role Column -->
-        <ng-container matColumnDef="userRole">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50">
-            Role
-          </th>
-          <td mat-cell *matCellDef="let rsvp" class="px-6 py-4 whitespace-nowrap">
+<!-- RSVPs Table (Pure HTML) -->
+<div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100" *ngIf="!loading && !error">
+  <div class="overflow-x-auto">
+    <table class="w-full">
+      <thead>
+        <tr class="bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          <th class="px-6 py-3">ID</th>
+          <th class="px-6 py-3">Event</th>
+          <th class="px-6 py-3">Event Date</th>
+          <th class="px-6 py-3">Name</th>
+          <th class="px-6 py-3">Email</th>
+          <th class="px-6 py-3">Phone</th>
+          <th class="px-6 py-3">Role</th>
+          <th class="px-6 py-3">Status</th>
+          <th class="px-6 py-3">RSVP Date</th>
+          <th class="px-6 py-3 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let rsvp of dataSource.data; let i = index" class="hover:bg-gray-50 transition-colors">
+          <td class="px-6 py-4 text-sm text-gray-500">{{ rsvp.id }}</td>
+          <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ rsvp.eventName }}</td>
+          <td class="px-6 py-4 text-sm text-gray-500">{{ formatDate(rsvp.eventDate) }}</td>
+          <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ rsvp.userName }}</td>
+          <td class="px-6 py-4 text-sm text-gray-500">{{ rsvp.userEmail }}</td>
+          <td class="px-6 py-4 text-sm text-gray-500">{{ rsvp.userPhone || '-' }}</td>
+          <td class="px-6 py-4">
             <span class="px-2 py-1 rounded-full text-xs font-medium" [ngClass]="getRoleClass(rsvp.userRole)">
               {{ rsvp.userRole }}
             </span>
           </td>
-        </ng-container>
-
-        <!-- Status Column -->
-        <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50">
-            Status
-          </th>
-          <td mat-cell *matCellDef="let rsvp" class="px-6 py-4 whitespace-nowrap">
+          <td class="px-6 py-4">
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" [ngClass]="getStatusClass(rsvp.status)">
-              <span class="w-2 h-2 rounded-full mr-1.5" [ngClass]="{
-                'bg-green-500': rsvp.status === 'confirmed',
-                'bg-red-500': rsvp.status === 'cancelled',
-                'bg-blue-500': rsvp.status === 'attended'
-              }"></span>
+              <span
+                class="w-2 h-2 rounded-full mr-1.5"
+                [ngClass]="{
+                  'bg-green-500': rsvp.status === 'confirmed',
+                  'bg-red-500': rsvp.status === 'cancelled',
+                  'bg-blue-500': rsvp.status === 'attended'
+                }"
+              ></span>
               {{ rsvp.status }}
             </span>
           </td>
-        </ng-container>
+          <td class="px-6 py-4 text-sm text-gray-500">{{ formatDate(rsvp.rsvpDate) }}</td>
+          <td class="px-6 py-4 text-right text-sm font-medium relative">
+            <div class="inline-block text-left">
+              <button
+                class="bg-amber-100 hover:bg-gray-100 rounded-full p-1"
+                (click)="menuOpenIndex = menuOpenIndex === i ? null : i"
+              >
+                ⋮
+              </button>
 
-        <!-- RSVP Date Column -->
-        <ng-container matColumnDef="rsvpDate">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50">
-            RSVP Date
-          </th>
-          <td mat-cell *matCellDef="let rsvp" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-            {{ formatDate(rsvp.rsvpDate) }}
+              <div
+                *ngIf="menuOpenIndex === i"
+                class="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-md z-10 border border-gray-200"
+              >
+                <button
+                  class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 flex items-center gap-2 text-green-500"
+                  (click)="updateStatus(rsvp, 'confirmed'); menuOpenIndex = null"
+                  [disabled]="rsvp.status === 'confirmed'"
+                >
+                  Confirm
+                </button>
+                <button
+                  class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 flex items-center gap-2 text-red-500"
+                  (click)="updateStatus(rsvp, 'cancelled'); menuOpenIndex = null"
+                  [disabled]="rsvp.status === 'cancelled'"
+                >
+                  Cancel
+                </button>
+                <button
+                  class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 flex items-center gap-2 text-blue-500"
+                  (click)="updateStatus(rsvp, 'attended'); menuOpenIndex = null"
+                  [disabled]="rsvp.status === 'attended'"
+                >
+                  Mark Attended
+                </button>
+              </div>
+            </div>
           </td>
-        </ng-container>
-
-        <!-- Actions Column -->
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50">
-            Actions
-          </th>
-          <td mat-cell *matCellDef="let rsvp" class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-            <button
-              mat-icon-button
-              [matMenuTriggerFor]="menu"
-              class="hover:bg-gray-100 rounded-full p-1"
-            >
-              <mat-icon class="text-gray-500">more_vert</mat-icon>
-            </button>
-            <mat-menu #menu="matMenu" class="shadow-lg rounded-lg overflow-hidden">
-              <button
-                mat-menu-item
-                (click)="updateStatus(rsvp, 'confirmed')"
-                [disabled]="rsvp.status === 'confirmed'"
-                class="flex items-center gap-2"
-              >
-                <mat-icon class="text-green-500">check_circle</mat-icon>
-                <span>Confirm</span>
-              </button>
-              <button
-                mat-menu-item
-                (click)="updateStatus(rsvp, 'cancelled')"
-                [disabled]="rsvp.status === 'cancelled'"
-                class="flex items-center gap-2"
-              >
-                <mat-icon class="text-red-500">cancel</mat-icon>
-                <span>Cancel</span>
-              </button>
-              <button
-                mat-menu-item
-                (click)="updateStatus(rsvp, 'attended')"
-                [disabled]="rsvp.status === 'attended'"
-                class="flex items-center gap-2"
-              >
-                <mat-icon class="text-blue-500">how_to_reg</mat-icon>
-                <span>Mark Attended</span>
-              </button>
-            </mat-menu>
-          </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns" class="h-12"></tr>
-        <tr
-          mat-row
-          *matRowDef="let row; columns: displayedColumns;"
-          class="hover:bg-gray-50 transition-colors"
-        ></tr>
+        </tr>
 
         <!-- Empty State -->
-        <tr class="mat-row" *matNoDataRow>
-          <td class="mat-cell py-12 text-center" colspan="10">
-            <div class="flex flex-col items-center justify-center gap-3 text-gray-400">
-              <mat-icon class="text-5xl">people_outline</mat-icon>
+        <tr *ngIf="dataSource.data.length === 0">
+          <td colspan="10" class="py-12 text-center text-gray-400">
+            <div class="flex flex-col items-center gap-3">
+              <div class="text-5xl">👥</div>
               <h3 class="text-lg font-medium text-gray-500">No RSVPs found</h3>
               <p class="max-w-md">Try adjusting your filters or check back later</p>
             </div>
           </td>
         </tr>
-      </table>
-    </div>
+      </tbody>
+    </table>
+  </div>
 
-    <!-- Paginator -->
+
+   <!-- Paginator -->
     <mat-paginator
       [pageSizeOptions]="[10, 25, 50, 100]"
       showFirstLastButtons

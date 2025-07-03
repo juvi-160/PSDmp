@@ -1,23 +1,23 @@
-import { Component,  OnInit, ViewChild } from "@angular/core"
-import  { FormBuilder, FormGroup } from "@angular/forms"
+import { Component, OnInit, ViewChild, AfterViewInit } from "@angular/core"
+import { FormBuilder, FormGroup } from "@angular/forms"
 import { MatTableDataSource } from "@angular/material/table"
 import { MatPaginator } from "@angular/material/paginator"
 import { MatSort } from "@angular/material/sort"
-import  { MatDialog } from "@angular/material/dialog"
-import  { MatSnackBar } from "@angular/material/snack-bar"
-import  { AdminService, EventRsvp, EventRsvpFilter } from "../../core/services/admin.service"
-import  { EventService } from "../../core/services/event.service"
-import  { Event } from "../../core/models/event.model"
+import { MatDialog } from "@angular/material/dialog"
+import { MatSnackBar } from "@angular/material/snack-bar"
+import { AdminService, EventRsvp, EventRsvpFilter } from "../../core/services/admin.service"
+import { EventService } from "../../core/services/event.service"
+import { Event } from "../../core/models/event.model"
 import { ConfirmDialogComponent } from "../admin-dashboard/shared/confirm-dialog/confirm-dialog.component"
 import { ToastService } from "../../core/services/toast.service"
 
 @Component({
   selector: 'app-event-rsvps',
-  standalone: false,
   templateUrl: './event-rsvps.component.html',
-  styleUrl: './event-rsvps.component.css'
+  standalone: false,
+  styleUrls: ['./event-rsvps.component.css',]
 })
-export class EventRsvpsComponent implements OnInit {
+export class EventRsvpsComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [
     "id",
     "eventName",
@@ -35,6 +35,8 @@ export class EventRsvpsComponent implements OnInit {
   loading = false
   error = ""
   events: Event[] = []
+
+  menuOpenIndex: number | null = null
 
   @ViewChild(MatPaginator) paginator!: MatPaginator
   @ViewChild(MatSort) sort!: MatSort
@@ -137,7 +139,6 @@ export class EventRsvpsComponent implements OnInit {
       next: (blob) => {
         this.loading = false
 
-        // Create a download link and trigger download
         const url = window.URL.createObjectURL(blob)
         const a = document.createElement("a")
         a.href = url
@@ -182,11 +183,11 @@ export class EventRsvpsComponent implements OnInit {
     })
   }
 
- formatDate(date: Date | string): string {
-  if (!date) return ""
-  const d = typeof date === "string" ? new Date(date) : date
-  return d.toLocaleDateString()
-}
+  formatDate(date: Date | string): string {
+    if (!date) return ""
+    const d = typeof date === "string" ? new Date(date) : date
+    return d.toLocaleDateString()
+  }
 
   getStatusClass(status: string): string {
     switch (status) {
