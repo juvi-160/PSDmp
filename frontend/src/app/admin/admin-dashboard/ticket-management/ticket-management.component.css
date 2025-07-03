@@ -3,7 +3,10 @@
   border: 1px solid #666;
   border-radius: 8px;
 }
-
+.table-container{
+  width: 100%;
+  overflow-x: auto;
+}
 .page-header {
   margin-bottom: 24px;
 }
