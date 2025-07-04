@@ -254,8 +254,19 @@
     >
       <mat-icon>delete</mat-icon>
     </button>
+
+    <!-- View Details Button -->
+    <button
+      mat-icon-button
+      color="accent"
+      (click)="viewTicketDetails(ticket)"
+      matTooltip="View Ticket Details"
+    >
+      <mat-icon>visibility</mat-icon>
+    </button>
   </td>
 </ng-container>
+
 
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

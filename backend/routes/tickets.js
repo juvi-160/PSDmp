@@ -1,5 +1,5 @@
-import express from "express"
-import { auth } from "express-oauth2-jwt-bearer"
+import express from "express";
+import { auth } from "express-oauth2-jwt-bearer";
 import {
   createTicket,
   getUserTickets,
@@ -8,13 +8,11 @@ import {
   updateTicket,
   addTicketResponse,
   getTicketStats,
-} from "../controllers/ticketController.js"
-import dotenv from "dotenv"
-dotenv.config()
+} from "../controllers/ticketController.js";
+import dotenv from "dotenv";
+dotenv.config();
 
-
-
-const router = express.Router()
+const router = express.Router();
 
 // Auth middleware
 const checkJwt = auth({
@@ -22,32 +20,34 @@ const checkJwt = auth({
   issuerBaseURL: `https://${process.env.AUTH0_DOMAIN}/`,
   tokenSigningAlg: "RS256",
   errorHandler: (err, req, res, next) => {
-    console.error("Auth0 middleware error:", err)
+    console.error("Auth0 middleware error:", err);
     res.status(err.status || 500).json({
       message: err.message,
       code: err.code,
       statusCode: err.status,
       error: err.error,
-    })
+    });
   },
-})
+});
 
 // Debug middleware
 const logToken = (req, res, next) => {
   console.log(
     "Auth headers:",
-    req.headers.authorization ? `${req.headers.authorization.substring(0, 20)}...` : "No authorization header",
-  )
-  console.log("Auth object:", req.auth)
-  next()
-}
+    req.headers.authorization
+      ? `${req.headers.authorization.substring(0, 20)}...`
+      : "No authorization header"
+  );
+  console.log("Auth object:", req.auth);
+  next();
+};
 
 // Apply auth to all routes
-router.use(checkJwt)
-// router.use(logToken)
+router.use(checkJwt);
+// router.use(logToken);
 
 // Admin routes (more specific routes first)
-router.get("/admin/stats", getTicketStats)
+router.get("/admin/stats", getTicketStats);
 
 // User routes
 router.post("/", createTicket)
@@ -57,4 +57,4 @@ router.get("/:id", getTicketById)
 router.put("/:id", updateTicket)
 router.post("/:id/responses", addTicketResponse)
 
-export default router
+export default router;
