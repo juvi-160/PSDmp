@@ -129,7 +129,7 @@ export class TicketManagementComponent implements OnInit {
   }
 
   viewTicketDetails(ticket: Ticket): void {
-    this.router.navigate(["/admin/ticket-details", ticket.id])
+    this.router.navigate(["/admin/tickets", ticket.id])
   }
 
   formatDate(date: Date | string): string {

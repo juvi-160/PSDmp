@@ -97,7 +97,7 @@ const routes: Routes = [
       { path: 'users/:id', component: UserDetailsComponent },
       { path: 'event-rsvps', component: EventRsvpsComponent },
       { path: 'tickets', component: TicketManagementComponent },
-      { path: 'admin/ticket-details/:id', component: TicketDetailsComponent },
+      { path: 'admin/tickets/:id', component: TicketDetailsComponent },
       { path: 'invite', component: InviteComponent },
       { path: "feedback", component: FeedbackComponent },
     ],
