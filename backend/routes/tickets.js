@@ -53,7 +53,7 @@ router.get("/admin/stats", getTicketStats);
 router.post("/", createTicket);
 router.get("/my-tickets", getUserTickets);
 router.get("/", getAllTickets); // Changed from "/" to "/all" to avoid conflicts
-router.get("/api/tickets/admin/ticket-details/:id", getTicketById);
+router.get("api/tickets/:id", getTicketById);
 router.put("/:id", updateTicket);
 router.post("/:id/responses", addTicketResponse);
 

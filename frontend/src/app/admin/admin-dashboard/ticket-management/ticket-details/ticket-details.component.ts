@@ -95,6 +95,6 @@ export class TicketDetailsComponent implements OnInit {
 
   // Navigate back to ticket list
   navigateBack(): void {
-    this.router.navigate(['/admin/ticket-details']);
+    this.router.navigate(['/admin/tickets']);
   }
 }
