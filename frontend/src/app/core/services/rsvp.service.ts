@@ -24,10 +24,15 @@ export interface EventStats {
 }
 
 export interface EventFeedback {
-  eventId: number
-  rating: number
-  comments?: string
+  eventId: number;
+  rating: number;
+  comments?: string;
+  userName: string;  // Make sure 'userName' exists here
+  userEmail: string; // Add 'userEmail' property if needed
+  eventName: string; // Add 'eventName' if needed
 }
+
+
 
 @Injectable({
   providedIn: "root",

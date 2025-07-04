@@ -72,20 +72,20 @@ export const submitFeedback = async (req, res) => {
 // Get feedback for an event (admin only)
 export const getEventFeedback = async (req, res) => {
   try {
-    const { eventId } = req.params
+    const { eventId } = req.params;
 
-    const sub = req.auth?.sub || req.auth?.payload?.sub
+    const sub = req.auth?.sub || req.auth?.payload?.sub;
     if (!sub) {
-      return res.status(401).json({ message: "Invalid authentication token" })
+      return res.status(401).json({ message: "Invalid authentication token" });
     }
 
     const user = await User.findOne({
       where: { auth0_id: sub },
       attributes: ["id", "role"],
-    })
+    });
 
     if (!user || user.role !== "admin") {
-      return res.status(403).json({ message: "Unauthorized: Admin access required" })
+      return res.status(403).json({ message: "Unauthorized: Admin access required" });
     }
 
     const feedback = await EventFeedback.findAll({
@@ -93,43 +93,49 @@ export const getEventFeedback = async (req, res) => {
       include: [
         {
           model: User,
-          as: "user",
-          attributes: ["name", "email"],
+          as: "user", // Including user details (name)
+          attributes: ["name"], // Only get the name from the user
+        },
+        {
+          model: Event,
+          as: "event", // Including event details (name)
+          attributes: ["name"], // Only get the name from the event
         },
       ],
       order: [["created_at", "DESC"]],
-    })
+    });
 
     // Calculate average rating
     const feedbackData = await EventFeedback.findAll({
       where: { event_id: eventId },
       attributes: ["rating"],
-    })
+    });
 
     const averageRating =
       feedbackData.length > 0
         ? feedbackData.reduce((sum, f) => sum + f.rating, 0) / feedbackData.length
-        : 0
+        : 0;
 
+    // Format feedback data
     const formattedFeedback = feedback.map((f) => ({
       id: f.id,
       rating: f.rating,
       comments: f.comments,
       createdAt: f.created_at,
-      userName: f.user.name,
-      userEmail: f.user.email,
-    }))
+      userName: f.user.name,  // Accessing the user name from the included model
+      eventName: f.event.name, // Accessing the event name from the included model
+    }));
 
     res.status(200).json({
       feedback: formattedFeedback,
       averageRating,
       count: feedback.length,
-    })
+    });
   } catch (error) {
-    console.error("Error in getEventFeedback:", error)
-    res.status(500).json({ message: "Server error", error: error.message })
+    console.error("Error in getEventFeedback:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
-}
+};
 
 export default {
   submitFeedback,

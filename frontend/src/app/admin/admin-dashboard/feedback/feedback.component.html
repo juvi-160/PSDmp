@@ -1,75 +1,50 @@
-<div class="event-feedback-container">
-
+<div class="ticket-management-container p-6 bg-gray-100 min-h-screen">
   <!-- Page Header -->
   <div class="page-header mb-6">
-    <div class="title-section">
-      <h2 class="text-2xl font-bold text-gray-800">Event Feedback</h2>
-      <p class="text-sm text-gray-500">Review ratings and comments from attendees</p>
+    <div class="title-section mb-4">
+      <h2 class="text-2xl font-semibold text-gray-800">Event Feedback</h2>
+      <p class="text-sm text-gray-600">View and manage feedback from users regarding the event</p>
     </div>
   </div>
 
-  <!-- Feedback Summary (Optional Stats Section) -->
-  <div class="stats-cards grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-    <mat-card class="stat-card">
-      <mat-card-content>
-        <div class="flex items-center gap-4">
-          <mat-icon class="text-blue-600">chat</mat-icon>
-          <div>
-            <div class="text-xl font-semibold">{{ feedbackList.length }}</div>
-            <div class="text-gray-600 text-sm">Total Feedback</div>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
-
-    <mat-card class="stat-card" *ngIf="feedbackList.length > 0">
-      <mat-card-content>
-        <div class="flex items-center gap-4">
-          <mat-icon class="text-yellow-500">star</mat-icon>
-          <div>
-            <div class="text-xl font-semibold">
-              {{
-                feedbackList.reduce((sum, f) => sum + f.rating, 0) / feedbackList.length | number: '1.1-1'
-              }}
-            </div>
-            <div class="text-gray-600 text-sm">Average Rating</div>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  </div>
-
-  <!-- Loading -->
-  <div class="text-center my-6" *ngIf="loading">
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="flex justify-center items-center">
     <mat-spinner diameter="40"></mat-spinner>
   </div>
 
   <!-- Error Message -->
-  <div *ngIf="error && !loading" class="text-center text-red-600 my-4">
-    <p class="mb-2">{{ error }}</p>
-    <button mat-raised-button color="primary" (click)="fetchFeedback()">Retry</button>
+  <div *ngIf="error && !loading" class="error-container bg-red-100 text-red-700 p-6 rounded-lg">
+    <p class="error-message">{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="retryLoadFeedback()" class="bg-blue-500 text-white rounded-lg py-2 px-6 hover:bg-blue-600 transition duration-200">
+      Retry
+    </button>
   </div>
 
-  <!-- Feedback List -->
-  <div *ngIf="!loading && feedbackList.length > 0" class="grid gap-4">
-    <mat-card *ngFor="let feedback of feedbackList" class="shadow-md">
-      <mat-card-content>
-        <div class="flex justify-between items-center mb-2">
-          <h3 class="text-base font-semibold">
-            {{ feedback.user?.name || 'Anonymous' }}
-          </h3>
-          <span class="text-yellow-500 font-medium">
-            Rating: {{ feedback.rating }} / 5
-          </span>
-        </div>
-        <p class="text-gray-700" *ngIf="feedback.comments">{{ feedback.comments }}</p>
-        <p class="text-xs text-gray-500 mt-2">Submitted on {{ feedback.created_at | date:'medium' }}</p>
-      </mat-card-content>
-    </mat-card>
+  <!-- Feedback Table -->
+  <div *ngIf="!loading && !error && feedback.length > 0" class="bg-white shadow-lg rounded-lg p-6 mb-6">
+    <h3 class="text-xl font-semibold text-gray-800 mb-4">User Feedback</h3>
+    <table class="min-w-full table-auto">
+      <thead>
+        <tr class="bg-gray-100">
+          <th class="px-6 py-3 text-left">User</th>
+          <th class="px-6 py-3 text-left">Rating</th>
+          <th class="px-6 py-3 text-left">Comments</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let feedbackItem of feedback" class="border-t">
+          <div *ngFor="let feedbackItem of feedback" class="border-t">
+            <td class="px-6 py-3">{{ feedbackItem.userName }}</td> <!-- Should be 'userName' -->
+            <td class="px-6 py-3">{{ feedbackItem.rating }} / 5</td>
+            <td class="px-6 py-3">{{ feedbackItem.comments || 'No comments provided' }}</td>
+          </div>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
-  <!-- No Feedback -->
-  <div *ngIf="!loading && feedbackList.length === 0" class="text-center text-gray-500 mt-4">
-    No feedback submitted yet for this event.
+  <!-- No Feedback Message -->
+  <div *ngIf="!loading && !error && feedback.length === 0" class="text-center mt-4">
+    <p class="text-gray-600">No feedback available for this event.</p>
   </div>
 </div>

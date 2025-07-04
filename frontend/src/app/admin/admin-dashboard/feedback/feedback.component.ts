@@ -1,52 +1,51 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { CommonModule, DatePipe } from '@angular/common'; // ✅ CommonModule for *ngIf, *ngFor + DatePipe
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; // ✅ For <mat-spinner>
 import { FeedbackService } from '../../../core/services/feedback.service';
+import { EventFeedback } from '../../../core/services/rsvp.service';
 
 @Component({
-  selector: 'app-event-feedback',
-  standalone: true,
-  imports: [
-    CommonModule,              // ✅ For *ngIf, *ngFor
-    MatProgressSpinnerModule   // ✅ For <mat-spinner>
-  ],
-  providers: [DatePipe],       // ✅ For date pipe to work
+  selector: 'app-feedback',
+  standalone: false,
   templateUrl: './feedback.component.html',
-  styleUrls: ['./feedback.component.css']
+  styleUrls: ['./feedback.component.css'],
 })
-export class EventFeedbackComponent implements OnInit {
-  eventId!: number;
-  feedbackList: any[] = [];
-  loading = false;
-  error = '';
+export class FeedbackComponent implements OnInit {
+  feedback: EventFeedback[] = [];  // Ensure feedback is of type EventFeedback[]
+  loading: boolean = false;
+  error: string | null = null;
 
-  constructor(
-    private route: ActivatedRoute,
-    private feedbackService: FeedbackService
-  ) {}
+  constructor(private feedbackService: FeedbackService) {}
 
   ngOnInit(): void {
-    this.eventId = Number(this.route.snapshot.paramMap.get('eventId'));
-    if (this.eventId) {
-      this.fetchFeedback();
-    } else {
-      this.error = 'Invalid event ID';
-    }
+    this.loadFeedback();
   }
 
-  fetchFeedback(): void {
+  // Function to load feedback for the event
+  loadFeedback(): void {
     this.loading = true;
-    this.feedbackService.getFeedbackByEventId(this.eventId).subscribe({
+    this.error = null;
+
+    this.feedbackService.getEventFeedback().subscribe({
       next: (data) => {
-        this.feedbackList = data;
+        // Assuming 'data' is directly the feedback array
+        this.feedback = data.map((feedbackItem: any) => ({
+          eventId: feedbackItem.event.id,        // Add eventId here
+          eventName: feedbackItem.event.name,    // Include event name
+          userName: feedbackItem.user.name,      // Include user name
+          userEmail: feedbackItem.user.email,    // Include user email
+          rating: feedbackItem.rating,
+          comments: feedbackItem.comments || 'No comments provided',  // Handle missing comments
+        }));
         this.loading = false;
       },
       error: (err) => {
-        this.error = 'Failed to load feedback';
+        this.error = 'Failed to load feedback. Please try again later.';
         this.loading = false;
-        console.error(err);
       }
     });
+  }
+
+  // Retry loading feedback if an error occurs
+  retryLoadFeedback(): void {
+    this.loadFeedback();
   }
 }

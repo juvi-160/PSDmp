@@ -78,9 +78,10 @@ import { AdminGuard } from './core/guards/admin.guard';
 import { PaymentHistoryComponent } from './dashboard/payment-history/payment-history.component';
 import { ContributeComponent } from './dashboard/contribute/contribute.component';
 import { ToastComponent } from './layout/toast/toast.component';
-import { EventFeedbackComponent } from './admin/admin-dashboard/feedback/feedback.component';
+
 import { EventRsvpsComponent } from './admin/event-rsvps/event-rsvps.component';
 import { TicketDetailsComponent } from './admin/admin-dashboard/ticket-management/ticket-details/ticket-details.component';
+import { FeedbackComponent } from './admin/admin-dashboard/feedback/feedback.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -124,7 +125,7 @@ const routes: Routes = [
       { path: "tickets", component: TicketManagementComponent },
       { path: 'tickets/:id', component: TicketDetailsComponent },
       { path: "invite", component: InviteComponent },
-      { path: "feedback", component: EventFeedbackComponent },
+      { path: "feedback", component: FeedbackComponent },
     ]
   }
 ];
@@ -172,10 +173,10 @@ const routes: Routes = [
     ContributeComponent,
     ToastComponent,
     TicketDetailsComponent,
+    FeedbackComponent,
   ],
   imports: [
     BrowserModule,
-    EventFeedbackComponent,
     CommonModule,
     ReactiveFormsModule,
     FormsModule,

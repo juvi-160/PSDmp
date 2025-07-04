@@ -1,5 +1,5 @@
-import { DataTypes } from "sequelize"
-import { sequelize } from "../config/db.js"
+import { DataTypes } from "sequelize";
+import { sequelize } from "../config/db.js";
 
 const EventFeedback = sequelize.define(
   "EventFeedback",
@@ -10,7 +10,7 @@ const EventFeedback = sequelize.define(
     },
     user_id: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
     },
     rating: {
       type: DataTypes.INTEGER,
@@ -40,15 +40,17 @@ const EventFeedback = sequelize.define(
 
 // Associations
 EventFeedback.associate = (models) => {
+  // Association with User model
   EventFeedback.belongsTo(models.User, {
     foreignKey: "user_id",
-    as: "user",
+    as: "user",  // Alias for the User model
   });
+
+  // Association with Event model
   EventFeedback.belongsTo(models.Event, {
     foreignKey: "event_id",
-    as: "event",
+    as: "event",  // Alias for the Event model
   });
 };
-
 
 export default EventFeedback;

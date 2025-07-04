@@ -1,14 +1,18 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
+import { EventFeedback } from './rsvp.service';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root',
+})
 export class FeedbackService {
-  private baseUrl = '/api/rsvps';
+  private apiUrl = `${environment.apiUrl}/event-feedback`;  // Adjust based on your API
 
   constructor(private http: HttpClient) {}
 
-  getFeedbackByEventId(eventId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/events/${eventId}/feedback`);
+  getEventFeedback(): Observable<EventFeedback[]> {
+    return this.http.get<EventFeedback[]>(this.apiUrl);
   }
 }

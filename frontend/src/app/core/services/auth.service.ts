@@ -80,11 +80,6 @@ export class AuthService {
                     },
                     error: (err) => {
                       console.error('Error creating user:', err);
-                      // this.snackBar.open(
-                      //   'Error creating user profile',
-                      //   'Close',
-                      //   { duration: 5000 }
-                      // );
                       this.toast.show('Error creating user profile', 'error');
                     },
                   });
@@ -127,6 +122,18 @@ export class AuthService {
       }),
       catchError(() => of({ needsPayment: true, role: 'pending' }))
     );
+  }
+
+  // NEW: Method to get the current user's name
+  getUserName(): string {
+    const currentUser = this.currentUserSubject.value;
+    return currentUser ? currentUser.name : '';
+  }
+
+  // NEW: Method to get the current user's email
+  getUserEmail(): string {
+    const currentUser = this.currentUserSubject.value;
+    return currentUser ? currentUser.email : '';
   }
 
   // EXISTING METHODS BELOW (NO CHANGES)
@@ -223,13 +230,9 @@ export class AuthService {
   updateUserAfterPayment(paymentDetails: any): Observable<User> {
     return this.getAccessToken().pipe(
       switchMap((token) => {
-        return this.http.post<User>(
-          `${this.apiUrl}/payment/verify`,
-          paymentDetails,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        return this.http.post<User>(`${this.apiUrl}/payment/verify`, paymentDetails, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
       }),
       tap((user) => {
         this.currentUserSubject.next(user);

@@ -236,34 +236,38 @@
 <ng-container matColumnDef="actions">
   <th mat-header-cell *matHeaderCellDef> Actions </th>
   <td mat-cell *matCellDef="let ticket">
-    <button
-      mat-icon-button
-      color="primary"
-      (click)="markAsSolved(ticket)"
-      [disabled]="ticket.status === 'resolved' || ticket.status === 'closed'"
-      matTooltip="Mark as Solved"
-    >
-      <mat-icon>check_circle</mat-icon>
-    </button>
+    <div class="flex justify-start gap-2">
+      <button
+        mat-icon-button
+        color="accent"
+        (click)="viewTicketDetails(ticket)"
+        matTooltip="View Ticket Details"
+        class="bg-blue-500 text-white rounded-lg py-2 px-2 hover:bg-blue-600 transition duration-200"
+      >
+        <mat-icon>visibility</mat-icon>
+      </button>
+      
+      <button
+        mat-icon-button
+        color="primary"
+        (click)="markAsSolved(ticket)"
+        [disabled]="ticket.status === 'resolved' || ticket.status === 'closed'"
+        matTooltip="Mark as Solved"
+        class="bg-green-500 text-white rounded-lg py-2 px-2 hover:bg-green-600 transition duration-200"
+      >
+        <mat-icon>check_circle</mat-icon>
+      </button>
 
-    <button
-      mat-icon-button
-      color="warn"
-      (click)="deleteTicket(ticket)"
-      matTooltip="Delete Ticket"
-    >
-      <mat-icon>delete</mat-icon>
-    </button>
-
-    <!-- View Details Button -->
-    <button
-      mat-icon-button
-      color="accent"
-      (click)="viewTicketDetails(ticket)"
-      matTooltip="View Ticket Details"
-    >
-      <mat-icon>visibility</mat-icon>
-    </button>
+      <button
+        mat-icon-button
+        color="warn"
+        (click)="deleteTicket(ticket)"
+        matTooltip="Delete Ticket"
+        class="bg-red-500 text-white rounded-lg py-2 px-2 hover:bg-red-600 transition duration-200"
+      >
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
   </td>
 </ng-container>
 
