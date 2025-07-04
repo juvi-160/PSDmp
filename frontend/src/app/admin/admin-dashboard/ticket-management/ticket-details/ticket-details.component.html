@@ -1,89 +1,133 @@
-<div class="ticket-management-container p-6 bg-gray-100 min-h-screen">
+<div class="bg-gray-50 min-h-screen p-6">
   <!-- Page Header -->
-  <div class="page-header mb-6">
-    <div class="title-section mb-4">
-      <h2 class="text-2xl font-semibold text-gray-800">Ticket Details</h2>
-      <p class="text-sm text-gray-600">View and manage ticket details</p>
+  <div class="mb-8">
+    <div class="mb-4">
+      <h2 class="text-2xl font-bold text-gray-800">Ticket Details</h2>
+      <p class="text-gray-600 mt-1">View and manage ticket details</p>
     </div>
+    <div class="border-b border-gray-200"></div>
   </div>
 
   <!-- Ticket Details Card -->
-  <div *ngIf="ticket && !loading" class="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
-    <mat-card class="ticket-card">
-      <mat-card-header class="bg-blue-500 text-white">
-        <mat-card-title class="text-lg font-semibold">Ticket ID: #{{ ticket.id }}</mat-card-title>
-      </mat-card-header>
+  <div *ngIf="ticket && !loading" class="max-w-4xl mx-auto">
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
+      <!-- Card Header -->
+      <div class="bg-blue-600 text-white p-4">
+        <h3 class="text-xl font-semibold">Ticket ID: #{{ ticket.id }}</h3>
+      </div>
 
-      <mat-card-content class="p-6">
-        <div class="ticket-info space-y-4">
-          <div class="ticket-info-item">
-            <strong class="text-gray-700">Subject:</strong> {{ ticket.subject }}
+      <!-- Card Content -->
+      <div class="p-6">
+        <div class="space-y-4">
+          <div class="bg-gray-50 p-3 rounded-lg">
+            <strong class="text-gray-700 block mb-1">Subject:</strong>
+            <p class="text-gray-800">{{ ticket.subject }}</p>
           </div>
-          <div class="ticket-info-item">
-            <strong class="text-gray-700">Description:</strong> {{ ticket.description }}
+
+          <div class="bg-gray-50 p-3 rounded-lg">
+            <strong class="text-gray-700 block mb-1">Description:</strong>
+            <p class="text-gray-800 whitespace-pre-line">{{ ticket.description }}</p>
           </div>
-          <div class="ticket-info-item">
-            <strong class="text-gray-700">Status:</strong>
-            <span [ngClass]="getStatusClass(ticket.status)" class="text-sm">{{ ticket.status | titlecase }}</span>
-          </div>
-          <div class="ticket-info-item">
-            <strong class="text-gray-700">Priority:</strong>
-            <span [ngClass]="getPriorityClass(ticket.priority)" class="text-sm">{{ ticket.priority | titlecase }}</span>
-          </div>
-          <div class="ticket-info-item">
-            <strong class="text-gray-700">Category:</strong> {{ ticket.category | titlecase }}
-          </div>
-          <div class="ticket-info-item">
-            <strong class="text-gray-700">User Name:</strong> {{ ticket.user.name }}
-          </div>
-          <div class="ticket-info-item">
-            <strong class="text-gray-700">User Email:</strong> {{ ticket.user.email }}
-          </div>
-          <div *ngIf="ticket.adminResponse" class="ticket-info-item">
-            <strong class="text-gray-700">Admin Response:</strong> {{ ticket.adminResponse }}
-          </div>
-          <div *ngIf="ticket.resolvedAt" class="ticket-info-item">
-            <strong class="text-gray-700">Resolved At:</strong> {{ formatDate(ticket.resolvedAt) }}
-          </div>
-          <div *ngIf="ticket.createdAt" class="ticket-info-item">
-            <strong class="text-gray-700">Created At:</strong> {{ formatDate(ticket.createdAt) }}
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-gray-50 p-3 rounded-lg">
+              <strong class="text-gray-700 block mb-1">Status:</strong>
+              <span [ngClass]="getStatusClass(ticket.status)" class="px-2 py-1 rounded-full text-xs font-medium">
+                {{ ticket.status | titlecase }}
+              </span>
+            </div>
+
+            <div class="bg-gray-50 p-3 rounded-lg">
+              <strong class="text-gray-700 block mb-1">Priority:</strong>
+              <span [ngClass]="getPriorityClass(ticket.priority)" class="px-2 py-1 rounded-full text-xs font-medium">
+                {{ ticket.priority | titlecase }}
+              </span>
+            </div>
+
+            <div class="bg-gray-50 p-3 rounded-lg">
+              <strong class="text-gray-700 block mb-1">Category:</strong>
+              <p class="text-gray-800">{{ ticket.category | titlecase }}</p>
+            </div>
+
+            <div class="bg-gray-50 p-3 rounded-lg">
+              <strong class="text-gray-700 block mb-1">User Name:</strong>
+              <p class="text-gray-800">{{ ticket.user.name }}</p>
+            </div>
+
+            <div class="bg-gray-50 p-3 rounded-lg">
+              <strong class="text-gray-700 block mb-1">User Email:</strong>
+              <p class="text-gray-800">{{ ticket.user.email }}</p>
+            </div>
+
+            <div *ngIf="ticket.adminResponse" class="bg-gray-50 p-3 rounded-lg">
+              <strong class="text-gray-700 block mb-1">Admin Response:</strong>
+              <p class="text-gray-800 whitespace-pre-line">{{ ticket.adminResponse }}</p>
+            </div>
+
+            <div *ngIf="ticket.resolvedAt" class="bg-gray-50 p-3 rounded-lg">
+              <strong class="text-gray-700 block mb-1">Resolved At:</strong>
+              <p class="text-gray-800">{{ formatDate(ticket.resolvedAt) }}</p>
+            </div>
+
+            <div *ngIf="ticket.createdAt" class="bg-gray-50 p-3 rounded-lg">
+              <strong class="text-gray-700 block mb-1">Created At:</strong>
+              <p class="text-gray-800">{{ formatDate(ticket.createdAt) }}</p>
+            </div>
           </div>
         </div>
-      </mat-card-content>
-    </mat-card>
+      </div>
 
-    <!-- Ticket Actions -->
-    <div class="ticket-actions flex justify-end gap-4 p-6">
-      <button mat-raised-button color="primary" (click)="navigateBack()" class="bg-blue-500 text-white rounded-lg py-2 px-6 hover:bg-blue-600 transition duration-200">Back to Tickets</button>
+      <!-- Ticket Actions -->
+      <div class="flex justify-end p-4 bg-gray-50 border-t">
+        <button (click)="navigateBack()" 
+                class="bg-blue-600 hover:bg-blue-700 text-white rounded-lg py-2 px-6 transition-colors">
+          Back to Tickets
+        </button>
+      </div>
     </div>
 
     <!-- Ticket Responses -->
-    <div *ngIf="ticket.responses && ticket.responses.length > 0" class="ticket-responses p-6">
+    <div *ngIf="ticket.responses && ticket.responses.length > 0" class="mt-8">
       <h3 class="text-xl font-semibold text-gray-800 mb-4">Ticket Responses</h3>
-      <div *ngFor="let response of ticket.responses" class="response-card mb-4">
-        <mat-card class="bg-gray-50 shadow-md rounded-lg">
-          <mat-card-header class="bg-gray-200 text-gray-800">
-            <mat-card-title class="font-semibold">
-              {{ response.isAdminResponse ? 'Admin' : 'User' }} Response
-            </mat-card-title>
-            <mat-card-subtitle class="text-sm">{{ formatDate(response.createdAt) }}</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content class="p-4">
-            <p class="text-gray-700">{{ response.message }}</p>
-          </mat-card-content>
-        </mat-card>
+      <div class="space-y-4">
+        <div *ngFor="let response of ticket.responses" class="response-card">
+          <div class="rounded-lg shadow-sm overflow-hidden" 
+               [class.bg-blue-50]="response.isAdminResponse" 
+               [class.bg-gray-50]="!response.isAdminResponse">
+            <div class="p-3 border-b" 
+                 [class.bg-blue-100]="response.isAdminResponse" 
+                 [class.bg-gray-100]="!response.isAdminResponse">
+              <h4 class="text-sm font-medium">
+                {{ response.isAdminResponse ? 'Admin' : 'User' }} Response
+                <span class="text-gray-500 text-xs font-normal ml-2">{{ formatDate(response.createdAt) }}</span>
+              </h4>
+            </div>
+            <div class="p-4">
+              <p class="text-gray-700 whitespace-pre-line">{{ response.message }}</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- Error Message -->
-  <div class="error-container bg-red-100 text-red-700 p-6 rounded-lg" *ngIf="error && !loading">
-    <p class="error-message">{{ error }}</p>
-    <button mat-raised-button color="primary" (click)="ticket && loadTicketDetails(ticket.id)" class="bg-blue-500 text-white rounded-lg py-2 px-6 hover:bg-blue-600 transition duration-200">Retry</button>
+  <div *ngIf="error && !loading" class="max-w-4xl mx-auto">
+    <div class="bg-red-50 border border-red-200 rounded-lg shadow-sm">
+      <div class="p-6">
+        <div class="flex flex-col items-center text-center">
+          <p class="text-red-600 font-medium mb-4">{{ error }}</p>
+          <button (click)="ticket && loadTicketDetails(ticket.id)" 
+                  class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded">
+            Retry
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Loading Spinner -->
-  <div *ngIf="loading" class="flex justify-center items-center">
-    <mat-spinner diameter="40"></mat-spinner>
+  <div *ngIf="loading" class="flex justify-center items-center py-12">
+    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
   </div>
 </div>
