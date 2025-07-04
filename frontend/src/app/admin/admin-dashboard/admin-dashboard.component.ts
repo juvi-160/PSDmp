@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { Inject } from '@angular/core';
+// Import your AuthService (adjust the path as needed)
+import { AuthService } from '@auth0/auth0-angular';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -16,4 +19,14 @@ export class AdminDashboardComponent {
     // { path: "/admin/invite", label: "Invite Members", icon: "drafts" },
     // Add more admin sections here as needed
   ]
+
+  constructor(public auth: AuthService) {}
+
+  logout(): void {
+    this.auth.logout({
+      logoutParams: {
+        returnTo: window.location.origin
+      }
+    });
+  }
 }

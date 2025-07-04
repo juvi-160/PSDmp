@@ -122,7 +122,7 @@ const routes: Routes = [
       { path: "users/:id", component: UserDetailsComponent },
       { path: "event-rsvps", component: EventRsvpsComponent },
       { path: "tickets", component: TicketManagementComponent },
-      { path: 'ticket-details/:id', component: TicketDetailsComponent },
+      { path: 'tickets/:id', component: TicketDetailsComponent },
       { path: "invite", component: InviteComponent },
       { path: "feedback", component: EventFeedbackComponent },
     ]

@@ -1,72 +1,89 @@
-<div class="ticket-details-container">
-  <div *ngIf="loading" class="loading-container">
-    <mat-spinner diameter="40"></mat-spinner>
+<div class="ticket-management-container p-6 bg-gray-100 min-h-screen">
+  <!-- Page Header -->
+  <div class="page-header mb-6">
+    <div class="title-section mb-4">
+      <h2 class="text-2xl font-semibold text-gray-800">Ticket Details</h2>
+      <p class="text-sm text-gray-600">View and manage ticket details</p>
+    </div>
   </div>
 
-  <div *ngIf="error" class="error-container">
-    <p class="error-message">{{ error }}</p>
-  </div>
-
-  <div *ngIf="ticket && !loading" class="ticket-details">
+  <!-- Ticket Details Card -->
+  <div *ngIf="ticket && !loading" class="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
     <mat-card class="ticket-card">
-      <mat-card-header>
-        <mat-card-title>Ticket Details</mat-card-title>
-        <mat-card-subtitle>ID: #{{ ticket.id }}</mat-card-subtitle>
+      <mat-card-header class="bg-blue-500 text-white">
+        <mat-card-title class="text-lg font-semibold">Ticket ID: #{{ ticket.id }}</mat-card-title>
       </mat-card-header>
-      <mat-card-content>
-        <div class="ticket-info">
+
+      <mat-card-content class="p-6">
+        <div class="ticket-info space-y-4">
           <div class="ticket-info-item">
-            <strong>Subject:</strong> {{ ticket.subject }}
+            <strong class="text-gray-700">Subject:</strong> {{ ticket.subject }}
           </div>
           <div class="ticket-info-item">
-            <strong>Description:</strong> {{ ticket.description }}
+            <strong class="text-gray-700">Description:</strong> {{ ticket.description }}
           </div>
           <div class="ticket-info-item">
-            <strong>Status:</strong> <span [ngClass]="getStatusClass(ticket.status)">{{ ticket.status | titlecase }}</span>
+            <strong class="text-gray-700">Status:</strong>
+            <span [ngClass]="getStatusClass(ticket.status)" class="text-sm">{{ ticket.status | titlecase }}</span>
           </div>
           <div class="ticket-info-item">
-            <strong>Priority:</strong> <span [ngClass]="getPriorityClass(ticket.priority)">{{ ticket.priority | titlecase }}</span>
+            <strong class="text-gray-700">Priority:</strong>
+            <span [ngClass]="getPriorityClass(ticket.priority)" class="text-sm">{{ ticket.priority | titlecase }}</span>
           </div>
           <div class="ticket-info-item">
-            <strong>Category:</strong> {{ ticket.category | titlecase }}
+            <strong class="text-gray-700">Category:</strong> {{ ticket.category | titlecase }}
           </div>
           <div class="ticket-info-item">
-            <strong>User Name:</strong> {{ ticket.user.name }}
+            <strong class="text-gray-700">User Name:</strong> {{ ticket.user.name }}
           </div>
           <div class="ticket-info-item">
-            <strong>User Email:</strong> {{ ticket.user.email }}
+            <strong class="text-gray-700">User Email:</strong> {{ ticket.user.email }}
           </div>
           <div *ngIf="ticket.adminResponse" class="ticket-info-item">
-            <strong>Admin Response:</strong> {{ ticket.adminResponse }}
+            <strong class="text-gray-700">Admin Response:</strong> {{ ticket.adminResponse }}
           </div>
           <div *ngIf="ticket.resolvedAt" class="ticket-info-item">
-            <strong>Resolved At:</strong> {{ formatDate(ticket.resolvedAt) }}
+            <strong class="text-gray-700">Resolved At:</strong> {{ formatDate(ticket.resolvedAt) }}
           </div>
           <div *ngIf="ticket.createdAt" class="ticket-info-item">
-            <strong>Created At:</strong> {{ formatDate(ticket.createdAt) }}
+            <strong class="text-gray-700">Created At:</strong> {{ formatDate(ticket.createdAt) }}
           </div>
         </div>
       </mat-card-content>
     </mat-card>
 
-    <div class="ticket-actions">
-      <button mat-raised-button color="primary" (click)="navigateBack()">Back to Tickets</button>
-      <!-- Add other buttons as needed -->
+    <!-- Ticket Actions -->
+    <div class="ticket-actions flex justify-end gap-4 p-6">
+      <button mat-raised-button color="primary" (click)="navigateBack()" class="bg-blue-500 text-white rounded-lg py-2 px-6 hover:bg-blue-600 transition duration-200">Back to Tickets</button>
     </div>
 
-    <div *ngIf="ticket.responses && ticket.responses.length > 0" class="ticket-responses">
-      <h3>Ticket Responses</h3>
-      <div *ngFor="let response of ticket.responses">
-        <mat-card class="response-card">
-          <mat-card-header>
-            <mat-card-title>{{ response.isAdminResponse ? 'Admin' : 'User' }} Response</mat-card-title>
-            <mat-card-subtitle>{{ formatDate(response.createdAt) }}</mat-card-subtitle>
+    <!-- Ticket Responses -->
+    <div *ngIf="ticket.responses && ticket.responses.length > 0" class="ticket-responses p-6">
+      <h3 class="text-xl font-semibold text-gray-800 mb-4">Ticket Responses</h3>
+      <div *ngFor="let response of ticket.responses" class="response-card mb-4">
+        <mat-card class="bg-gray-50 shadow-md rounded-lg">
+          <mat-card-header class="bg-gray-200 text-gray-800">
+            <mat-card-title class="font-semibold">
+              {{ response.isAdminResponse ? 'Admin' : 'User' }} Response
+            </mat-card-title>
+            <mat-card-subtitle class="text-sm">{{ formatDate(response.createdAt) }}</mat-card-subtitle>
           </mat-card-header>
-          <mat-card-content>
-            <p>{{ response.message }}</p>
+          <mat-card-content class="p-4">
+            <p class="text-gray-700">{{ response.message }}</p>
           </mat-card-content>
         </mat-card>
       </div>
     </div>
+  </div>
+
+  <!-- Error Message -->
+  <div class="error-container bg-red-100 text-red-700 p-6 rounded-lg" *ngIf="error && !loading">
+    <p class="error-message">{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="ticket && loadTicketDetails(ticket.id)" class="bg-blue-500 text-white rounded-lg py-2 px-6 hover:bg-blue-600 transition duration-200">Retry</button>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="flex justify-center items-center">
+    <mat-spinner diameter="40"></mat-spinner>
   </div>
 </div>
