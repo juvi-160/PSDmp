@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { FeedbackService } from '../../../core/services/feedback.service';
 import { EventFeedback } from '../../../core/services/rsvp.service';
 
@@ -9,9 +9,10 @@ import { EventFeedback } from '../../../core/services/rsvp.service';
   styleUrls: ['./feedback.component.css'],
 })
 export class FeedbackComponent implements OnInit {
-  feedback: EventFeedback[] = [];  // Ensure feedback is of type EventFeedback[]
+  feedback: EventFeedback[] = [];
   loading: boolean = false;
   error: string | null = null;
+  eventId: number = 1;  // You can dynamically set this or get from route params
 
   constructor(private feedbackService: FeedbackService) {}
 
@@ -19,21 +20,19 @@ export class FeedbackComponent implements OnInit {
     this.loadFeedback();
   }
 
-  // Function to load feedback for the event
   loadFeedback(): void {
     this.loading = true;
     this.error = null;
 
-    this.feedbackService.getEventFeedback().subscribe({
+    this.feedbackService.getEventFeedback(this.eventId).subscribe({
       next: (data) => {
-        // Assuming 'data' is directly the feedback array
         this.feedback = data.map((feedbackItem: any) => ({
-          eventId: feedbackItem.event.id,        // Add eventId here
-          eventName: feedbackItem.event.name,    // Include event name
-          userName: feedbackItem.user.name,      // Include user name
-          userEmail: feedbackItem.user.email,    // Include user email
+          eventId: feedbackItem.event.id,
+          eventName: feedbackItem.event.name,
+          userName: feedbackItem.user.name,
+          userEmail: feedbackItem.user.email,
           rating: feedbackItem.rating,
-          comments: feedbackItem.comments || 'No comments provided',  // Handle missing comments
+          comments: feedbackItem.comments || 'No comments provided',
         }));
         this.loading = false;
       },
@@ -44,7 +43,6 @@ export class FeedbackComponent implements OnInit {
     });
   }
 
-  // Retry loading feedback if an error occurs
   retryLoadFeedback(): void {
     this.loadFeedback();
   }

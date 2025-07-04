@@ -25,11 +25,11 @@ export interface EventStats {
 
 export interface EventFeedback {
   eventId: number;
+  eventName: string;
+  userName: string;
+  userEmail: string;
   rating: number;
-  comments?: string;
-  userName: string;  // Make sure 'userName' exists here
-  userEmail: string; // Add 'userEmail' property if needed
-  eventName: string; // Add 'eventName' if needed
+  comments: string;
 }
 
 
