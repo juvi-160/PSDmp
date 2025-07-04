@@ -37,7 +37,12 @@ const formatUserResponse = (user) => {
     createdAt: user.created_at,
     updatedAt: user.updated_at,
     paymentRequired: user.role === 'individual member' && !user.has_paid,
-    isAssociateMember: user.role === 'associate member'
+    isAssociateMember: user.role === 'associate member',
+    ageGroup: user.age_group || null,
+    profession: user.profession || null,
+    city: user.city || null,
+    areaOfInterests: user.area_of_interests || null,
+    aboutYou: user.about_you || null
   };
 };
 
@@ -114,7 +119,7 @@ export const getUserById = async (req, res) => {
     });
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    const totalPaid = user.role === 'associate member' ? 0 : 
+    const totalPaid = user.role === 'associate member' ? 0 :
       user.orders
         .filter(order => order.status === "paid")
         .reduce((sum, order) => sum + (Number.parseFloat(order.amount) || 0), 0);
@@ -200,22 +205,27 @@ export const getUserPaymentHistory = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const userId = req.params.id;
-    const { 
-      role, 
-      isEmailVerified, 
-      isPhoneVerified, 
-      hasPaid, 
+    const {
+      role,
+      isEmailVerified,
+      isPhoneVerified,
+      hasPaid,
       autoPayEnabled,
       subscriptionStatus,
-      subscriptionId
+      subscriptionId,
+      ageGroup,
+      profession,
+      city,
+      areaOfInterests,
+      aboutYou
     } = req.body;
 
     const user = await User.findByPk(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
 
     // Automatically set has_paid to true for associate members
-    const updatedHasPaid = role === 'associate member' ? true : 
-                         (hasPaid !== undefined ? hasPaid : user.has_paid);
+    const updatedHasPaid = role === 'associate member' ? true :
+      (hasPaid !== undefined ? hasPaid : user.has_paid);
 
     await user.update({
       role: role || user.role,
@@ -224,7 +234,12 @@ export const updateUser = async (req, res) => {
       has_paid: updatedHasPaid,
       auto_pay_enabled: autoPayEnabled !== undefined ? autoPayEnabled : user.auto_pay_enabled,
       subscription_status: subscriptionStatus || user.subscription_status,
-      subscription_id: subscriptionId || user.subscription_id
+      subscription_id: subscriptionId || user.subscription_id,
+      age_group: ageGroup || user.age_group,
+      profession: profession || user.profession,
+      city: city || user.city,
+      area_of_interests: areaOfInterests || user.area_of_interests,
+      about_you: aboutYou || user.about_you
     });
 
     res.status(200).json(formatUserResponse(await user.reload()));
@@ -259,7 +274,7 @@ export const updateUserRole = async (req, res) => {
 
     const previousRole = user.role;
     const updateData = { role };
-    
+
     // Automatically set payment status based on role
     if (role === 'associate member') {
       updateData.has_paid = true;
@@ -296,9 +311,9 @@ export const updateUserRole = async (req, res) => {
       }
     }
 
-    return res.status(200).json({ 
-      user: formatUserResponse(user), 
-      emailSent 
+    return res.status(200).json({
+      user: formatUserResponse(user),
+      emailSent
     });
 
   } catch (error) {
@@ -380,6 +395,11 @@ export const exportUsersToExcel = async (req, res) => {
       { header: "Email", key: "email", width: 30 },
       { header: "Phone", key: "phone", width: 20 },
       { header: "Role", key: "role", width: 20 },
+      { header: "Age Group", key: "age_group", width: 15 }, // ✅
+      { header: "Profession", key: "profession", width: 20 }, // ✅
+      { header: "City", key: "city", width: 20 }, // ✅
+      { header: "Interests", key: "area_of_interests", width: 30 }, // ✅
+      { header: "About", key: "about_you", width: 40 }, // ✅
       { header: "Email Verified", key: "is_email_verified", width: 15 },
       { header: "Phone Verified", key: "is_phone_verified", width: 15 },
       { header: "Payment Status", key: "has_paid", width: 15 },
@@ -399,10 +419,10 @@ export const exportUsersToExcel = async (req, res) => {
     };
 
     users.forEach((user) => {
-      let paymentAmount = user.role === 'associate member' ? 0 : 
-                        (Number.parseFloat(user.orders[0]?.amount) || 0);
-      let paymentCurrency = user.role === 'associate member' ? "N/A" : 
-                          (user.orders[0]?.currency || "INR");
+      let paymentAmount = user.role === 'associate member' ? 0 :
+        (Number.parseFloat(user.orders[0]?.amount) || 0);
+      let paymentCurrency = user.role === 'associate member' ? "N/A" :
+        (user.orders[0]?.currency || "INR");
 
       worksheet.addRow({
         id: user.id,
@@ -411,10 +431,15 @@ export const exportUsersToExcel = async (req, res) => {
         email: user.email,
         phone: user.phone || "N/A",
         role: user.role,
+        age_group: user.age_group || "N/A", // ✅
+        profession: user.profession || "N/A", // ✅
+        city: user.city || "N/A", // ✅
+        area_of_interests: user.area_of_interests || "N/A", // ✅
+        about_you: user.about_you || "N/A", // ✅
         is_email_verified: user.is_email_verified ? "Yes" : "No",
         is_phone_verified: user.is_phone_verified ? "Yes" : "No",
-        has_paid: user.role === 'associate member' ? "Not Required" : 
-                 (user.has_paid ? "Paid" : "Not Paid"),
+        has_paid: user.role === 'associate member' ? "Not Required" :
+          (user.has_paid ? "Paid" : "Not Paid"),
         payment_amount: formatPaymentAmount(paymentAmount, paymentCurrency, user.role),
         auto_pay_enabled: user.auto_pay_enabled ? "Yes" : "No",
         subscription_id: user.subscription_id || "N/A",
@@ -441,19 +466,19 @@ export const exportUsersToExcel = async (req, res) => {
 export const getUserStats = async (req, res) => {
   try {
     const totalUsers = await User.count();
-    const paidUsers = await User.count({ 
-      where: { 
+    const paidUsers = await User.count({
+      where: {
         has_paid: true,
         role: { [Op.ne]: 'associate member' }
-      } 
+      }
     });
     const associateMembers = await User.count({ where: { role: "associate member" } });
     const pendingUsers = await User.count({ where: { role: "pending" } });
-    const activeSubscriptions = await User.count({ 
-      where: { 
+    const activeSubscriptions = await User.count({
+      where: {
         subscription_status: "active",
         auto_pay_enabled: true
-      } 
+      }
     });
 
     const orders = await Order.findAll({
