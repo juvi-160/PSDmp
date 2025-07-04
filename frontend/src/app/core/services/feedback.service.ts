@@ -8,7 +8,7 @@ import { EventFeedback } from './rsvp.service';
   providedIn: 'root',
 })
 export class FeedbackService {
-  private apiUrl = `${environment.apiUrl}/events`;  // Adjust the base API URL
+  private apiUrl = `${environment.apiUrl}/rsvps/events`;  // Adjust the base API URL
 
   constructor(private http: HttpClient) {}
 
