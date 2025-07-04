@@ -60,7 +60,7 @@ async function syncDb() {
     const isDevelopment = process.env.NODE_ENV !== "production"
 
     await sequelize.sync({
-      force: true,
+      alter: true,
       alter: isDevelopment, // Only alter in development
     })
     console.log("All models were synchronized successfully.")
