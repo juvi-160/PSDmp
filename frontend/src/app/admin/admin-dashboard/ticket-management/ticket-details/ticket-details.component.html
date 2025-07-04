@@ -1,0 +1,72 @@
+<div class="ticket-details-container">
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div *ngIf="error" class="error-container">
+    <p class="error-message">{{ error }}</p>
+  </div>
+
+  <div *ngIf="ticket && !loading" class="ticket-details">
+    <mat-card class="ticket-card">
+      <mat-card-header>
+        <mat-card-title>Ticket Details</mat-card-title>
+        <mat-card-subtitle>ID: #{{ ticket.id }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="ticket-info">
+          <div class="ticket-info-item">
+            <strong>Subject:</strong> {{ ticket.subject }}
+          </div>
+          <div class="ticket-info-item">
+            <strong>Description:</strong> {{ ticket.description }}
+          </div>
+          <div class="ticket-info-item">
+            <strong>Status:</strong> <span [ngClass]="getStatusClass(ticket.status)">{{ ticket.status | titlecase }}</span>
+          </div>
+          <div class="ticket-info-item">
+            <strong>Priority:</strong> <span [ngClass]="getPriorityClass(ticket.priority)">{{ ticket.priority | titlecase }}</span>
+          </div>
+          <div class="ticket-info-item">
+            <strong>Category:</strong> {{ ticket.category | titlecase }}
+          </div>
+          <div class="ticket-info-item">
+            <strong>User Name:</strong> {{ ticket.user.name }}
+          </div>
+          <div class="ticket-info-item">
+            <strong>User Email:</strong> {{ ticket.user.email }}
+          </div>
+          <div *ngIf="ticket.adminResponse" class="ticket-info-item">
+            <strong>Admin Response:</strong> {{ ticket.adminResponse }}
+          </div>
+          <div *ngIf="ticket.resolvedAt" class="ticket-info-item">
+            <strong>Resolved At:</strong> {{ formatDate(ticket.resolvedAt) }}
+          </div>
+          <div *ngIf="ticket.createdAt" class="ticket-info-item">
+            <strong>Created At:</strong> {{ formatDate(ticket.createdAt) }}
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <div class="ticket-actions">
+      <button mat-raised-button color="primary" (click)="navigateBack()">Back to Tickets</button>
+      <!-- Add other buttons as needed -->
+    </div>
+
+    <div *ngIf="ticket.responses && ticket.responses.length > 0" class="ticket-responses">
+      <h3>Ticket Responses</h3>
+      <div *ngFor="let response of ticket.responses">
+        <mat-card class="response-card">
+          <mat-card-header>
+            <mat-card-title>{{ response.isAdminResponse ? 'Admin' : 'User' }} Response</mat-card-title>
+            <mat-card-subtitle>{{ formatDate(response.createdAt) }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p>{{ response.message }}</p>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>
