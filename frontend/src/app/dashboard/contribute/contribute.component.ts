@@ -23,6 +23,7 @@ export class ContributeComponent implements OnInit {
 
   // Form controls
   customAmountControl = new FormControl("", [Validators.required, Validators.min(300), Validators.pattern(/^\d+$/)]);
+  contributionReason: string = '';
 
   // Payment data
   selectedAmount = 0;
@@ -173,6 +174,7 @@ export class ContributeComponent implements OnInit {
           .createSubscriptionWithImmediatePayment(dynamicPlan.planId, this.selectedAmount, {
             customAmount: this.selectedAmount,
             paymentType: "monthly-autopay",
+            contribution_reason: this.contributionReason
           })
           .subscribe({
             next: (subscriptionData: SubscriptionWithPayment) => {

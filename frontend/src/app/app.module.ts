@@ -78,7 +78,7 @@ import { AdminGuard } from './core/guards/admin.guard';
 import { PaymentHistoryComponent } from './dashboard/payment-history/payment-history.component';
 import { ContributeComponent } from './dashboard/contribute/contribute.component';
 import { ToastComponent } from './layout/toast/toast.component';
-import { FeedbackComponent } from './admin/admin-dashboard/feedback/feedback.component';
+import { EventFeedbackComponent } from './admin/admin-dashboard/feedback/feedback.component';
 import { EventRsvpsComponent } from './admin/event-rsvps/event-rsvps.component';
 
 const routes: Routes = [
@@ -122,7 +122,7 @@ const routes: Routes = [
       { path: "event-rsvps", component: EventRsvpsComponent },
       { path: "tickets", component: TicketManagementComponent },
       { path: "invite", component: InviteComponent },
-      { path: "feedback", component: FeedbackComponent },
+      { path: "feedback", component: EventFeedbackComponent },
     ]
   }
 ];
@@ -168,10 +168,11 @@ const routes: Routes = [
     PaymentHistoryComponent,
     ContributeComponent,
     ToastComponent,
-    FeedbackComponent,
+    
   ],
   imports: [
     BrowserModule,
+    EventFeedbackComponent,
     CommonModule,
     ReactiveFormsModule,
     FormsModule,

@@ -52,7 +52,7 @@ router.get("/admin/stats", getTicketStats)
 // User routes
 router.post("/", createTicket)
 router.get("/my-tickets", getUserTickets)
-router.get("/", getAllTickets) // Changed from "/" to "/all" to avoid conflicts
+router.get("/", getAllTickets)
 router.get("/:id", getTicketById)
 router.put("/:id", updateTicket)
 router.post("/:id/responses", addTicketResponse)

@@ -46,6 +46,11 @@ const Subscription = sequelize.define(
       type: DataTypes.JSON,
       allowNull: true,
     },
+    contribution_reason: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      comment: "Optional message about why the user is contributing to PSF"
+    }
   },
   {
     timestamps: true,

@@ -98,6 +98,27 @@
           <span>Please enter at least ₹300 to continue</span>
         </div>
       </div>
+
+      <!-- Step 1.5 - Contribution Reason -->
+      <div
+        class="bg-white border border-gray-100 rounded-3xl p-6 sm:p-8 shadow-xs hover:shadow-sm transition-all duration-300 ease-out">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+          <span
+            class="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-green-200 to-green-300 text-white rounded-full text-sm font-medium shadow-xs">1.5</span>
+          <span class="bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">Why are you
+            contributing?</span>
+        </h2>
+
+        <mat-form-field class="w-full">
+          <mat-label>Your reason (optional)</mat-label>
+          <textarea matInput rows="3" placeholder="Tell us briefly why you're supporting PSF"
+            [(ngModel)]="contributionReason" name="contributionReason" class="text-sm"></textarea>
+          <mat-hint class="text-xs text-gray-400">This helps us understand and highlight community
+            motivations.</mat-hint>
+        </mat-form-field>
+      </div>
+
+
       <!-- Step 2 - Enhanced Payment Type Selection -->
       <div *ngIf="isAmountValid"
         class="bg-white border border-gray-100 rounded-3xl p-6 sm:p-8 shadow-xs hover:shadow-sm transition-all duration-300 ease-out">

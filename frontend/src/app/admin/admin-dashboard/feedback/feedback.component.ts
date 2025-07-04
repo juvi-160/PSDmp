@@ -1,42 +1,52 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { RsvpService } from '../../../core/services/rsvp.service';  // Import the rsvp service
+import { CommonModule, DatePipe } from '@angular/common'; // ✅ CommonModule for *ngIf, *ngFor + DatePipe
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; // ✅ For <mat-spinner>
+import { FeedbackService } from '../../../core/services/feedback.service';
 
 @Component({
-  selector: 'app-feedback',
-  standalone: false,
+  selector: 'app-event-feedback',
+  standalone: true,
+  imports: [
+    CommonModule,              // ✅ For *ngIf, *ngFor
+    MatProgressSpinnerModule   // ✅ For <mat-spinner>
+  ],
+  providers: [DatePipe],       // ✅ For date pipe to work
   templateUrl: './feedback.component.html',
-  styleUrl: './feedback.component.css'
+  styleUrls: ['./feedback.component.css']
 })
-export class FeedbackComponent implements OnInit {
-  feedback: any[] = [];
-  eventId: number | null = null;
-  error: string = '';
+export class EventFeedbackComponent implements OnInit {
+  eventId!: number;
+  feedbackList: any[] = [];
+  loading = false;
+  error = '';
 
   constructor(
     private route: ActivatedRoute,
-    private rsvpService: RsvpService // Inject the RsvpService
+    private feedbackService: FeedbackService
   ) {}
 
   ngOnInit(): void {
-    // Get event ID from route params
-    this.route.params.subscribe((params) => {
-      this.eventId = +params['eventId']; // Ensure it's a number
-      if (this.eventId) {
-        this.loadFeedback();
-      }
-    });
+    this.eventId = Number(this.route.snapshot.paramMap.get('eventId'));
+    if (this.eventId) {
+      this.fetchFeedback();
+    } else {
+      this.error = 'Invalid event ID';
+    }
   }
 
-  loadFeedback(): void {
-    // Use the rsvp service to fetch feedback for the event
-    this.rsvpService.getFeedbackForEvent(this.eventId!).subscribe(
-      (data) => {
-        this.feedback = data; // Store feedback data
+  fetchFeedback(): void {
+    this.loading = true;
+    this.feedbackService.getFeedbackByEventId(this.eventId).subscribe({
+      next: (data) => {
+        this.feedbackList = data;
+        this.loading = false;
       },
-      (error) => {
-        this.error = 'Error loading feedback. Please try again later.';
+      error: (err) => {
+        this.error = 'Failed to load feedback';
+        this.loading = false;
+        console.error(err);
       }
-    );
+    });
   }
 }

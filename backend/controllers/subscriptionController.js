@@ -91,7 +91,7 @@ export const createSubscriptionWithImmediatePayment = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const { planId, amount, customerNotify = true, notes = {} } = req.body;
+    const { planId, amount, customerNotify = true, notes = {}, contribution_reason} = req.body;
 
     // Step 1: Create immediate payment order for first month
     const firstPaymentOrder = await razorpay.orders.create({
@@ -162,6 +162,7 @@ console.log({
       start_at: new Date(subscription.start_at * 1000),
       notes: JSON.stringify(subscription.notes),
       customer_id: subscription.customer_id,
+      contribution_reason,
     });
     
 
@@ -194,7 +195,7 @@ export const createSubscription = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const { planId, customerNotify = true, notes = {} } = req.body;
+    const { planId, customerNotify = true, notes = {}, contribution_reason } = req.body;
 
     const subscriptionData = {
       plan_id: planId,
@@ -220,6 +221,7 @@ export const createSubscription = async (req, res) => {
       start_at: new Date(subscription.start_at * 1000),
       notes: JSON.stringify(subscription.notes),
       customer_id: subscription.customer_id,
+      contribution_reason,
     });
 
     res.status(200).json(subscription);
