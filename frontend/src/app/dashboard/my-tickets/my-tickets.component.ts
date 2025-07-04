@@ -1,20 +1,28 @@
-import { Component,  OnInit, ViewChild } from "@angular/core"
+import { Component, OnInit, ViewChild } from "@angular/core"
 import { MatTableDataSource } from "@angular/material/table"
 import { MatPaginator } from "@angular/material/paginator"
 import { MatSort } from "@angular/material/sort"
-import  { MatDialog } from "@angular/material/dialog"
-import  { Router } from "@angular/router"
-import  { TicketService } from "../../core/services/ticket.service"
-import  { Ticket, TicketFilter } from "../../core/models/ticket.model"
+import { MatDialog } from "@angular/material/dialog"
+import { Router } from "@angular/router"
+import { TicketService } from "../../core/services/ticket.service"
+import { Ticket, TicketFilter } from "../../core/models/ticket.model"
 
 @Component({
   selector: 'app-my-tickets',
   standalone: false,
   templateUrl: './my-tickets.component.html',
-  styleUrl: './my-tickets.component.css'
+  styleUrls: ['./my-tickets.component.css']
 })
 export class MyTicketsComponent implements OnInit {
-  displayedColumns: string[] = ["id", "subject", "category", "priority", "status", "createdAt"]
+  displayedColumns: string[] = [
+    "id",
+    "subject",
+    "category",
+    "priority",
+    "status",
+    "createdAt",
+    "actions" // Add this
+  ];
 
   dataSource = new MatTableDataSource<Ticket>([])
   loading = false
@@ -87,20 +95,19 @@ export class MyTicketsComponent implements OnInit {
   }
 
   formatDate(date: Date | string): string {
-  if (!date) return 'N/A';
+    if (!date) return 'N/A';
 
-  const d = new Date(date);
-  return isNaN(d.getTime())
-    ? 'Invalid Date'
-    : d.toLocaleDateString('en-IN', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-}
-
+    const d = new Date(date);
+    return isNaN(d.getTime())
+      ? 'Invalid Date'
+      : d.toLocaleDateString('en-IN', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+  }
 
   getStatusClass(status: string): string {
     switch (status) {
@@ -149,12 +156,33 @@ export class MyTicketsComponent implements OnInit {
     }
   }
 
-
-
   onPageChange(event: any): void {
     this.currentPage = event.pageIndex + 1
     this.pageSize = event.pageSize
     this.loadTickets()
   }
-}
 
+  // Method to mark a ticket as solved
+  markAsSolved(ticket: Ticket): void {
+    if (confirm(`Mark ticket #${ticket.id} as resolved?`)) {
+      this.ticketService.updateTicket(ticket.id.toString(), { status: 'resolved' }).subscribe({
+        next: () => this.loadTickets(), // Reload the table
+        error: (err) => {
+          console.error('Failed to resolve ticket', err);
+        },
+      });
+    }
+  }
+
+  // Method to delete a ticket
+  deleteTicket(ticket: Ticket): void {
+    if (confirm(`Are you sure you want to delete ticket #${ticket.id}?`)) {
+      this.ticketService.deleteTicket(ticket.id).subscribe({
+        next: () => this.loadTickets(), // Refresh the data
+        error: (err) => {
+          console.error('Failed to delete ticket', err);
+        },
+      });
+    }
+  }
+}

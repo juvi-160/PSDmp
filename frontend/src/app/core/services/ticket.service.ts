@@ -76,38 +76,41 @@ export class TicketService {
     );
   }
 
-  getAllTickets(filter?: TicketFilter): Observable<PaginatedTickets> {
-    let params = new HttpParams();
+ getAllTickets(filter?: TicketFilter): Observable<PaginatedTickets> {
+  let params = new HttpParams();
 
-    if (filter) {
-      if (filter.status) params = params.set('status', filter.status);
-      if (filter.priority) params = params.set('priority', filter.priority);
-      if (filter.category) params = params.set('category', filter.category);
-      if (filter.search) params = params.set('search', filter.search);
-      if (filter.page) params = params.set('page', filter.page.toString());
-      if (filter.limit) params = params.set('limit', filter.limit.toString());
+  if (filter) {
+    if (filter.status) params = params.set('status', filter.status);
+    if (filter.priority) params = params.set('priority', filter.priority);
+    if (filter.category) params = params.set('category', filter.category);
+    if (filter.search) {
+      params = params.set('search', filter.search);
     }
-
-    return this.authService.getAccessToken().pipe(
-      switchMap((token) =>
-        this.http.get<PaginatedTickets>(`${this.apiUrl}`, {
-          params,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-      ),
-      map((response) => ({
-        ...response,
-        tickets: response.tickets.map((ticket) => ({
-          ...ticket,
-          createdAt: new Date(ticket.createdAt),
-          updatedAt: new Date(ticket.updatedAt),
-          resolvedAt: ticket.resolvedAt ? new Date(ticket.resolvedAt) : undefined,
-        })),
-      }))
-    );
+    if (filter.page) params = params.set('page', filter.page.toString());
+    if (filter.limit) params = params.set('limit', filter.limit.toString());
   }
+
+  return this.authService.getAccessToken().pipe(
+    switchMap((token) =>
+      this.http.get<PaginatedTickets>(`${this.apiUrl}`, {
+        params,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+    ),
+    map((response) => ({
+      ...response,
+      tickets: response.tickets.map((ticket) => ({
+        ...ticket,
+        userName: ticket.user?.name,  // Ensure userName is populated
+        userEmail: ticket.user?.email, // Ensure userEmail is populated
+      })),
+    }))
+  );
+}
+
+
 
   getTicketById(id: string | number): Observable<Ticket> {
     return this.authService.getAccessToken().pipe(

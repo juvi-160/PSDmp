@@ -1,4 +1,3 @@
-// models/ticket.js
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../config/db.js';
 
@@ -38,6 +37,14 @@ const Ticket = sequelize.define('Ticket', {
   resolved_at: {
     type: DataTypes.DATE,
     allowNull: true
+  },
+  user_name: {
+    type: DataTypes.STRING,  // Adding userName
+    allowNull: false
+  },
+  user_email: {
+    type: DataTypes.STRING,  // Adding userEmail
+    allowNull: false
   }
 }, {
   timestamps: true,

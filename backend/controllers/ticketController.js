@@ -13,23 +13,27 @@ export const createTicket = async (req, res) => {
     if (!subject || !description)
       return res.status(400).json({ message: "Subject and description are required" });
 
+    // Fetch user details (including userName and userEmail)
     const user = await User.findOne({
       where: { auth0_id: sub },
       attributes: ["id", "name", "email"]
     });
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // 🔧 Get the first available admin
+    // Fetch the first available admin
     const admin = await User.findOne({ where: { role: "admin" }, attributes: ["id"] });
     if (!admin) return res.status(500).json({ message: "No admin available to assign this ticket" });
 
+    // Create a ticket with the userName and userEmail
     const ticket = await Ticket.create({
       user_id: user.id,
-      admin_id: admin.id, // ✅ Assign admin_id
+      admin_id: admin.id,
       subject,
       description,
       priority: priority || "medium",
-      category: category || "general"
+      category: category || "general",
+      user_name: user.name,  // Store userName
+      user_email: user.email, // Store userEmail
     });
 
     res.status(201).json({
@@ -41,7 +45,6 @@ export const createTicket = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
 
 export const getUserTickets = async (req, res) => {
   try {
@@ -103,7 +106,7 @@ export const getAllTickets = async (req, res) => {
     const offset = (Number(page) - 1) * Number(limit);
     const { count, rows: tickets } = await Ticket.findAndCountAll({
       where: whereClause,
-      include: [{ model: User, as: "user", attributes: ["name", "email"] }],
+      include: [{ model: User, as: "user", attributes: ["name", "email"] }],  // Include userName and userEmail
       order: [["created_at", "DESC"]],
       limit: Number(limit),
       offset
@@ -139,7 +142,7 @@ export const getTicketById = async (req, res) => {
     const ticket = await Ticket.findOne({
       where: whereClause,
       include: [
-        { model: User, as: "user", attributes: ["name", "email"] },
+        { model: User, as: "user", attributes: ["name", "email"] }, // Include user_name and user_email
         { model: TicketResponse, as: "responses", order: [["created_at", "ASC"]] }
       ]
     });

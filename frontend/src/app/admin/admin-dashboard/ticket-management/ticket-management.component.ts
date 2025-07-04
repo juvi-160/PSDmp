@@ -18,16 +18,17 @@ import { ToastService } from "../../../core/services/toast.service"
 })
 export class TicketManagementComponent implements OnInit {
   displayedColumns: string[] = [
-    "id",
-    "subject",
-    "userName",
-    "userEmail",
-    "category",
-    "priority",
-    "status",
-    "createdAt",
-    "actions",
-  ]
+  "id",
+  "subject",
+  "userName",  // User name column
+  "userEmail", // User email column
+  "category",
+  "priority",
+  "status",
+  "createdAt",
+  "actions",
+];
+
 
   dataSource = new MatTableDataSource<Ticket>([])
   filterForm: FormGroup
