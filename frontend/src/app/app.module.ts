@@ -171,7 +171,6 @@ const routes: Routes = [
     PaymentHistoryComponent,
     ContributeComponent,
     ToastComponent,
-    EventFeedbackComponent,
     TicketDetailsComponent,
   ],
   imports: [
