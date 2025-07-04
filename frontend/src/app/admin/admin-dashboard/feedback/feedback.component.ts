@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FeedbackService } from '../../../core/services/feedback.service';
 import { EventFeedback } from '../../../core/services/rsvp.service';
 
@@ -12,7 +12,9 @@ export class FeedbackComponent implements OnInit {
   feedback: EventFeedback[] = [];
   loading: boolean = false;
   error: string | null = null;
-  eventId: number = 1;  // You can dynamically set this or get from route params
+  averageRating: number = 0;
+  feedbackCount: number = 0;
+  eventId: number = 1; // You can replace this with a dynamic value from route params
 
   constructor(private feedbackService: FeedbackService) {}
 
@@ -25,21 +27,30 @@ export class FeedbackComponent implements OnInit {
     this.error = null;
 
     this.feedbackService.getEventFeedback(this.eventId).subscribe({
-      next: (data) => {
-        this.feedback = data.map((feedbackItem: any) => ({
-          eventId: feedbackItem.event.id,
-          eventName: feedbackItem.event.name,
-          userName: feedbackItem.user.name,
-          userEmail: feedbackItem.user.email,
+      next: (response: any) => {
+        console.log('📥 Feedback API response:', response);
+
+        const feedbackArray = response.feedback || [];
+
+        this.feedback = feedbackArray.map((feedbackItem: any) => ({
+          eventId: this.eventId,
+          eventName: feedbackItem.eventName || 'Unknown Event',
+          userName: feedbackItem.userName || 'Anonymous',
+          userEmail: feedbackItem.userEmail || 'N/A',
           rating: feedbackItem.rating,
           comments: feedbackItem.comments || 'No comments provided',
+          createdAt: feedbackItem.createdAt,
         }));
+
+        this.averageRating = response.averageRating || 0;
+        this.feedbackCount = response.count || 0;
         this.loading = false;
       },
       error: (err) => {
+        console.error('❌ Error loading feedback:', err);
         this.error = 'Failed to load feedback. Please try again later.';
         this.loading = false;
-      }
+      },
     });
   }
 
