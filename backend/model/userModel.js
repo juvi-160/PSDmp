@@ -20,15 +20,13 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING(255),
     allowNull: false,
     unique: true,
-    validate: {
-      isEmail: true
-    }
+    validate: { isEmail: true }
   },
   phone: {
     type: DataTypes.STRING(20),
     allowNull: true,
     validate: {
-      is: /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im // Basic phone validation
+      is: /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
     }
   },
   role: {
@@ -40,7 +38,7 @@ const User = sequelize.define('User', {
     allowNull: true
   },
   subscription_status: {
-    type: DataTypes.ENUM('active', 'pending', 'cancelled',  'halted'),
+    type: DataTypes.ENUM('active', 'pending', 'cancelled', 'halted'),
     allowNull: true
   },
   is_email_verified: {
@@ -55,7 +53,7 @@ const User = sequelize.define('User', {
     type: DataTypes.BOOLEAN,
     defaultValue: false
   },
-  auto_pay_enabled: {  
+  auto_pay_enabled: {
     type: DataTypes.BOOLEAN,
     defaultValue: false
   },
@@ -70,22 +68,39 @@ const User = sequelize.define('User', {
   last_payment_date: {
     type: DataTypes.DATE,
     allowNull: true
+  },
+
+  // 🆕 Additional Fields
+  age_group: {
+    type: DataTypes.ENUM('Under 18', '18-25', '26-35', '36-50', '51+'),
+    allowNull: true
+  },
+  profession: {
+    type: DataTypes.STRING(100),
+    allowNull: true
+  },
+  city: {
+    type: DataTypes.STRING(100),
+    allowNull: true
+  },
+  area_of_interests: {
+    type: DataTypes.TEXT, // Comma-separated list or JSON string
+    allowNull: true
+  },
+  about_you: {
+    type: DataTypes.TEXT,
+    allowNull: true
   }
 }, {
   timestamps: true,
   createdAt: 'created_at',
   updatedAt: 'updated_at',
   indexes: [
-    {
-      unique: true,
-      fields: ['email']
-    },
-    {
-      unique: true,
-      fields: ['auth0_id']
-    }
+    { unique: true, fields: ['email'] },
+    { unique: true, fields: ['auth0_id'] }
   ]
 });
+
 
 // Improved ID generation
 User.beforeCreate(async (user) => {
