@@ -40,6 +40,28 @@ const logToken = (req, res, next) => {
   next()
 }
 
+router.get('/events/:eventId/feedback', async (req, res) => {
+  const { eventId } = req.params;
+
+  try {
+    // Fetch feedback from the database for the given event ID
+    const feedback = await EventFeedback.findAll({
+      where: { eventId },
+      include: [{ model: User, attributes: ['email'] }],
+    });
+
+    if (!feedback.length) {
+      return res.status(404).json({ message: 'No feedback found for this event' });
+    }
+
+    res.json(feedback);
+  } catch (error) {
+    console.error('Error fetching event feedback:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
 // RSVP routes - Fixed parameter syntax
 router.post("/events/:eventId/rsvp", checkJwt, logToken, rsvpToEvent)
 router.put("/events/:eventId/cancel", checkJwt, logToken, cancelRsvp)

@@ -40,6 +40,10 @@ export class RsvpService {
     private authService: AuthService,
   ) {}
 
+    getFeedbackForEvent(eventId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/events/${eventId}/feedback`);
+  }
+
   // Helper method to get auth headers
   private getAuthHeaders(): Observable<HttpHeaders> {
     return this.authService.getAccessToken().pipe(
