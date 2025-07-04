@@ -8,11 +8,12 @@ import { EventFeedback } from './rsvp.service';
   providedIn: 'root',
 })
 export class FeedbackService {
-  private apiUrl = `${environment.apiUrl}/event-feedback`;  // Adjust based on your API
+  private apiUrl = `${environment.apiUrl}/events`;  // Adjust the base API URL
 
   constructor(private http: HttpClient) {}
 
-  getEventFeedback(): Observable<EventFeedback[]> {
-    return this.http.get<EventFeedback[]>(this.apiUrl);
+  // Get feedback for a specific event
+  getEventFeedback(eventId: number): Observable<EventFeedback[]> {
+    return this.http.get<EventFeedback[]>(`${this.apiUrl}/${eventId}/feedback`);
   }
 }

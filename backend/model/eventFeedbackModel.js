@@ -40,17 +40,15 @@ const EventFeedback = sequelize.define(
 
 // Associations
 EventFeedback.associate = (models) => {
-  // Association with User model
   EventFeedback.belongsTo(models.User, {
-    foreignKey: "user_id",
-    as: "user",  // Alias for the User model
+    foreignKey: 'user_id', 
+    as: 'user'
   });
-
-  // Association with Event model
   EventFeedback.belongsTo(models.Event, {
-    foreignKey: "event_id",
-    as: "event",  // Alias for the Event model
+    foreignKey: 'event_id', 
+    as: 'event'
   });
 };
+
 
 export default EventFeedback;

@@ -1,3 +1,5 @@
+import EventFeedback from "../model/eventFeedbackModel.js";
+import User from "../model/userModel.js";
 import express from "express"
 import { auth } from "express-oauth2-jwt-bearer"
 import {
@@ -44,22 +46,34 @@ router.get('/events/:eventId/feedback', async (req, res) => {
   const { eventId } = req.params;
 
   try {
-    // Fetch feedback from the database for the given event ID
     const feedback = await EventFeedback.findAll({
-      where: { eventId },
-      include: [{ model: User, attributes: ['email'] }],
+      where: { event_id: eventId },
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['name', 'email'],
+        },
+        {
+          model: Event,
+          as: 'event',
+          attributes: ['name'],
+        },
+      ],
     });
 
-    if (!feedback.length) {
+    if (!feedback || feedback.length === 0) {
       return res.status(404).json({ message: 'No feedback found for this event' });
     }
 
     res.json(feedback);
   } catch (error) {
-    console.error('Error fetching event feedback:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error('Error fetching feedback:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 });
+
+
 
 
 // RSVP routes - Fixed parameter syntax
@@ -73,6 +87,6 @@ router.get("/stats", checkJwt, logToken, getUserEventStats)
 
 // Feedback routes
 router.post("/events/:eventId/feedback", checkJwt, logToken, submitFeedback)
-router.get("/events/:eventId/feedback", checkJwt, logToken, getEventFeedback)
+router.get("/events/:eventId/feedback", checkJwt, logToken, getEventFeedback);
 
 export default router
