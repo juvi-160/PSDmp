@@ -67,6 +67,7 @@ export const getUserTickets = async (req, res) => {
       limit: Number(limit),
       offset
     });
+    
 
     res.status(200).json({
       tickets,
