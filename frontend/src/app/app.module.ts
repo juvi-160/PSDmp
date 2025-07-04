@@ -80,6 +80,7 @@ import { ContributeComponent } from './dashboard/contribute/contribute.component
 import { ToastComponent } from './layout/toast/toast.component';
 import { EventFeedbackComponent } from './admin/admin-dashboard/feedback/feedback.component';
 import { EventRsvpsComponent } from './admin/event-rsvps/event-rsvps.component';
+import { TicketDetailsComponent } from './admin/admin-dashboard/ticket-management/ticket-details/ticket-details.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -121,6 +122,7 @@ const routes: Routes = [
       { path: "users/:id", component: UserDetailsComponent },
       { path: "event-rsvps", component: EventRsvpsComponent },
       { path: "tickets", component: TicketManagementComponent },
+      { path: 'ticket-details/:id', component: TicketDetailsComponent },
       { path: "invite", component: InviteComponent },
       { path: "feedback", component: EventFeedbackComponent },
     ]
@@ -160,6 +162,7 @@ const routes: Routes = [
     MyTicketsComponent,
     TicketManagementComponent,
     EventRsvpsComponent,
+    TicketDetailsComponent,
 
     MembershipSelectionComponent,
     MemberComponent,
@@ -168,7 +171,8 @@ const routes: Routes = [
     PaymentHistoryComponent,
     ContributeComponent,
     ToastComponent,
-    
+    FeedbackComponent,
+    TicketDetailsComponent,
   ],
   imports: [
     BrowserModule,
