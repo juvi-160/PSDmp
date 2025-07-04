@@ -26,11 +26,11 @@ export class ErrorInterceptor implements HttpInterceptor {
         }
 
         const errorMessage = error.error?.message || "An unknown error occurred"
-        this.snackBar.open(errorMessage, "Close", {
-          duration: 5000,
-          horizontalPosition: "center",
-          verticalPosition: "bottom",
-        })
+        // this.snackBar.open(errorMessage, "Close", {
+        //   duration: 5000,
+        //   horizontalPosition: "center",
+        //   verticalPosition: "bottom",
+        // })
         this.toast.show(errorMessage, "error")
 
         return throwError(() => error)
