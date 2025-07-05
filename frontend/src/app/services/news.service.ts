@@ -14,7 +14,7 @@ export interface NewsItem {
   providedIn: 'root'
 })
 export class NewsService {
-  private apiUrl = 'https://api.psfhyd.org/api';
+  private apiUrl = 'http://localhost:3000/api';
 
   constructor(private http: HttpClient) { }
 
