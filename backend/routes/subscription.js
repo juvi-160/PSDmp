@@ -12,7 +12,9 @@ import {
   enableAutoPay,
   disableAutoPay,
   getSubscription,
-  getSubscriptionInvoices
+  getSubscriptionInvoices,
+  getSubscriptionsByPlan,
+  getPlan
 } from "../controllers/subscriptionController.js"
 
 const router = express.Router()
@@ -48,5 +50,12 @@ router.post("/disable-auto-pay", disableAutoPay);
 //subscriptions finder through razorpay
 router.get("/razorpay/subscriptions/:subscriptionId", getSubscription);
 router.get("/razorpay/subscriptions/:subscriptionId/invoices", getSubscriptionInvoices);
+
+//pln_id finder through razorpay
+router.get("/razorpay/plan/:planId",  getPlan);
+///plan/:planId/subscriptions
+router.get("/razorpay/plan/:planId/subscriptions", getSubscriptionsByPlan);
+
+
 
 export default router

@@ -8,6 +8,11 @@
   <p>{{ error }}</p>
 </div>
 
+<!-- Success message -->
+<div *ngIf="successMessage" class="text-green-600 text-center text-lg mt-6">
+  <p>{{ successMessage }}</p>
+</div>
+
 <!-- Payment History Card -->
 <div *ngIf="!loading && paymentHistory" class="max-w-3xl mx-auto mt-8">
   <div class="bg-white shadow-2xl rounded-2xl p-6 border border-gray-100">
@@ -39,38 +44,98 @@
           *ngIf="paymentHistory.autoPayEnabled"
           (click)="disableAutoPay()"
           class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition"
+          [disabled]="cancellingAutoPay"
         >
-          Disable AutoPay
+          <span *ngIf="!cancellingAutoPay">Disable AutoPay</span>
+          <span *ngIf="cancellingAutoPay" class="flex items-center">
+            <mat-spinner diameter="20" class="mr-2"></mat-spinner>
+            Processing...
+          </span>
         </button>
 
         <button
           *ngIf="!paymentHistory.autoPayEnabled"
           (click)="enableAutoPay()"
           class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md transition"
+          [disabled]="loading"
         >
           Enable AutoPay
         </button>
       </div>
 
-      <!-- Subscription Info -->
-      <div class="flex justify-between">
-        <span class="font-medium text-gray-600">Subscription Plan:</span>
-        <span class="text-gray-800">{{ paymentHistory.subscription?.plan || 'N/A' }}</span>
+      <!-- AutoPay URL section -->
+      <div *ngIf="autoPayShortUrl && !paymentHistory.autoPayEnabled" class="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+        <p class="text-sm text-gray-600 mb-2">Use this link to complete AutoPay setup:</p>
+        <div class="flex items-center gap-2">
+          <input 
+            type="text" 
+            [value]="autoPayShortUrl" 
+            readonly
+            class="flex-1 p-2 border rounded-md text-sm text-gray-700 bg-white"
+          >
+          <button 
+            (click)="copyToClipboard(autoPayShortUrl)"
+            class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md text-sm transition"
+          >
+            Copy
+          </button>
+          <button 
+            (click)="openAutoPayUrl()"
+            class="bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-md text-sm transition"
+          >
+            Open
+          </button>
+        </div>
+        <p class="text-xs text-gray-500 mt-2">This link will expire in 24 hours</p>
       </div>
 
-      <div class="flex justify-between">
-        <span class="font-medium text-gray-600">Status:</span>
-        <span class="capitalize text-gray-800">{{ paymentHistory.subscription?.status || 'N/A' }}</span>
+      <!-- Subscription Details -->
+      <div *ngIf="subscriptionDetails" class="mt-4">
+        <h3 class="font-medium text-gray-700 mb-2">Subscription Details</h3>
+        <div class="grid grid-cols-2 gap-2 text-sm">
+          <div>Subscription ID:</div>
+          <div class="font-medium">{{ subscriptionDetails.id || 'N/A' }}</div>
+          
+          <div>Plan ID:</div>
+          <div class="font-medium">{{ subscriptionDetails.plan_id || 'N/A' }}</div>
+          
+          <div>Status:</div>
+          <div class="capitalize font-medium">{{ subscriptionDetails.status || 'N/A' }}</div>
+          
+          <div>Start Date:</div>
+          <div class="font-medium">{{ subscriptionDetails.start_at * 1000 | date:'mediumDate' }}</div>
+          
+          <div>Total Payments:</div>
+          <div class="font-medium">{{ subscriptionDetails.total_count || '0' }}</div>
+          
+          <div>Paid Count:</div>
+          <div class="font-medium">{{ subscriptionDetails.paid_count || '0' }}</div>
+        </div>
       </div>
 
-      <div class="flex justify-between">
-        <span class="font-medium text-gray-600">Start Date:</span>
-        <span>
-          <ng-container *ngIf="paymentHistory.subscription?.startAt !== 'N/A'; else noStart">
-            {{ paymentHistory.subscription?.startAt | date: 'mediumDate' }}
-          </ng-container>
-          <ng-template #noStart><span class="text-gray-400">N/A</span></ng-template>
-        </span>
+      <!-- Subscription Invoices -->
+      <div *ngIf="subscriptionInvoices.length > 0" class="mt-6">
+        <h3 class="font-medium text-gray-700 mb-3">Recent Invoices</h3>
+        <div class="space-y-3">
+          <div *ngFor="let invoice of subscriptionInvoices" class="p-3 border rounded-lg">
+            <div class="flex justify-between">
+              <span class="font-medium">Invoice #{{ invoice.id }}</span>
+              <span class="text-sm">{{ invoice.date * 1000 | date:'mediumDate' }}</span>
+            </div>
+            <div class="flex justify-between mt-1">
+              <span>Amount:</span>
+              <span class="font-medium">₹{{ invoice.amount / 100 }}</span>
+            </div>
+            <div class="flex justify-between mt-1">
+              <span>Status:</span>
+              <span class="capitalize" [ngClass]="{
+                'text-green-600': invoice.status === 'paid',
+                'text-yellow-600': invoice.status === 'pending',
+                'text-red-600': invoice.status === 'failed'
+              }">{{ invoice.status }}</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 

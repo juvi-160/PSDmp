@@ -808,3 +808,25 @@ export const getSubscriptionInvoices = async (req, res) => {
     return res.status(500).json({ message: err.message });
   }
 };
+
+export const getPlan = async (req, res) => {
+  try {
+    const { planId } = req.params;
+    const plan = await razorpay.plans.fetch(planId);
+    return res.json(plan);
+  } catch (err) {
+    console.error("Error fetching plan:", err);
+    return res.status(500).json({ message: err.message });
+  }
+};
+
+export const getSubscriptionsByPlan = async (req, res) => {
+  try {
+    const { planId } = req.params;
+    const subscriptions = await razorpay.subscriptions.all({ plan_id: planId });
+    return res.json(subscriptions);
+  } catch (err) {
+    console.error("Error listing subscriptions:", err);
+    return res.status(500).json({ message: err.message });
+  }
+};

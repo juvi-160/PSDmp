@@ -16,6 +16,7 @@ export class PaymentHistoryComponent implements OnInit {
   paymentHistory: any = {};
   subscriptionDetails: any = null;
   subscriptionInvoices: any[] = [];
+  autoPayShortUrl: string | null = null;
 
   loading = false;
   error = '';
@@ -85,7 +86,14 @@ export class PaymentHistoryComponent implements OnInit {
     this.paymentHistoryService.getSubscriptionById(subscriptionId).subscribe({
       next: (details: any) => {
         this.subscriptionDetails = details;
-        console.log('Subscription Details:', details);
+        // Store the short_url if available
+        if (details.short_url) {
+          this.autoPayShortUrl = details.short_url;
+        }
+        // Update autoPayEnabled status based on subscription status
+        if (this.paymentHistory) {
+          this.paymentHistory.autoPayEnabled = this.isSubscriptionActive(details);
+        }
       },
       error: (error: any) => {
         console.error('Failed to fetch subscription details', error);
@@ -97,7 +105,6 @@ export class PaymentHistoryComponent implements OnInit {
     this.paymentHistoryService.getSubscriptionInvoicesById(subscriptionId).subscribe({
       next: (invoices: any[]) => {
         this.subscriptionInvoices = invoices;
-        console.log('Subscription Invoices:', invoices);
       },
       error: (error: any) => {
         console.error('Failed to fetch invoices', error);
@@ -105,14 +112,31 @@ export class PaymentHistoryComponent implements OnInit {
     });
   }
 
+  isSubscriptionActive(subscription: any): boolean {
+    return subscription && 
+           subscription.status && 
+           ['active', 'created', 'authenticated'].includes(subscription.status);
+  }
+
   enableAutoPay(): void {
+    if (this.autoPayShortUrl) {
+      // If we already have a short URL, just show it to the user
+      this.toast.show('Use the AutoPay link below to complete setup', 'info');
+      return;
+    }
+
     if (!confirm('Are you sure you want to enable AutoPay?')) return;
     this.loading = true;
 
     this.paymentHistoryService.enableAutoPay().subscribe({
-      next: () => {
-        this.toast.show('AutoPay enabled successfully', 'success');
-        this.paymentHistory.autoPayEnabled = true;
+      next: (response: any) => {
+        if (response.short_url) {
+          this.autoPayShortUrl = response.short_url;
+          this.toast.show('AutoPay setup link generated', 'success');
+        } else {
+          this.toast.show('AutoPay enabled successfully', 'success');
+          this.paymentHistory.autoPayEnabled = true;
+        }
         this.loading = false;
       },
       error: (error: any) => {
@@ -131,6 +155,7 @@ export class PaymentHistoryComponent implements OnInit {
       next: () => {
         this.toast.show('AutoPay disabled successfully', 'success');
         this.paymentHistory.autoPayEnabled = false;
+        this.autoPayShortUrl = null;
         this.loading = false;
       },
       error: (error: any) => {
@@ -139,6 +164,23 @@ export class PaymentHistoryComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  copyToClipboard(text: string): void {
+    navigator.clipboard.writeText(text)
+      .then(() => {
+        this.toast.show('Link copied to clipboard!', 'success');
+      })
+      .catch(err => {
+        console.error('Failed to copy text:', err);
+        this.toast.show('Failed to copy link', 'error');
+      });
+  }
+
+  openAutoPayUrl(): void {
+    if (this.autoPayShortUrl) {
+      window.open(this.autoPayShortUrl, '_blank');
+    }
   }
 
   handleInvalidId(): void {
