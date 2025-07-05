@@ -24,36 +24,7 @@
         <span class="font-semibold text-gray-900">₹{{ paymentHistory.totalAmount || 0 }}</span>
       </div>
 
-      <div class="flex justify-between items-center">
-        <span class="font-medium text-gray-600">Autopay:</span>
-        <span
-          [ngClass]="paymentHistory.autoPayEnabled ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'">
-          {{ paymentHistory.autoPayEnabled ? 'Enabled' : 'Disabled' }}
-        </span>
-      </div>
-
-      <!-- AutoPay toggle buttons -->
-      <div class="flex gap-3 mt-2">
-        <!-- Disable button if AutoPay is enabled -->
-        <button
-          *ngIf="paymentHistory.autoPayEnabled"
-          (click)="disableAutoPay()"
-          class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition"
-        >
-          Disable AutoPay
-        </button>
-
-        <!-- Enable button (link) if AutoPay is disabled and short_url is available -->
-        <a
-          *ngIf="!paymentHistory.autoPayEnabled && subscriptionShortUrl"
-          [href]="subscriptionShortUrl"
-          target="_blank"
-          class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md transition text-center"
-        >
-          Enable AutoPay
-        </a>
-      </div>
-
+      
       <!-- Subscription Info -->
       <div class="flex justify-between">
         <span class="font-medium text-gray-600">Subscription Plan:</span>

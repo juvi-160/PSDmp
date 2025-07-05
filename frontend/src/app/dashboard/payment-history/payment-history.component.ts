@@ -16,7 +16,7 @@ export class PaymentHistoryComponent implements OnInit {
   paymentHistory: any = {};
   subscriptionDetails: any = null;
   subscriptionInvoices: any[] = [];
-  subscriptionShortUrl: string = ''; // ✅ Add this property
+  subscriptionShortUrl: string = '';
 
   loading = false;
   error = '';
@@ -47,7 +47,6 @@ export class PaymentHistoryComponent implements OnInit {
 
   initComponentLogic(userEmail: string): void {
     this.loading = true;
-
     this.authService.currentUser.subscribe((user) => {
       if (!user) {
         this.error = 'User not authenticated.';
@@ -56,14 +55,11 @@ export class PaymentHistoryComponent implements OnInit {
       }
 
       this.currentUser = user;
-
       this.paymentHistoryService.getPaymentHistory(userEmail).subscribe({
         next: (data: any) => {
           this.paymentHistory = data;
-
           const isAssociate = user.role === 'associate member';
           const hasPaid = data?.totalPayments > 0;
-
           this.showPaymentIntegration = isAssociate && !hasPaid;
           this.showPaymentHistory = !isAssociate || hasPaid;
 
@@ -86,10 +82,12 @@ export class PaymentHistoryComponent implements OnInit {
     this.paymentHistoryService.getSubscriptionById(subscriptionId).subscribe({
       next: (details: any) => {
         this.subscriptionDetails = details;
-
-        // ✅ Store short_url for use in the template
         this.subscriptionShortUrl = details?.short_url || '';
-
+        if (this.paymentHistory && this.paymentHistory.subscription) {
+          this.paymentHistory.subscription.startAt = details?.start_at
+            ? new Date(details.start_at * 1000)
+            : null;
+        }
         console.log('Subscription Details:', details);
       },
       error: (error: any) => {
@@ -113,7 +111,6 @@ export class PaymentHistoryComponent implements OnInit {
   enableAutoPay(): void {
     if (!confirm('Are you sure you want to enable AutoPay?')) return;
     this.loading = true;
-
     this.paymentHistoryService.enableAutoPay().subscribe({
       next: () => {
         this.toast.show('AutoPay enabled successfully', 'success');
@@ -131,7 +128,6 @@ export class PaymentHistoryComponent implements OnInit {
   disableAutoPay(): void {
     if (!confirm('Are you sure you want to disable AutoPay?')) return;
     this.loading = true;
-
     this.paymentHistoryService.disableAutoPay().subscribe({
       next: () => {
         this.toast.show('AutoPay disabled successfully', 'success');
