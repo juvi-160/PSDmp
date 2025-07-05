@@ -189,7 +189,9 @@ const routes: Routes = [
       authorizationParams: {
         redirect_uri: window.location.origin,
         audience: environment.auth0.audience
-      }
+      },
+      cacheLocation: 'localstorage',
+      useRefreshTokens: true
     }),
     // Angular Material Modules
     MatInputModule,
