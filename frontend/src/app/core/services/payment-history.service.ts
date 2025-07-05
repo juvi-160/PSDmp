@@ -27,7 +27,7 @@ export class PaymentHistoryService {
   }
 
   enableAutoPay(): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/subscrition/enable-auto-pay`, {}).pipe(
+    return this.http.post<any>(`${this.baseUrl}/subscription/enable-auto-pay`, {}).pipe(
       catchError((error) => throwError(() => error))
     );
   }
