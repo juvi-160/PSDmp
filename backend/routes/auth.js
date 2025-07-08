@@ -1,5 +1,5 @@
 import express from "express"
-import { checkJwt, logToken, getUserProfile, createUser, verifyPayment } from "../controllers/authController.js"
+import { checkJwt, logToken, getUserProfile, createUser, verifyPayment, verifyPhone } from "../controllers/authController.js"
 import User from "../model/userModel.js" // Fixed import path
 
 const router = express.Router()
@@ -12,6 +12,8 @@ router.post("/users", checkJwt, logToken, createUser)
 
 // Verify payment and update user role (protected route)
 router.post("/payment/verify", checkJwt, logToken, verifyPayment)
+
+router.post("/phone/verify", checkJwt, logToken, verifyPhone)
 
 // Public registration route
 router.post("/register", async (req, res) => {
@@ -44,7 +46,8 @@ router.post("/register", async (req, res) => {
       age_group: age_group || null,
       profession: profession || null,
       city: city || null,
-      why_psf: why_psf || null,
+      area_of_interests: area_of_interests || null,
+      about_you: about_you || null,
       role: "pending",
       profile_completed: false,
     })

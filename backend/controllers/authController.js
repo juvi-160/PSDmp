@@ -5,6 +5,7 @@ dotenv.config();
 import { auth } from "express-oauth2-jwt-bearer";
 import crypto from "crypto";
 import { Op } from "sequelize";
+import admin from '../utils/firebase.js';
 
 // Middleware
 const checkJwt = auth({
@@ -170,6 +171,45 @@ const changeUserRole = async (req, res) => {
   } catch (error) {
     console.error("Error changing user role:", error);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const verifyPhone = async (req, res) => {
+  const { firebaseToken, userId, phone } = req.body;
+
+  try {
+    const decoded = await admin.auth().verifyIdToken(firebaseToken);
+    const phoneNumber = decoded.phone_number;
+
+    if (!phoneNumber) {
+      return res.status(400).json({ message: 'Token does not contain a valid phone number' });
+    }
+
+    if (phone && phone !== phoneNumber) {
+      return res.status(400).json({ message: 'Phone number mismatch between token and body' });
+    }
+
+    const user = await User.findByPk(userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    await user.update({
+      phone: phoneNumber,
+      is_phone_verified: true
+    });
+
+    return res.status(200).json({
+      message: 'Phone number verified and updated',
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        is_phone_verified: user.is_phone_verified
+      }
+    });
+  } catch (err) {
+    console.error('Phone verification error:', err);
+    return res.status(401).json({ message: 'Invalid token', error: err.message });
   }
 };
 
