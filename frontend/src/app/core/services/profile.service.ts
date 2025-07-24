@@ -52,4 +52,17 @@ export class ProfileService {
       })),
     )
   }
+
+  markPhoneVerified(): Observable<any> {
+    return this.authService.getAccessToken().pipe(
+      switchMap((token) => {
+        return this.http.post<any>(`${this.apiUrl}/mark-phone-verified`, {}, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+      })
+    );
+  }
 }
