@@ -1,8 +1,5 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { MatSnackBar } from "@angular/material/snack-bar";
-import { MatChipInputEvent } from "@angular/material/chips";
-import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { ProfileService } from "../../core/services/profile.service";
 import { User, ProfileUpdateData } from "../../core/models/user.model";
 import { ToastService } from "../../core/services/toast.service";
@@ -14,7 +11,7 @@ import { firebaseConfig } from "../../environments/firebase-config";
 
 @Component({
   selector: "app-profile",
-  standalone:false,
+  standalone: false,
   templateUrl: "./profile.component.html",
   styleUrls: ["./profile.component.css"],
 })
@@ -28,26 +25,22 @@ export class ProfileComponent implements OnInit {
   otpVerified = false;
   phoneOTP = "";
   confirmationResult!: ConfirmationResult;
-  showOtpInput = false;
   verifyingOtp = false;
-
-  readonly separatorKeysCodes = [ENTER, COMMA] as const;
   areasOfInterest: string[] = [];
+
   private auth: Auth;
 
   ageGroups = [
+    { value: "Under 18", label: "Under 18 years" },
     { value: "18-25", label: "18-25 years" },
     { value: "26-35", label: "26-35 years" },
-    { value: "36-45", label: "36-45 years" },
-    { value: "46-55", label: "46-55 years" },
-    { value: "56-65", label: "56-65 years" },
-    { value: "65+", label: "65+ years" },
+    { value: "36-50", label: "36-50 years" },
+    { value: "51+", label: "51+ years" },
   ];
 
   constructor(
     private formBuilder: FormBuilder,
     private profileService: ProfileService,
-    private snackBar: MatSnackBar,
     private toast: ToastService
   ) {
     const app = initializeApp(firebaseConfig);
@@ -67,7 +60,11 @@ export class ProfileComponent implements OnInit {
       ageGroup: [""],
       profession: ["", [Validators.maxLength(100)]],
       city: ["", [Validators.maxLength(50)]],
+      company: [""],
+      position: [""],
       whyPsf: ["", [Validators.maxLength(500)]],
+      agreedToTerms: [false, Validators.requiredTrue],
+      agreedToContribute: [false],
     });
   }
 
@@ -88,7 +85,11 @@ export class ProfileComponent implements OnInit {
           ageGroup: user.ageGroup || "",
           profession: user.profession || "",
           city: user.city || "",
+          company: user.company || "",
+          position: user.position || "",
           whyPsf: user.whyPsf || "",
+          agreedToTerms: user.agreedToTerms || false,
+          agreedToContribute: user.agreedToContribute || false,
         });
 
         this.loading = false;
@@ -110,8 +111,12 @@ export class ProfileComponent implements OnInit {
       ageGroup: this.profileForm.get("ageGroup")?.value || undefined,
       profession: this.profileForm.get("profession")?.value || undefined,
       city: this.profileForm.get("city")?.value || undefined,
+      company: this.profileForm.get("company")?.value || undefined,
+      position: this.profileForm.get("position")?.value || undefined,
       areasOfInterest: this.areasOfInterest.length > 0 ? this.areasOfInterest : undefined,
       whyPsf: this.profileForm.get("whyPsf")?.value || undefined,
+      agreedToTerms: this.profileForm.get("agreedToTerms")?.value || undefined,
+      agreedToContribute: this.profileForm.get("agreedToContribute")?.value || undefined,
     };
 
     this.profileService.updateUserProfile(profileData).subscribe({
@@ -126,14 +131,6 @@ export class ProfileComponent implements OnInit {
         this.toast.show("Failed to update profile. Please try again.", "error");
       },
     });
-  }
-
-  addInterest(event: MatChipInputEvent): void {
-    const value = (event.value || "").trim();
-    if (value && !this.areasOfInterest.includes(value)) {
-      this.areasOfInterest.push(value);
-    }
-    event.chipInput!.clear();
   }
 
   removeInterest(interest: string): void {
@@ -151,54 +148,72 @@ export class ProfileComponent implements OnInit {
       this.profileForm.get("ageGroup")?.value,
       this.profileForm.get("profession")?.value,
       this.profileForm.get("city")?.value,
+      this.profileForm.get("company")?.value,
+      this.profileForm.get("position")?.value,
       this.profileForm.get("whyPsf")?.value,
       this.areasOfInterest.length > 0 ? "yes" : "",
+      this.profileForm.get("agreedToTerms")?.value ? "yes" : "",
     ];
 
     const completedFields = fields.filter((field) => !!field && field.toString().trim().length > 0).length;
     return Math.round((completedFields / fields.length) * 100);
   }
 
- sendOTP(): void {
-  let rawPhone = this.profileForm.get("phone")?.value;
-
-  if (!rawPhone || rawPhone.length < 10) {
-    this.toast.show("Please enter a valid phone number", "error");
-    return;
+  formatRoleName(role: string | undefined): string {
+    if (!role) return '';
+    return role.split(' ').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
   }
 
-  // ✅ Convert to E.164 format if not already
-  rawPhone = rawPhone.trim();
-  if (!rawPhone.startsWith("+")) {
-    rawPhone = "+91" + rawPhone; // Default to India country code
-  }
-
-  // ✅ Initialize Recaptcha
-  window.recaptchaVerifier = new RecaptchaVerifier(
-    this.auth,
-    "recaptcha-container",
-    {
-      size: "normal",
-      callback: () => {},
-      "expired-callback": () => {
-        this.toast.show("reCAPTCHA expired. Please try again.", "error");
-      }
+  addInterest(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const value = input.value.trim();
+    if (value && !this.areasOfInterest.includes(value)) {
+      this.areasOfInterest.push(value);
+      input.value = '';
     }
-  );
+    event.preventDefault();
+  }
 
-  signInWithPhoneNumber(this.auth, rawPhone, window.recaptchaVerifier)
-    .then((confirmationResult) => {
-      this.confirmationResult = confirmationResult;
-      this.otpSent = true;
-      this.showOtpInput = true;
-      this.toast.show("OTP sent successfully!", "success");
-    })
-    .catch((error) => {
-      console.error("OTP send error:", error);
-      this.toast.show("Failed to send OTP. " + error.message, "error");
-    });
-}
+  sendOTP(): void {
+    let rawPhone = this.profileForm.get("phone")?.value;
 
+    if (!rawPhone || rawPhone.length < 10) {
+      this.toast.show("Please enter a valid phone number", "error");
+      return;
+    }
+
+    // Convert to E.164 format if not already
+    rawPhone = rawPhone.trim();
+    if (!rawPhone.startsWith("+")) {
+      rawPhone = "+92" + rawPhone; // Default to Pakistan country code
+    }
+
+    // Initialize Recaptcha
+    window.recaptchaVerifier = new RecaptchaVerifier(
+      this.auth,
+      "recaptcha-container",
+      {
+        size: "normal",
+        callback: () => {},
+        "expired-callback": () => {
+          this.toast.show("reCAPTCHA expired. Please try again.", "error");
+        }
+      }
+    );
+
+    signInWithPhoneNumber(this.auth, rawPhone, window.recaptchaVerifier)
+      .then((confirmationResult) => {
+        this.confirmationResult = confirmationResult;
+        this.otpSent = true;
+        this.toast.show("OTP sent successfully!", "success");
+      })
+      .catch((error) => {
+        console.error("OTP send error:", error);
+        this.toast.show("Failed to send OTP. " + error.message, "error");
+      });
+  }
 
   verifyOTPAndSave(): void {
     if (!this.phoneOTP || this.phoneOTP.length < 6) {

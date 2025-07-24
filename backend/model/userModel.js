@@ -90,7 +90,25 @@ const User = sequelize.define('User', {
   about_you: {
     type: DataTypes.TEXT,
     allowNull: true
-  }
+  },
+  company: {
+    type: DataTypes.STRING(255),
+    allowNull: true
+  },
+  position: {
+    type: DataTypes.STRING(255),
+    allowNull: true
+  },
+  agreed_to_contribute: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  },
+  agreed_to_terms: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  },
 }, {
   timestamps: true,
   createdAt: 'created_at',
@@ -124,25 +142,25 @@ User.beforeCreate(async (user) => {
 
 // Define associations
 User.associate = (models) => {
-  User.hasMany(models.Order, { 
-    foreignKey: 'user_id', 
-    as: 'orders' 
+  User.hasMany(models.Order, {
+    foreignKey: 'user_id',
+    as: 'orders'
   });
-  User.hasMany(models.EventRSVP, { 
-    foreignKey: 'user_id', 
-    as: 'rsvps' 
+  User.hasMany(models.EventRSVP, {
+    foreignKey: 'user_id',
+    as: 'rsvps'
   });
-  User.hasMany(models.EventFeedback, { 
-    foreignKey: 'user_id', 
-    as: 'feedbacks' 
+  User.hasMany(models.EventFeedback, {
+    foreignKey: 'user_id',
+    as: 'feedbacks'
   });
-  User.hasMany(models.Ticket, { 
-    foreignKey: 'user_id', 
-    as: 'tickets' 
+  User.hasMany(models.Ticket, {
+    foreignKey: 'user_id',
+    as: 'tickets'
   });
-  User.hasMany(models.TicketResponse, { 
-    foreignKey: 'user_id', 
-    as: 'responses' 
+  User.hasMany(models.TicketResponse, {
+    foreignKey: 'user_id',
+    as: 'responses'
   });
   User.hasMany(models.Subscription, {
     foreignKey: 'user_id',

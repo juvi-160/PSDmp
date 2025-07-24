@@ -45,11 +45,15 @@ export const getUserProfile = async (req, res) => {
       whyPsf: user.why_psf,
       profilePicture: user.profile_picture,
       profileCompleted: Boolean(user.profile_completed),
+      company: user.company,
+      position: user.position,
+      agreedToContribute: Boolean(user.agreed_to_contribute),
+      agreedToTerms: Boolean(user.agreed_to_terms),
       createdAt: user.created_at,
       updatedAt: user.updated_at,
     }
 
-    res.status(200).json(formattedUser)
+    res.status(200).json(formatUserResponse(user));
   } catch (error) {
     console.error("Error getting user profile:", error)
     res.status(500).json({ message: "Server error" })
@@ -74,7 +78,11 @@ export const updateUserProfile = async (req, res) => {
       city = null,
       areasOfInterest = null,
       whyPsf = null,
-    } = req.body
+      company = null,
+      position = null,
+      agreedToContribute = null,
+      agreedToTerms = null
+    } = req.body;
 
     // Validate age group if provided
     const validAgeGroups = ["18-25", "26-35", "36-45", "46-55", "56-65", "65+"]
@@ -96,28 +104,36 @@ export const updateUserProfile = async (req, res) => {
       return res.status(404).json({ message: "User not found" })
     }
 
-    const willBeCompleted = Boolean(
-      (phone ?? currentUser.phone) &&
-        (ageGroup ?? currentUser.age_group) &&
-        (profession ?? currentUser.profession) &&
-        (city ?? currentUser.city) &&
-        (areasOfInterest ?? currentUser.areas_of_interest) &&
-        (whyPsf ?? currentUser.why_psf),
-    )
+    const willBeCompleted =
+      Boolean(phone ?? currentUser.phone) &&
+      Boolean(ageGroup ?? currentUser.age_group) &&
+      Boolean(profession ?? currentUser.profession) &&
+      Boolean(city ?? currentUser.city) &&
+      Boolean(areasOfInterest ?? currentUser.areas_of_interest) &&
+      Boolean(whyPsf ?? currentUser.why_psf) &&
+      Boolean(company ?? currentUser.company) &&
+      Boolean(position ?? currentUser.position) &&
+      (agreedToContribute ?? currentUser.agreed_to_contribute) === true &&
+      (agreedToTerms ?? currentUser.agreed_to_terms) === true
+
 
     // Convert undefined to null for SQL
     const safeAreasOfInterest = areasOfInterest ? JSON.stringify(areasOfInterest) : null
 
     // Update user
     await currentUser.update({
-      phone: phone || currentUser.phone,
-      age_group: ageGroup || currentUser.age_group,
-      profession: profession || currentUser.profession,
-      city: city || currentUser.city,
-      areas_of_interest: safeAreasOfInterest || currentUser.areas_of_interest,
-      why_psf: whyPsf || currentUser.why_psf,
-      profile_completed: willBeCompleted,
-    })
+      phone: phone ?? currentUser.phone,
+      age_group: ageGroup ?? currentUser.age_group,
+      profession: profession ?? currentUser.profession,
+      city: city ?? currentUser.city,
+      areas_of_interest: safeAreasOfInterest ?? currentUser.areas_of_interest,
+      why_psf: whyPsf ?? currentUser.why_psf,
+      company: company ?? currentUser.company,
+      position: position ?? currentUser.position,
+      agreed_to_contribute: agreedToContribute ?? currentUser.agreed_to_contribute,
+      agreed_to_terms: agreedToTerms ?? currentUser.agreed_to_terms,
+      profile_completed: willBeCompleted
+    });
 
     // Reload to get updated data
     await currentUser.reload()
@@ -139,6 +155,10 @@ export const updateUserProfile = async (req, res) => {
       whyPsf: currentUser.why_psf,
       profilePicture: currentUser.profile_picture,
       profileCompleted: Boolean(currentUser.profile_completed),
+      company: currentUser.company,
+      position: currentUser.position,
+      agreedToContribute: Boolean(currentUser.agreed_to_contribute),
+      agreedToTerms: Boolean(currentUser.agreed_to_terms),
       createdAt: currentUser.created_at,
       updatedAt: currentUser.updated_at,
     }

@@ -25,6 +25,10 @@ export interface User {
   paymentHistory?: PaymentHistory[]
   totalPaymentAmount?: number
   formattedPaymentAmount?: string
+  company?: string
+  position?: string
+  agreedToContribute?: boolean
+  agreedToTerms?: boolean
 }
 
 export interface PaymentDetails {
@@ -66,4 +70,8 @@ export interface ProfileUpdateData {
   city?: string
   areasOfInterest?: string[]
   whyPsf?: string
+  company?: string
+  position?: string
+  agreedToContribute?: boolean
+  agreedToTerms?: boolean
 }
