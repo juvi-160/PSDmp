@@ -60,9 +60,10 @@ export class ProfileComponent implements OnInit {
       ageGroup: [""],
       profession: ["", [Validators.maxLength(100)]],
       city: ["", [Validators.maxLength(50)]],
+      areaOfInterests: [[]],
       company: [""],
       position: [""],
-      whyPsf: ["", [Validators.maxLength(500)]],
+      aboutYou: ["", [Validators.maxLength(500)]],
       agreedToTerms: [false, Validators.requiredTrue],
       agreedToContribute: [false],
     });
@@ -75,7 +76,7 @@ export class ProfileComponent implements OnInit {
     this.profileService.getUserProfile().subscribe({
       next: (user) => {
         this.user = user;
-        this.areasOfInterest = user.areasOfInterest || [];
+        this.areasOfInterest = user.area_of_interests || [];
         this.otpVerified = user.isPhoneVerified || false;
 
         this.profileForm.patchValue({
@@ -87,9 +88,10 @@ export class ProfileComponent implements OnInit {
           city: user.city || "",
           company: user.company || "",
           position: user.position || "",
-          whyPsf: user.whyPsf || "",
-          agreedToTerms: user.agreedToTerms || false,
-          agreedToContribute: user.agreedToContribute || false,
+          areaOfInterests: user.area_of_interests || [],
+          aboutYou: user.about_you || "",
+          agreedToTerms: user.agreed_to_terms || false,
+          agreedToContribute: user.agreed_to_contribute || false,
         });
 
         this.loading = false;
@@ -106,6 +108,8 @@ export class ProfileComponent implements OnInit {
     if (this.profileForm.invalid) return;
     this.saving = true;
 
+    const areaOfInterestsValue = this.profileForm.get("areaOfInterests")?.value;
+
     const profileData: ProfileUpdateData = {
       phone: this.profileForm.get("phone")?.value || undefined,
       ageGroup: this.profileForm.get("ageGroup")?.value || undefined,
@@ -113,11 +117,12 @@ export class ProfileComponent implements OnInit {
       city: this.profileForm.get("city")?.value || undefined,
       company: this.profileForm.get("company")?.value || undefined,
       position: this.profileForm.get("position")?.value || undefined,
-      areasOfInterest: this.areasOfInterest.length > 0 ? this.areasOfInterest : undefined,
-      whyPsf: this.profileForm.get("whyPsf")?.value || undefined,
-      agreedToTerms: this.profileForm.get("agreedToTerms")?.value || undefined,
-      agreedToContribute: this.profileForm.get("agreedToContribute")?.value || undefined,
+      area_of_interests: Array.isArray(areaOfInterestsValue) && areaOfInterestsValue.length > 0 ? areaOfInterestsValue : undefined,
+      about_you: this.profileForm.get("aboutYou")?.value || undefined,
+      agreed_to_terms: this.profileForm.get("agreedToTerms")?.value || undefined,
+      agreed_to_contribute: this.profileForm.get("agreedToContribute")?.value || undefined,
     };
+
 
     this.profileService.updateUserProfile(profileData).subscribe({
       next: (updatedUser) => {
@@ -150,7 +155,7 @@ export class ProfileComponent implements OnInit {
       this.profileForm.get("city")?.value,
       this.profileForm.get("company")?.value,
       this.profileForm.get("position")?.value,
-      this.profileForm.get("whyPsf")?.value,
+      this.profileForm.get("aboutYou")?.value,
       this.areasOfInterest.length > 0 ? "yes" : "",
       this.profileForm.get("agreedToTerms")?.value ? "yes" : "",
     ];
@@ -161,7 +166,7 @@ export class ProfileComponent implements OnInit {
 
   formatRoleName(role: string | undefined): string {
     if (!role) return '';
-    return role.split(' ').map(word => 
+    return role.split(' ').map(word =>
       word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
   }
@@ -187,7 +192,7 @@ export class ProfileComponent implements OnInit {
     // Convert to E.164 format if not already
     rawPhone = rawPhone.trim();
     if (!rawPhone.startsWith("+")) {
-      rawPhone = "+92" + rawPhone; // Default to Pakistan country code
+      rawPhone = "+91" + rawPhone; // Default to Pakistan country code
     }
 
     // Initialize Recaptcha
@@ -196,7 +201,7 @@ export class ProfileComponent implements OnInit {
       "recaptcha-container",
       {
         size: "normal",
-        callback: () => {},
+        callback: () => { },
         "expired-callback": () => {
           this.toast.show("reCAPTCHA expired. Please try again.", "error");
         }
@@ -221,6 +226,11 @@ export class ProfileComponent implements OnInit {
       return;
     }
 
+    if (this.otpVerified) {
+      this.toast.show("Phone already verified.", "info");
+      return;
+    }
+
     this.verifyingOtp = true;
 
     this.confirmationResult
@@ -229,7 +239,7 @@ export class ProfileComponent implements OnInit {
         this.verifyingOtp = false;
         this.otpVerified = true;
         this.toast.show("Phone number verified!", "success");
-        
+
         // Update phone verification status with backend
         this.profileService.markPhoneVerified().subscribe({
           next: () => {

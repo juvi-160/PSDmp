@@ -84,7 +84,7 @@ const User = sequelize.define('User', {
     allowNull: true
   },
   area_of_interests: {
-    type: DataTypes.TEXT, // Comma-separated list or JSON string
+    type: DataTypes.JSON, // Comma-separated list or JSON string
     allowNull: true
   },
   about_you: {

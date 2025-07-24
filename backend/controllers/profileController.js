@@ -41,19 +41,19 @@ export const getUserProfile = async (req, res) => {
       ageGroup: user.age_group,
       profession: user.profession,
       city: user.city,
-      areasOfInterest: user.areas_of_interest ? JSON.parse(user.areas_of_interest) : [],
-      whyPsf: user.why_psf,
+      area_of_interests: user.area_of_interests || [],
+      about_you: user.about_you,
       profilePicture: user.profile_picture,
       profileCompleted: Boolean(user.profile_completed),
       company: user.company,
       position: user.position,
-      agreedToContribute: Boolean(user.agreed_to_contribute),
-      agreedToTerms: Boolean(user.agreed_to_terms),
+      agreed_to_contribute: Boolean(user.agreed_to_contribute),
+      agreed_to_terms: Boolean(user.agreed_to_terms),
       createdAt: user.created_at,
       updatedAt: user.updated_at,
     }
 
-    res.status(200).json(formatUserResponse(user));
+    res.status(200).json(formattedUser);
   } catch (error) {
     console.error("Error getting user profile:", error)
     res.status(500).json({ message: "Server error" })
@@ -76,12 +76,12 @@ export const updateUserProfile = async (req, res) => {
       ageGroup = null,
       profession = null,
       city = null,
-      areasOfInterest = null,
-      whyPsf = null,
+      area_of_interests = null,
+      about_you = null,
       company = null,
       position = null,
-      agreedToContribute = null,
-      agreedToTerms = null
+      agreed_to_contribute = null,
+      agreed_to_terms = null
     } = req.body;
 
     // Validate age group if provided
@@ -91,7 +91,7 @@ export const updateUserProfile = async (req, res) => {
     }
 
     // Validate areas of interest format
-    if (areasOfInterest && !Array.isArray(areasOfInterest)) {
+    if (area_of_interests && !Array.isArray(area_of_interests)) {
       return res.status(400).json({ message: "Areas of interest must be an array" })
     }
 
@@ -109,16 +109,12 @@ export const updateUserProfile = async (req, res) => {
       Boolean(ageGroup ?? currentUser.age_group) &&
       Boolean(profession ?? currentUser.profession) &&
       Boolean(city ?? currentUser.city) &&
-      Boolean(areasOfInterest ?? currentUser.areas_of_interest) &&
-      Boolean(whyPsf ?? currentUser.why_psf) &&
+      Boolean(area_of_interests ?? currentUser.areas_of_interest) &&
+      Boolean(about_you ?? currentUser.why_psf) &&
       Boolean(company ?? currentUser.company) &&
       Boolean(position ?? currentUser.position) &&
-      (agreedToContribute ?? currentUser.agreed_to_contribute) === true &&
-      (agreedToTerms ?? currentUser.agreed_to_terms) === true
-
-
-    // Convert undefined to null for SQL
-    const safeAreasOfInterest = areasOfInterest ? JSON.stringify(areasOfInterest) : null
+      (agreed_to_contribute ?? currentUser.agreed_to_contribute) === true &&
+      (agreed_to_terms ?? currentUser.agreed_to_terms) === true
 
     // Update user
     await currentUser.update({
@@ -126,14 +122,15 @@ export const updateUserProfile = async (req, res) => {
       age_group: ageGroup ?? currentUser.age_group,
       profession: profession ?? currentUser.profession,
       city: city ?? currentUser.city,
-      areas_of_interest: safeAreasOfInterest ?? currentUser.areas_of_interest,
-      why_psf: whyPsf ?? currentUser.why_psf,
+      area_of_interests: area_of_interests ?? currentUser.area_of_interests,
+      about_you: about_you ?? currentUser.about_you,
       company: company ?? currentUser.company,
       position: position ?? currentUser.position,
-      agreed_to_contribute: agreedToContribute ?? currentUser.agreed_to_contribute,
-      agreed_to_terms: agreedToTerms ?? currentUser.agreed_to_terms,
+      agreed_to_contribute: agreed_to_contribute ?? currentUser.agreed_to_contribute,
+      agreed_to_terms: agreed_to_terms ?? currentUser.agreed_to_terms,
       profile_completed: willBeCompleted
     });
+
 
     // Reload to get updated data
     await currentUser.reload()
@@ -151,19 +148,19 @@ export const updateUserProfile = async (req, res) => {
       ageGroup: currentUser.age_group,
       profession: currentUser.profession,
       city: currentUser.city,
-      areasOfInterest: currentUser.areas_of_interest ? JSON.parse(currentUser.areas_of_interest) : [],
-      whyPsf: currentUser.why_psf,
+      area_of_interests: currentUser.area_of_interests || [],
+      about_you: currentUser.about_you,
       profilePicture: currentUser.profile_picture,
       profileCompleted: Boolean(currentUser.profile_completed),
       company: currentUser.company,
       position: currentUser.position,
-      agreedToContribute: Boolean(currentUser.agreed_to_contribute),
-      agreedToTerms: Boolean(currentUser.agreed_to_terms),
+      agreed_to_contribute: Boolean(currentUser.agreed_to_contribute),
+      agreed_to_terms: Boolean(currentUser.agreed_to_terms),
       createdAt: currentUser.created_at,
       updatedAt: currentUser.updated_at,
     }
 
-    res.status(200).json(formattedUser)
+    res.status(200).json(formattedUser);
   } catch (error) {
     console.error("Error updating user profile:", error)
     res.status(500).json({ message: "Server error" })

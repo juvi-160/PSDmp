@@ -14,8 +14,8 @@ export interface User {
   ageGroup?: "18-25" | "26-35" | "36-45" | "46-55" | "56-65" | "65+"
   profession?: string
   city?: string
-  areasOfInterest?: string[]
-  whyPsf?: string
+  area_of_interests?: string[]
+  about_you?: string
   profilePicture?: string
   profileCompleted?: boolean
   autoPayEnabled?: boolean
@@ -27,8 +27,8 @@ export interface User {
   formattedPaymentAmount?: string
   company?: string
   position?: string
-  agreedToContribute?: boolean
-  agreedToTerms?: boolean
+  agreed_to_terms?: boolean
+  agreed_to_contribute?: boolean
 }
 
 export interface PaymentDetails {
@@ -68,10 +68,10 @@ export interface ProfileUpdateData {
   ageGroup?: "18-25" | "26-35" | "36-45" | "46-55" | "56-65" | "65+"
   profession?: string
   city?: string
-  areasOfInterest?: string[]
-  whyPsf?: string
+  area_of_interests?: string[]
+  about_you?: string
   company?: string
   position?: string
-  agreedToContribute?: boolean
-  agreedToTerms?: boolean
+  agreed_to_terms?: boolean
+  agreed_to_contribute?: boolean
 }
