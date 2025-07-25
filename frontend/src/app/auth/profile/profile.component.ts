@@ -154,8 +154,10 @@ export class ProfileComponent implements OnInit {
     const index = this.areasOfInterest.indexOf(interest);
     if (index >= 0) {
       this.areasOfInterest.splice(index, 1);
+      this.profileForm.get('areaOfInterests')?.setValue([...this.areasOfInterest]);
     }
   }
+
 
   getProfileCompletionPercentage(): number {
     if (!this.profileForm) return 0;
@@ -188,9 +190,29 @@ export class ProfileComponent implements OnInit {
     const value = input.value.trim();
     if (value && !this.areasOfInterest.includes(value)) {
       this.areasOfInterest.push(value);
+      this.profileForm.get('areaOfInterests')?.setValue([...this.areasOfInterest]);
       input.value = '';
     }
     event.preventDefault();
+  }
+
+  resetForm(): void {
+    this.profileForm.reset(); // Clears the form
+    this.areasOfInterest = []; // Clears chip tags or other custom arrays
+
+    // Optionally reset form controls manually if needed:
+    this.profileForm.patchValue({
+      areaOfInterests: [],
+      ageGroup: '',
+      profession: '',
+      city: '',
+      whyPsf: '',
+      company: '',
+      position: '',
+      agreedToContribute: false,
+      agreedToTerms: false,
+      phone: ''
+    });
   }
 
   sendOTP(): void {
