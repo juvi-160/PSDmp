@@ -52,6 +52,8 @@ export class ProfileComponent implements OnInit {
     this.loadProfile();
   }
 
+
+
   initForm(): void {
     this.profileForm = this.formBuilder.group({
       name: [{ value: "", disabled: true }],
@@ -76,7 +78,17 @@ export class ProfileComponent implements OnInit {
     this.profileService.getUserProfile().subscribe({
       next: (user) => {
         this.user = user;
-        this.areasOfInterest = user.area_of_interests || [];
+        if (typeof user.area_of_interests === 'string') {
+          try {
+            this.areasOfInterest = JSON.parse(user.area_of_interests);
+          } catch (e) {
+            console.error('Failed to parse areas_of_interests:', e);
+            this.areasOfInterest = [];
+          }
+        } else {
+          this.areasOfInterest = user.area_of_interests || [];
+        }
+
         this.otpVerified = user.isPhoneVerified || false;
 
         this.profileForm.patchValue({
