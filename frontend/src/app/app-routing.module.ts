@@ -32,7 +32,7 @@ import { PaymentGuard } from './core/guards/payment.guard';
 import { AdminGuard } from './core/guards/admin.guard';
 import { PaymentHistoryComponent } from './dashboard/payment-history/payment-history.component';
 import { ContributeComponent } from './dashboard/contribute/contribute.component';
-import { EventFeedbackComponent} from './admin/admin-dashboard/feedback/feedback.component';
+import { FeedbackComponent} from './admin/admin-dashboard/feedback/feedback.component';
 import { TicketDetailsComponent } from './admin/admin-dashboard/ticket-management/ticket-details/ticket-details.component';
 
 
@@ -99,7 +99,7 @@ const routes: Routes = [
       { path: 'tickets', component: TicketManagementComponent },
       { path: 'tickets/:id', component: TicketDetailsComponent },
       { path: 'invite', component: InviteComponent },
-      { path: "feedback", component: EventFeedbackComponent },
+      { path: "feedback", component: FeedbackComponent },
     ],
   },
   { path: '', redirectTo: 'home', pathMatch: 'full' },
