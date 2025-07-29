@@ -395,11 +395,11 @@ export const exportUsersToExcel = async (req, res) => {
       { header: "Email", key: "email", width: 30 },
       { header: "Phone", key: "phone", width: 20 },
       { header: "Role", key: "role", width: 20 },
-      { header: "Age Group", key: "age_group", width: 15 }, // ✅
-      { header: "Profession", key: "profession", width: 20 }, // ✅
-      { header: "City", key: "city", width: 20 }, // ✅
-      { header: "Interests", key: "area_of_interests", width: 30 }, // ✅
-      { header: "About", key: "about_you", width: 40 }, // ✅
+      { header: "Age Group", key: "age_group", width: 15 }, 
+      { header: "Profession", key: "profession", width: 20 }, 
+      { header: "City", key: "city", width: 20 }, 
+      { header: "Interests", key: "area_of_interests", width: 30 }, 
+      { header: "About", key: "about_you", width: 40 }, 
       { header: "Email Verified", key: "is_email_verified", width: 15 },
       { header: "Phone Verified", key: "is_phone_verified", width: 15 },
       { header: "Payment Status", key: "has_paid", width: 15 },
@@ -431,11 +431,11 @@ export const exportUsersToExcel = async (req, res) => {
         email: user.email,
         phone: user.phone || "N/A",
         role: user.role,
-        age_group: user.age_group || "N/A", // ✅
-        profession: user.profession || "N/A", // ✅
-        city: user.city || "N/A", // ✅
-        area_of_interests: user.area_of_interests || "N/A", // ✅
-        about_you: user.about_you || "N/A", // ✅
+        age_group: user.age_group || "N/A", 
+        profession: user.profession || "N/A", 
+        city: user.city || "N/A", 
+        area_of_interests: user.area_of_interests || "N/A", 
+        about_you: user.about_you || "N/A", 
         is_email_verified: user.is_email_verified ? "Yes" : "No",
         is_phone_verified: user.is_phone_verified ? "Yes" : "No",
         has_paid: user.role === 'associate member' ? "Not Required" :
