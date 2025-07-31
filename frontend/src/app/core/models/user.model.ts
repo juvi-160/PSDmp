@@ -1,34 +1,34 @@
 export interface User {
-  id?: number
-  auth0Id: string
-  name: string
-  email: string
-  phone?: string
-  role: "admin" | "individual member" | "associate member" | "pending"
-  isEmailVerified: boolean
-  isPhoneVerified: boolean
-  hasPaid: boolean
-  phoneVerificationCode?: string
-  createdAt: Date
-  updatedAt: Date
-  ageGroup?: "18-25" | "26-35" | "36-45" | "46-55" | "56-65" | "65+"
-  profession?: string
-  city?: string
-  area_of_interests?: string[]
-  about_you?: string
-  profilePicture?: string
-  profileCompleted?: boolean
-  autoPayEnabled?: boolean
-  subscriptionId?: string
-  subscriptionStatus?: "active" | "inactive" | "cancelled"
-  paymentDetails?: PaymentDetails
-  paymentHistory?: PaymentHistory[]
-  totalPaymentAmount?: number
-  formattedPaymentAmount?: string
-  company?: string
-  position?: string
-  agreed_to_terms?: boolean
-  agreed_to_contribute?: boolean
+  id?: string;  // Changed from required to optional
+  auth0Id?: string;
+  name: string;
+  email: string;
+  phone?: string;
+  role: "admin" | "individual member" | "associate member" | "pending";
+  isEmailVerified: boolean;
+  isPhoneVerified: boolean;
+  hasPaid: boolean;
+  phoneVerificationCode?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  ageGroup?: "18-25" | "26-35" | "36-45" | "46-55" | "56-65" | "65+";
+  profession?: string;
+  city?: string;
+  area_of_interests?: string[];
+  about_you?: string;
+  profilePicture?: string;
+  profileCompleted?: boolean;
+  autoPayEnabled?: boolean;
+  subscriptionId?: string;
+  subscriptionStatus?: "active" | "inactive" | "cancelled";
+  paymentDetails?: PaymentDetails;
+  paymentHistory?: PaymentHistory[];
+  totalPaymentAmount?: number;
+  formattedPaymentAmount?: string;
+  company?: string;
+  position?: string;
+  agreed_to_terms?: boolean;
+  agreed_to_contribute?: boolean;
 }
 
 export interface PaymentDetails {
@@ -64,6 +64,7 @@ export interface UserFilter {
 }
 
 export interface ProfileUpdateData {
+
   phone?: string
   ageGroup?: "18-25" | "26-35" | "36-45" | "46-55" | "56-65" | "65+"
   profession?: string
@@ -74,4 +75,5 @@ export interface ProfileUpdateData {
   position?: string
   agreed_to_terms?: boolean
   agreed_to_contribute?: boolean
+  profileCompleted?: boolean;
 }

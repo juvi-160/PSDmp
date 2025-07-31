@@ -97,7 +97,7 @@ export class UserService {
   }
 
   // Update user
-  updateUser(id: number, userData: Partial<User>): Observable<User> {
+  updateUser(id: string, userData: Partial<User>): Observable<User> {
     return this.http.put<User>(`${this.apiUrl}/${id}`, userData);
   }
 
@@ -138,7 +138,7 @@ export class UserService {
   }
 
   // Update user role
-  updateUserRole(id: number, role: string): Observable<{ user: User; emailSent: boolean }> {
+  updateUserRole(id: string, role: string): Observable<{ user: User; emailSent: boolean }> {
     return this.http.put<{ user: User; emailSent: boolean }>(`${this.apiUrl}/${id}/role`, { role }).pipe(
       map((response) => ({
         user: {
@@ -161,7 +161,7 @@ export class UserService {
   }
 
   // Delete user
-  deleteUser(id: number): Observable<void> {
+  deleteUser(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
