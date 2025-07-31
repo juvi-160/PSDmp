@@ -204,7 +204,7 @@ export class AuthService {
   getUserProfile(): Observable<User> {
     return this.getAccessToken().pipe(
       switchMap((token) => {
-        return this.http.get<User>(`http://localhost:3000/api`, {
+        return this.http.get<User>(`http://localhost:3000/api/profile`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

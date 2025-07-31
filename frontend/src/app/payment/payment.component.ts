@@ -119,7 +119,7 @@ export class PaymentComponent implements OnInit {
   constructor(
     private subscriptionService: SubscriptionService,
     private authService: AuthService,
-    private router: Router,
+    public router: Router,
     private toast: ToastService,
     private fb: FormBuilder
   ) {
@@ -150,6 +150,7 @@ export class PaymentComponent implements OnInit {
     this.loading = true;
     this.authService.currentUser.subscribe({
       next: (user: User | null) => {
+         console.log('API Response:', JSON.stringify(user, null, 2));
         if (!user) {
           this.router.navigate(["/"]);
           return;
@@ -164,18 +165,22 @@ export class PaymentComponent implements OnInit {
           isEmailVerified: !!user.isEmailVerified,
           isPhoneVerified: !!user.isPhoneVerified,
           hasPaid: !!user.hasPaid,
+          profileCompleted: !!user.profileCompleted, // Ensure this is set from API response
           createdAt: user.createdAt,
           updatedAt: user.updatedAt,
         };
 
+        // Use the profileCompleted status from the API
+        this.profileCompleted = this.user.profileCompleted || false;
+
         // Only redirect if profile is already completed and payment not needed
-        if (this.user.profileCompleted &&
-          (this.user.role === 'associate member')) {
+        if (this.profileCompleted &&
+          (this.user.role === 'admin' || this.user.role === 'associate member')) {
           this.router.navigate(["/dashboard"]);
         }
 
         this.initProfileForm(this.user);
-        this.checkProfileCompletion();
+        this.checkProfileCompletion(); // Still run this to calculate percentage
         this.loading = false;
       },
       error: (error) => {
@@ -185,7 +190,6 @@ export class PaymentComponent implements OnInit {
       }
     });
   }
-
 
   initProfileForm(user: User): void {
     if (typeof user.area_of_interests === 'string') {
@@ -220,6 +224,14 @@ export class PaymentComponent implements OnInit {
   checkProfileCompletion(): void {
     if (!this.user) return;
 
+    // If profile is already marked completed in DB, use that
+    if (this.user.profileCompleted) {
+      this.profileCompleted = true;
+      this.profileCompletionPercentage = 100;
+      return;
+    }
+
+    // Otherwise calculate completion status
     const requiredFields = ['phone', 'profession', 'city', 'aboutYou', 'agreedToTerms'];
     const completedFields = requiredFields.filter(field => {
       const value = this.profileForm.get(field)?.value;
@@ -229,12 +241,6 @@ export class PaymentComponent implements OnInit {
 
     this.profileCompletionPercentage = Math.round((completedFields.length / requiredFields.length) * 100);
     this.profileCompleted = this.profileCompletionPercentage === 100;
-
-    // For roles that don't need payment, redirect to dashboard after profile completion
-    if (this.profileCompleted &&
-      (this.user.role === 'admin' || this.user.role === 'associate member')) {
-      this.router.navigate(['/dashboard']);
-    }
   }
 
   // Profile methods
