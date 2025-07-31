@@ -1,16 +1,16 @@
 <div class="w-full max-w-4xl mx-auto p-4 font-sans">
-  <!-- Profile Header -->
-  <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-8 p-8 bg-gradient-to-r from-teal-600 to-teal-800 text-white rounded-2xl shadow-xl">
-    <div class="flex-shrink-0 w-24 h-24 rounded-full bg-white/20 flex items-center justify-center text-3xl font-bold shadow-md">
+  <!-- Profile Header - More refined with subtle shadow -->
+  <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-8 p-8 bg-gradient-to-br from-teal-600 to-teal-700 text-white rounded-2xl shadow-md">
+    <div class="flex-shrink-0 w-24 h-24 rounded-full bg-white/10 flex items-center justify-center text-3xl font-bold border-2 border-white/30">
       {{ user?.name?.charAt(0) || 'U' }}
     </div>
-    <div class="text-center sm:text-left">
+    <div class="text-center sm:text-left space-y-2">
       <h2 class="text-3xl font-bold tracking-tight">{{ user?.name }}</h2>
-      <p class="inline-block px-4 py-1.5 mt-3 rounded-full text-sm font-semibold bg-white/20 backdrop-blur-sm shadow-sm">
-        {{ formatRoleName(user?.role) }}
-      </p>
-      <div *ngIf="user?.hasPaid" class="mt-3 flex justify-center sm:justify-start items-center">
-        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800 shadow-sm">
+      <div class="flex flex-wrap justify-center sm:justify-start items-center gap-2">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-white/10 backdrop-blur-sm">
+          {{ formatRoleName(user?.role) }}
+        </span>
+        <span *ngIf="user?.hasPaid" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
           <svg class="-ml-0.5 mr-1.5 h-2 w-2 text-green-500" fill="currentColor" viewBox="0 0 8 8">
             <circle cx="4" cy="4" r="3" />
           </svg>
@@ -20,85 +20,86 @@
     </div>
   </div>
 
-  <!-- Profile Completion Progress -->
-  <div *ngIf="!profileCompleted" class="mb-8 p-6 bg-amber-50 border-l-4 border-amber-400 rounded-xl shadow-sm">
-    <div class="flex justify-between items-center mb-3">
-      <h3 class="text-amber-800 font-semibold flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-600" viewBox="0 0 20 20" fill="currentColor">
+  <!-- Profile Completion - More attention-grabbing -->
+  <div *ngIf="!profileCompleted" class="mb-8 p-6 bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200 rounded-2xl shadow-sm">
+    <div class="flex items-start">
+      <div class="flex-shrink-0 pt-0.5">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-600" viewBox="0 0 20 20" fill="currentColor">
           <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
         </svg>
-        Complete Your Profile
-      </h3>
-      <span class="text-amber-800 font-bold">{{ profileCompletionPercentage }}%</span>
+      </div>
+      <div class="ml-4 flex-1">
+        <div class="flex justify-between items-center">
+          <h3 class="text-lg font-semibold text-amber-800">Complete Your Profile</h3>
+          <span class="text-amber-800 font-bold">{{ profileCompletionPercentage }}%</span>
+        </div>
+        <div class="w-full bg-amber-200 rounded-full h-2.5 mt-2 mb-3">
+          <div class="bg-gradient-to-r from-amber-500 to-amber-600 h-2.5 rounded-full shadow-inner" 
+                [style.width]="profileCompletionPercentage + '%'"></div>
+        </div>
+        <p class="text-sm text-amber-700">
+          Complete your profile to unlock all PSF membership benefits and features!
+        </p>
+      </div>
     </div>
-    <div class="w-full bg-amber-200 rounded-full h-2.5 mb-4">
-      <div class="bg-amber-500 h-2.5 rounded-full shadow-inner" [style.width]="profileCompletionPercentage + '%'"></div>
-    </div>
-    <p class="text-sm text-amber-700">
-      Complete your profile to unlock all PSF membership benefits and features!
-    </p>
   </div>
 
-  <!-- Profile Form -->
-  <div *ngIf="!profileCompleted" class="bg-white rounded-2xl shadow-lg overflow-hidden mb-8 border border-gray-100">
-    <!-- Form Header -->
-    <div class="bg-gradient-to-r from-gray-50 to-white border-b p-6">
-      <h2 class="text-2xl font-bold text-gray-800">Profile Information</h2>
+  <!-- Profile Form - Cleaner card design -->
+  <div *ngIf="!profileCompleted" class="bg-white rounded-2xl shadow-sm overflow-hidden mb-8 border border-gray-200">
+    <div class="bg-white border-b p-6">
+      <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-teal-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+        Profile Information
+      </h2>
       <p class="text-red-500 text-sm mt-1">* indicates required fields</p>
     </div>
 
     <form [formGroup]="profileForm" class="p-6 space-y-8">
-      <!-- Basic Information Section -->
-      <div class="space-y-6 pb-6 border-b border-gray-200">
-        <h3 class="text-lg font-semibold text-teal-700 mb-4 flex items-center gap-3">
-          <span class="w-2.5 h-6 bg-teal-600 rounded-full"></span>
+      <!-- Sections with cleaner headers -->
+      <div class="space-y-6">
+        <h3 class="text-lg font-semibold text-gray-700 flex items-center">
+          <span class="w-3 h-6 bg-teal-500 rounded mr-3"></span>
           Basic Information
         </h3>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-            <div class="relative">
-              <input type="text" formControlName="name" readonly
-                class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-600 focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
-            </div>
+            <input type="text" formControlName="name" readonly
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-600">
           </div>
 
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-            <div class="relative">
-              <input type="email" formControlName="email" readonly
-                class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-600 focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
-            </div>
+            <input type="email" formControlName="email" readonly
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-600">
           </div>
         </div>
 
-        <!-- Phone Field -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number *</label>
-          <div class="relative">
-            <input type="tel" formControlName="phone" placeholder="Enter your phone number"
-              class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-teal-200 focus:border-teal-500"
-              [class.border-gray-300]="!profileForm.get('phone')?.invalid"
-              [class.border-red-300]="profileForm.get('phone')?.invalid">
-          </div>
+          <input type="tel" formControlName="phone" placeholder="Enter your phone number"
+                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-200 focus:border-teal-500"
+                 [class.border-red-300]="profileForm.get('phone')?.invalid">
           <p *ngIf="profileForm.get('phone')?.invalid" class="mt-2 text-xs text-red-500">
             Please enter a valid 10-digit phone number
           </p>
         </div>
       </div>
 
-      <!-- Professional Information Section -->
-      <div class="space-y-6 pb-6 border-b border-gray-200">
-        <h3 class="text-lg font-semibold text-teal-700 mb-4 flex items-center gap-3">
-          <span class="w-2.5 h-6 bg-teal-600 rounded-full"></span>
+      <!-- Professional Section -->
+      <div class="space-y-6 pt-6 border-t border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-700 flex items-center">
+          <span class="w-3 h-6 bg-teal-500 rounded mr-3"></span>
           Professional Information
         </h3>
 
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Profession *</label>
-          <input type="text" formControlName="profession" placeholder="E.g. Software Developer, Student, Designer"
-            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
+          <input type="text" formControlName="profession" placeholder="E.g. Software Developer, Student"
+                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
           <p *ngIf="profileForm.get('profession')?.invalid" class="mt-2 text-xs text-red-500">
             Please enter your profession
           </p>
@@ -108,21 +109,21 @@
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Company</label>
             <input type="text" formControlName="company" placeholder="Your company or organization"
-              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
           </div>
 
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Position</label>
-            <input type="text" formControlName="position" placeholder="Your job title or role"
-              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
+            <input type="text" formControlName="position" placeholder="Your job title"
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
           </div>
         </div>
       </div>
 
-      <!-- Personal Details Section -->
-      <div class="space-y-6 pb-6 border-b border-gray-200">
-        <h3 class="text-lg font-semibold text-teal-700 mb-4 flex items-center gap-3">
-          <span class="w-2.5 h-6 bg-teal-600 rounded-full"></span>
+      <!-- Personal Details -->
+      <div class="space-y-6 pt-6 border-t border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-700 flex items-center">
+          <span class="w-3 h-6 bg-teal-500 rounded mr-3"></span>
           Personal Details
         </h3>
 
@@ -130,7 +131,7 @@
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Age Group</label>
             <select formControlName="ageGroup" 
-              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-200 focus:border-teal-500 bg-white">
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-200 focus:border-teal-500 bg-white">
               <option value="">Select your age group</option>
               <option *ngFor="let group of ageGroups" [value]="group.value">{{ group.label }}</option>
             </select>
@@ -139,7 +140,7 @@
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">City *</label>
             <input type="text" formControlName="city" placeholder="Your current city"
-              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
             <p *ngIf="profileForm.get('city')?.invalid" class="mt-2 text-xs text-red-500">
               Please enter your city
             </p>
@@ -147,45 +148,47 @@
         </div>
       </div>
 
-      <!-- Areas of Interest -->
-      <div class="space-y-6 pb-6 border-b border-gray-200">
-        <h3 class="text-lg font-semibold text-teal-700 mb-4 flex items-center gap-3">
-          <span class="w-2.5 h-6 bg-teal-600 rounded-full"></span>
+      <!-- Areas of Interest - More modern tag input -->
+      <div class="space-y-6 pt-6 border-t border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-700 flex items-center">
+          <span class="w-3 h-6 bg-teal-500 rounded mr-3"></span>
           Areas of Interest
         </h3>
 
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Your interests (add up to 5)</label>
-          <div class="flex flex-wrap gap-2 p-3 border border-gray-300 rounded-xl min-h-14 focus-within:ring-2 focus-within:ring-teal-200 focus-within:border-teal-500 bg-white">
-            <div *ngFor="let interest of areasOfInterest"
-              class="flex items-center bg-teal-100 text-teal-800 px-3 py-1.5 rounded-full text-sm font-medium shadow-sm">
-              {{ interest }}
-              <button type="button" (click)="removeInterest(interest)" class="ml-1.5 text-teal-600 hover:text-teal-800">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                </svg>
-              </button>
+          <div class="relative">
+            <div class="flex flex-wrap gap-2 p-3 border border-gray-300 rounded-lg min-h-14 bg-white">
+              <div *ngFor="let interest of areasOfInterest"
+                   class="flex items-center bg-teal-50 text-teal-700 px-3 py-1 rounded-full text-sm font-medium border border-teal-100">
+                {{ interest }}
+                <button type="button" (click)="removeInterest(interest)" class="ml-1.5 text-teal-500 hover:text-teal-700">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </div>
+              <input type="text" placeholder="Type and press Enter..."
+                     (keydown.enter)="addInterest($event)"
+                     class="flex-1 min-w-[100px] px-2 py-1 border-0 focus:ring-0 focus:outline-none bg-transparent">
             </div>
-            <input type="text" placeholder="Type and press Enter to add..."
-              (keydown.enter)="addInterest($event)"
-              class="flex-1 min-w-[150px] px-2 py-1 border-0 focus:ring-0 focus:outline-none bg-transparent">
+            <p class="mt-2 text-xs text-gray-500">Examples: Python, Web Development, Data Science</p>
           </div>
-          <p class="mt-2 text-xs text-gray-500">Examples: Python, Web Development, Data Science, Community Building</p>
         </div>
       </div>
 
-      <!-- About You Section -->
-      <div class="space-y-6 pb-6 border-b border-gray-200">
-        <h3 class="text-lg font-semibold text-teal-700 mb-4 flex items-center gap-3">
-          <span class="w-2.5 h-6 bg-teal-600 rounded-full"></span>
+      <!-- About You -->
+      <div class="space-y-6 pt-6 border-t border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-700 flex items-center">
+          <span class="w-3 h-6 bg-teal-500 rounded mr-3"></span>
           About You
         </h3>
 
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Why PSF? *</label>
           <textarea formControlName="aboutYou" rows="5" 
-            placeholder="Tell us about yourself, your Python experience, and why you joined PSF..."
-            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-200 focus:border-teal-500"></textarea>
+                    placeholder="Tell us about yourself and why you joined PSF..."
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-200 focus:border-teal-500"></textarea>
           <div class="flex justify-between mt-2">
             <p *ngIf="profileForm.get('aboutYou')?.invalid" class="text-xs text-red-500">
               This field is required (max 500 characters)
@@ -197,46 +200,46 @@
         </div>
       </div>
 
-      <!-- Agreement Section -->
-      <div class="space-y-6">
-        <h3 class="text-lg font-semibold text-teal-700 mb-4 flex items-center gap-3">
-          <span class="w-2.5 h-6 bg-teal-600 rounded-full"></span>
+      <!-- Agreements - Better checkbox styling -->
+      <div class="space-y-6 pt-6 border-t border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-700 flex items-center">
+          <span class="w-3 h-6 bg-teal-500 rounded mr-3"></span>
           Agreements
         </h3>
 
         <div class="space-y-4">
-          <div class="flex items-start">
-            <div class="flex items-center h-5 mt-0.5">
+          <div class="relative flex items-start">
+            <div class="flex items-center h-5">
               <input id="agreedToTerms" formControlName="agreedToTerms" type="checkbox"
-                class="focus:ring-teal-500 h-4 w-4 text-teal-600 border-gray-300 rounded">
+                     class="focus:ring-teal-500 h-4 w-4 text-teal-600 border-gray-300 rounded">
             </div>
             <div class="ml-3 text-sm">
               <label for="agreedToTerms" class="font-medium text-gray-700">I agree to the Terms and Conditions *</label>
-              <p class="text-gray-500 mt-1">By checking this box, you agree to our <a href="#" class="text-teal-600 hover:underline">Terms of Service</a> and <a href="#" class="text-teal-600 hover:underline">Privacy Policy</a>.</p>
+              <p class="text-gray-500 mt-1">By checking this box, you agree to our terms of service and privacy policy.</p>
             </div>
           </div>
 
-          <div class="flex items-start">
-            <div class="flex items-center h-5 mt-0.5">
+          <div class="relative flex items-start">
+            <div class="flex items-center h-5">
               <input id="agreedToContribute" formControlName="agreedToContribute" type="checkbox"
-                class="focus:ring-teal-500 h-4 w-4 text-teal-600 border-gray-300 rounded">
+                     class="focus:ring-teal-500 h-4 w-4 text-teal-600 border-gray-300 rounded">
             </div>
             <div class="ml-3 text-sm">
               <label for="agreedToContribute" class="font-medium text-gray-700">I agree to contribute to PSF initiatives</label>
-              <p class="text-gray-500 mt-1">Check this box if you're interested in participating in PSF activities, events, and volunteer opportunities.</p>
+              <p class="text-gray-500 mt-1">Check this if you're interested in participating in PSF activities.</p>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Form Actions -->
-      <div class="flex flex-col sm:flex-row justify-end gap-3 mt-10">
+      <!-- Form Actions - Better button grouping -->
+      <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-8">
         <button type="button" (click)="router.navigate(['/dashboard'])"
-          class="px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors font-medium">
-          Back to Dashboard
+                class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+          Cancel
         </button>
         <button (click)="saveProfile()" [disabled]="profileForm.invalid || saving"
-          class="px-8 py-3 bg-teal-600 text-white rounded-xl hover:bg-teal-700 disabled:bg-teal-400 disabled:cursor-not-allowed transition-colors font-medium shadow-sm">
+                class="px-8 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:bg-teal-400 disabled:cursor-not-allowed transition-colors font-medium shadow-sm">
           <span *ngIf="!saving" class="flex items-center justify-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
@@ -255,136 +258,140 @@
     </form>
   </div>
 
-  <!-- Payment Section -->
+  <!-- Payment Section - More professional layout -->
   <div *ngIf="profileCompleted && (user?.role === 'individual member' || user?.role === 'admin' || user?.role === 'pending')"
-    class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
-    <div class="bg-gradient-to-r from-gray-50 to-white border-b p-6">
-      <h2 class="text-2xl font-bold text-gray-800">Membership Payment</h2>
+       class="bg-white rounded-2xl shadow-sm overflow-hidden mb-8 border border-gray-200">
+    <div class="bg-white border-b p-6">
+      <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-teal-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+        Membership Payment
+      </h2>
       <p class="text-gray-500 text-sm mt-1">Complete your membership by making a payment</p>
     </div>
 
     <div class="p-6">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <!-- Payment Options -->
-        <div>
-          <div class="mb-8">
-            <h3 class="text-lg font-semibold text-gray-700 mb-4">Select Payment Type</h3>
-            <div class="grid grid-cols-2 gap-3">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Payment Type -->
+        <div class="lg:col-span-2 space-y-8">
+          <div>
+            <h3 class="text-lg font-semibold text-gray-700 mb-4">Payment Type</h3>
+            <div class="grid grid-cols-2 gap-4">
               <button (click)="onPaymentTypeChange('one-time')" 
-                [class.bg-teal-600]="paymentType === 'one-time'"
-                [class.text-white]="paymentType === 'one-time'"
-                [class.bg-gray-100]="paymentType !== 'one-time'"
-                [class.ring-2]="paymentType === 'one-time'"
-                [class.ring-teal-300]="paymentType === 'one-time'"
-                class="px-4 py-3 rounded-xl font-medium transition-all">
-                One-Time Payment
+                      [class.bg-teal-600]="paymentType === 'one-time'"
+                      [class.text-white]="paymentType === 'one-time'"
+                      [class.bg-gray-50]="paymentType !== 'one-time'"
+                      class="px-4 py-4 rounded-lg border border-gray-200 font-medium transition-all text-left">
+                <div class="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  One-Time Payment
+                </div>
               </button>
               <button (click)="onPaymentTypeChange('autopay')" 
-                [class.bg-teal-600]="paymentType === 'autopay'"
-                [class.text-white]="paymentType === 'autopay'"
-                [class.bg-gray-100]="paymentType !== 'autopay'"
-                [class.ring-2]="paymentType === 'autopay'"
-                [class.ring-teal-300]="paymentType === 'autopay'"
-                class="px-4 py-3 rounded-xl font-medium transition-all">
-                Monthly AutoPay
+                      [class.bg-teal-600]="paymentType === 'autopay'"
+                      [class.text-white]="paymentType === 'autopay'"
+                      [class.bg-gray-50]="paymentType !== 'autopay'"
+                      class="px-4 py-4 rounded-lg border border-gray-200 font-medium transition-all text-left">
+                <div class="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  Monthly AutoPay
+                </div>
               </button>
             </div>
           </div>
 
-          <div class="mb-8">
-            <h3 class="text-lg font-semibold text-gray-700 mb-4">Select Amount</h3>
-            <div class="grid grid-cols-2 gap-4 mb-5">
+          <!-- Amount Selection -->
+          <div>
+            <h3 class="text-lg font-semibold text-gray-700 mb-4">Contribution Amount</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
               <button *ngFor="let plan of presetPlans" (click)="selectPresetAmount(plan.amount)"
-                [class.border-teal-600]="selectedAmount === plan.amount"
-                [class.bg-teal-50]="selectedAmount === plan.amount"
-                [class.ring-2]="selectedAmount === plan.amount"
-                [class.ring-teal-200]="selectedAmount === plan.amount"
-                class="border rounded-xl p-4 text-center hover:bg-gray-50 transition-all">
-                <div class="font-bold text-lg text-gray-800">₹{{ plan.amount }}</div>
-                <div class="text-sm text-gray-600 mt-1">{{ plan.description }}</div>
+                      [class.bg-teal-600]="selectedAmount === plan.amount"
+                      [class.text-white]="selectedAmount === plan.amount"
+                      [class.bg-gray-50]="selectedAmount !== plan.amount"
+                      class="px-4 py-3 rounded-lg border border-gray-200 font-medium transition-all">
+                ₹{{ plan.amount }}
               </button>
             </div>
 
             <div class="mb-5">
-              <label class="block text-sm font-medium text-gray-700 mb-2">Or enter custom amount (min ₹300)</label>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Custom Amount (min ₹300)</label>
               <div class="relative">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">₹</span>
                 <input type="number" [formControl]="customAmountControl" (input)="onCustomAmountChange()"
-                  class="pl-8 w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-200 focus:border-teal-500"
-                  placeholder="Enter amount">
+                       class="pl-8 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-200 focus:border-teal-500"
+                       placeholder="Enter amount">
               </div>
               <p *ngIf="showMinimumError" class="mt-2 text-xs text-red-500">Minimum amount is ₹300</p>
             </div>
+          </div>
 
-            <div class="mb-5">
-              <label class="block text-sm font-medium text-gray-700 mb-2">Contribution Reason (Optional)</label>
-              <textarea [(ngModel)]="contributionReason" 
-                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-200 focus:border-teal-500"
-                rows="3" placeholder="Why are you contributing this amount? (e.g., Supporting Python education)"></textarea>
-            </div>
+          <!-- Reason -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Contribution Reason (Optional)</label>
+            <textarea [(ngModel)]="contributionReason" 
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-200 focus:border-teal-500"
+                      rows="3" placeholder="Why are you contributing this amount?"></textarea>
+          </div>
 
-            <div *ngIf="paymentType === 'autopay'" class="bg-blue-50 border border-blue-200 rounded-xl p-4">
-              <div class="flex items-start">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
-                </svg>
-                <div>
-                  <p class="text-sm text-blue-800">
-                    AutoPay will charge ₹{{ selectedAmount }} every month starting from {{ getNextChargeDate() }}.
-                    You can cancel anytime from your dashboard.
-                  </p>
-                </div>
+          <!-- AutoPay Notice -->
+          <div *ngIf="paymentType === 'autopay'" class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div class="flex">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600 mr-3 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
+              </svg>
+              <div>
+                <p class="text-sm text-blue-800">
+                  AutoPay will charge ₹{{ selectedAmount }} monthly starting {{ getNextChargeDate() }}.
+                  Cancel anytime from your dashboard.
+                </p>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Order Summary -->
-        <div>
-          <div class="bg-gray-50 rounded-xl p-6 border border-gray-200 shadow-inner">
-            <h3 class="text-xl font-semibold text-gray-800 mb-6 pb-2 border-b border-gray-200">Order Summary</h3>
+        <!-- Order Summary - Sticky card -->
+        <div class="lg:col-span-1">
+          <div class="bg-gray-50 rounded-lg p-6 border border-gray-200 sticky top-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Order Summary</h3>
 
-            <div class="space-y-4">
+            <div class="space-y-3 mb-6">
               <div class="flex justify-between">
-                <span class="text-gray-600">Membership Type:</span>
-                <span class="font-medium text-gray-800">{{ paymentType === 'one-time' ? '1-Month Membership' : 'Monthly AutoPay' }}</span>
+                <span class="text-gray-600">Membership:</span>
+                <span class="font-medium">{{ paymentType === 'one-time' ? 'One-Time' : 'Monthly AutoPay' }}</span>
               </div>
-
               <div class="flex justify-between">
                 <span class="text-gray-600">Amount:</span>
-                <span class="font-medium text-gray-800">₹{{ selectedAmount }}</span>
+                <span class="font-medium">₹{{ selectedAmount }}</span>
               </div>
-
               <div *ngIf="paymentType === 'autopay'" class="flex justify-between">
-                <span class="text-gray-600">Next Billing Date:</span>
-                <span class="font-medium text-gray-800">{{ getNextChargeDate() }}</span>
+                <span class="text-gray-600">Next Charge:</span>
+                <span class="font-medium">{{ getNextChargeDate() }}</span>
               </div>
+            </div>
 
-              <div class="border-t border-gray-200 pt-4 mt-4">
-                <div class="flex justify-between items-center">
-                  <span class="text-gray-600 font-medium">Total Due Now:</span>
-                  <span class="font-bold text-2xl text-teal-600">₹{{ selectedAmount }}</span>
-                </div>
+            <div class="border-t border-gray-200 pt-4 mb-6">
+              <div class="flex justify-between items-center">
+                <span class="text-gray-700 font-medium">Total Due:</span>
+                <span class="text-xl font-bold text-teal-600">₹{{ selectedAmount }}</span>
               </div>
             </div>
 
             <button (click)="initiatePayment()" [disabled]="!isPaymentButtonEnabled()"
-              class="w-full mt-8 py-4 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl disabled:bg-teal-400 disabled:cursor-not-allowed transition-colors shadow-md hover:shadow-lg">
-              <span class="flex items-center justify-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
-                </svg>
-                {{ getPaymentButtonText() }}
-              </span>
+                    class="w-full py-3 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-lg disabled:bg-teal-400 disabled:cursor-not-allowed transition-colors">
+              {{ getPaymentButtonText() }}
             </button>
 
-            <div class="mt-5 text-xs text-gray-500">
-              <p>By proceeding, you agree to our <a href="#" class="text-teal-600 hover:underline">Terms of Service</a> and <a href="#" class="text-teal-600 hover:underline">Privacy Policy</a>.</p>
-              <div class="flex items-center mt-3">
+            <div class="mt-4 text-xs text-gray-500">
+              <div class="flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400 mr-2" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
                 </svg>
-                <span>Payments are secure and encrypted</span>
+                <span>Secure payment processing</span>
               </div>
             </div>
           </div>
@@ -393,19 +400,19 @@
     </div>
   </div>
 
-  <!-- Completed Profile View -->
+  <!-- Completion State - More celebratory -->
   <div *ngIf="profileCompleted && (user?.role === 'admin' || user?.role === 'associate member')"
-    class="bg-white rounded-2xl shadow-lg overflow-hidden p-8 text-center border border-gray-100">
+       class="bg-white rounded-2xl shadow-sm overflow-hidden p-8 text-center border border-gray-200">
     <div class="max-w-md mx-auto">
-      <div class="w-20 h-20 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-6">
+      <div class="w-20 h-20 bg-teal-50 rounded-full flex items-center justify-center mx-auto mb-6">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-teal-600" viewBox="0 0 20 20" fill="currentColor">
           <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
         </svg>
       </div>
-      <h2 class="text-2xl font-bold text-gray-800 mb-3">Profile Completed!</h2>
-      <p class="text-gray-600 mb-6">Your profile information has been saved successfully. You can now access all member benefits.</p>
+      <h2 class="text-2xl font-bold text-gray-800 mb-3">Welcome to PSF!</h2>
+      <p class="text-gray-600 mb-6">Your profile is complete and you now have full access to all member benefits and resources.</p>
       <button (click)="router.navigate(['/dashboard'])"
-        class="px-8 py-3 bg-teal-600 text-white rounded-xl hover:bg-teal-700 transition-colors font-medium shadow-sm">
+              class="px-8 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-medium">
         Go to Dashboard
       </button>
     </div>
