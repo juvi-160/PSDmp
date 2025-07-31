@@ -14,7 +14,8 @@ import { environment } from '../environments/environment';
 export class DashboardComponent implements OnInit {
   @ViewChild('sidenav') sidenav!: MatSidenav;
   isAdmin = false;
-  isAssociateMember = false; // For checking if the user is an associate member
+  isAssociateMember = false;
+  isIndividualMember = false;
   navItems: { icon: string, label: string, link: string }[] = [];
 
   constructor(
@@ -29,17 +30,24 @@ export class DashboardComponent implements OnInit {
 
       const email = user.email;
 
-      // Fetch the user's role based on the email
       this.http.get<any>(`${environment.apiUrl}/admin/check-user-role/${email}`).subscribe({
         next: (roleData) => {
-          // Check if the user is an admin or associate member based on the role
-          this.isAdmin = roleData.role === 'admin';  // Set isAdmin based on the role
-          this.isAssociateMember = roleData.role === 'associate member'; // Associate member check
+          const role = roleData.role?.toLowerCase();
 
-          localStorage.setItem('isAdmin', JSON.stringify(this.isAdmin));  // Store isAdmin in localStorage
-          localStorage.setItem('isAssociateMember', JSON.stringify(this.isAssociateMember)); // Store associate member status
+          // Set role flags
+          this.isAdmin = role === 'admin';
+          this.isAssociateMember = role === 'associate member';
+          this.isIndividualMember = role === 'individual member';
 
-          // Set navigation items
+          // Store role and flags in localStorage
+          localStorage.setItem('userRole', role || 'individual member');
+          localStorage.setItem('isAdmin', JSON.stringify(this.isAdmin));
+          localStorage.setItem('isAssociateMember', JSON.stringify(this.isAssociateMember));
+
+          // Apply global body class
+          this.setBodyTheme(role);
+
+          // Setup navigation items
           this.navItems = [
             { icon: 'dashboard', label: 'Dashboard', link: '/dashboard' },
             ...(this.isAssociateMember ? [{ icon: 'money', label: 'Contribute', link: '/dashboard/contribute' }] : []),
@@ -50,18 +58,19 @@ export class DashboardComponent implements OnInit {
             { icon: 'account_circle', label: 'Profile', link: '/dashboard/profile' },
             { icon: 'money', label: 'Payment History', link: `/dashboard/payment-history/${email}` },
           ];
-
         },
         error: (err) => {
           console.error('Failed to fetch user role:', err);
         }
       });
 
-      // Retrieve admin and associate member status from localStorage (in case of page reload)
-      const storedIsAdmin = JSON.parse(localStorage.getItem('isAdmin') || 'false');
-      const storedIsAssociateMember = JSON.parse(localStorage.getItem('isAssociateMember') || 'false');
-      this.isAdmin = storedIsAdmin;
-      this.isAssociateMember = storedIsAssociateMember;
+      // Load from localStorage on reload
+      const storedRole = localStorage.getItem('userRole') || 'individual member';
+      this.isAdmin = JSON.parse(localStorage.getItem('isAdmin') || 'false');
+      this.isAssociateMember = JSON.parse(localStorage.getItem('isAssociateMember') || 'false');
+      this.isIndividualMember = storedRole === 'individual member';
+
+      this.setBodyTheme(storedRole);
     });
   }
 
@@ -75,5 +84,20 @@ export class DashboardComponent implements OnInit {
         returnTo: window.location.origin
       }
     });
+  }
+
+  private setBodyTheme(role: string | null): void {
+    document.body.classList.remove('admin-theme', 'associate-theme', 'individual-theme');
+
+    switch (role) {
+      case 'admin':
+        document.body.classList.add('admin-theme');
+        break;
+      case 'associate member':
+        document.body.classList.add('associate-theme');
+        break;
+      default:
+        document.body.classList.add('individual-theme');
+    }
   }
 }

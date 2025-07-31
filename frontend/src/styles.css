@@ -1,2 +1,60 @@
 
 @import "tailwindcss";
+
+/* styles.css */
+
+/* ADMIN */
+body.admin-theme .mat-toolbar {
+  background-color: #3f51b5 !important;
+  color: #fff !important;
+}
+body.admin-theme .mat-sidenav {
+  background-color: #e8eaf6;
+}
+
+/* ASSOCIATE MEMBER */
+body.associate-theme .mat-toolbar {
+  background-color: #ff9800 !important;
+  color: #fff !important;
+}
+body.associate-theme .mat-sidenav {
+  background-color: #fff3e0;
+}
+
+/* INDIVIDUAL MEMBER */
+body.individual-theme .mat-toolbar {
+  background-color: #009688 !important;
+  color: #fff !important;
+}
+body.individual-theme .mat-sidenav {
+  background-color: #e0f2f1;
+}
+
+/* styles.css */
+
+/* === Admin Theme === */
+body.admin-theme .mat-toolbar {
+  background-color: #3f51b5 !important;
+  color: white !important;
+}
+body.admin-theme .mat-sidenav {
+  background-color: #e8eaf6;
+}
+
+/* === Associate Member Theme === */
+body.associate-theme .mat-toolbar {
+  background-color: #ff9800 !important;
+  color: white !important;
+}
+body.associate-theme .mat-sidenav {
+  background-color: #fff3e0;
+}
+
+/* === Individual Member Theme === */
+body.individual-theme .mat-toolbar {
+  background-color: #009688 !important;
+  color: white !important;
+}
+body.individual-theme .mat-sidenav {
+  background-color: #e0f2f1;
+}
