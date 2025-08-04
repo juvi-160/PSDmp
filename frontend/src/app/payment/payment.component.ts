@@ -175,7 +175,7 @@ export class PaymentComponent implements OnInit {
 
         // Only redirect if profile is already completed and payment not needed
         if (this.profileCompleted &&
-          (this.user.role === 'admin' || this.user.role === 'associate member')) {
+          (this.user.role === 'associate member')) {
           this.router.navigate(["/dashboard"]);
         }
 

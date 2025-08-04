@@ -38,8 +38,8 @@ interface ProfileUpdateData {
   providedIn: 'root',
 })
 export class AuthService {
-  private currentUserSubject = new BehaviorSubject<User | null>(null);
-  public currentUser = this.currentUserSubject.asObservable();
+  private currentUserSubject: BehaviorSubject<User | null>;
+  public currentUser: Observable<User | null>;
   private apiUrl = `${environment.apiUrl}/auth`;
 
   constructor(
@@ -48,43 +48,47 @@ export class AuthService {
     private router: Router,
     private toast: ToastService
   ) {
-    this.auth0.isAuthenticated$
-      .pipe(
-        switchMap((isAuthenticated) => {
-          if (isAuthenticated) {
-            return this.auth0.user$;
-          } else {
-            this.currentUserSubject.next(null);
-            return of(null);
-          }
-        }),
-        switchMap((auth0User) => {
-          if (!auth0User) return of(null);
+    this.currentUserSubject = new BehaviorSubject<User | null>(null);
+    this.currentUser = this.currentUserSubject.asObservable();
 
-          return this.getUserProfile().pipe(
-            catchError((error) => {
-              if (error.status === 404) {
-                const newUser: User = {
-                  name: auth0User.name || '',
-                  email: auth0User.email || '',
-                  role: 'pending',
-                  isEmailVerified: auth0User.email_verified || false,
-                };
-                return this.createUser(newUser);
-              } else {
-                this.toast.show('Error fetching user profile', 'error');
-                return of(null);
-              }
-            })
-          );
-        })
-      )
-      .subscribe((user) => {
-        if (user) {
-          this.currentUserSubject.next(user);
-          this.handleUserRedirection(user);
-        }
-      });
+    this.auth0.isAuthenticated$.subscribe((isAuthenticated) => {
+      if (isAuthenticated) {
+        this.auth0.user$.subscribe((auth0User) => {
+          if (auth0User) {
+            this.getUserProfile().subscribe({
+              next: (user: User) => {
+                this.currentUserSubject.next(user);
+                this.handleUserRedirection(user);
+              },
+              error: (error: any) => {
+                if (error.status === 404) {
+                  const newUser: User = {
+                    name: auth0User.name || '',
+                    email: auth0User.email || '',
+                    role: 'pending',
+                    isEmailVerified: auth0User.email_verified || false,
+                  };
+
+                  this.createUser(newUser).subscribe({
+                    next: (createdUser: User) => {
+                      this.currentUserSubject.next(createdUser);
+                      this.router.navigate(['/payment']);
+                    },
+                    error: (err: any) => {
+                      this.toast.show('Error creating user profile', 'error');
+                    },
+                  });
+                } else {
+                  this.toast.show('Error fetching user profile', 'error');
+                }
+              },
+            });
+          }
+        });
+      } else {
+        this.currentUserSubject.next(null);
+      }
+    });
   }
 
   private handleUserRedirection(user: User): void {
@@ -99,84 +103,28 @@ export class AuthService {
     }
   }
 
-  getUserProfile(): Observable<User> {
-    return this.getAccessToken().pipe(
-      switchMap((token) =>
-        this.http.get<User>(`${environment.apiUrl}/profile`, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-      ),
-      map((user) => ({
-        ...user,
-        createdAt: user.createdAt ? new Date(user.createdAt) : undefined,
-        updatedAt: user.updatedAt ? new Date(user.updatedAt) : undefined,
-      }))
-    );
-  }
-
-  createUser(user: User): Observable<User> {
-    return this.getAccessToken().pipe(
-      switchMap((token) =>
-        this.http.post<User>(`${this.apiUrl}/users`, user, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-      )
-    );
-  }
-
-  updateUserProfile(profileData: ProfileUpdateData): Observable<User> {
-    return this.getAccessToken().pipe(
-      switchMap((token) =>
-        this.http.put<User>(`${environment.apiUrl}/profile`, profileData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        })
-      ),
-      tap((user) => this.currentUserSubject.next(user))
-    );
-  }
-
-  markPhoneVerified(): Observable<any> {
-    return this.getAccessToken().pipe(
-      switchMap((token) =>
-        this.http.post<any>(`${environment.apiUrl}/profile/mark-phone-verified`, {}, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        })
-      )
-    );
-  }
-
-  updateUserAfterPayment(paymentDetails: any): Observable<User> {
-    return this.getAccessToken().pipe(
-      switchMap((token) =>
-        this.http.post<User>(`${this.apiUrl}/payment/verify`, paymentDetails, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-      ),
-      tap((user) => this.currentUserSubject.next(user))
-    );
-  }
-
-  checkPaymentStatus(): Observable<boolean> {
+  checkUserPaymentStatus(): Observable<{ needsPayment: boolean, role: string }> {
     return this.getUserProfile().pipe(
-      map((user) => user.hasPaid === true && user.role === 'individual member'),
-      catchError(() => of(false))
-    );
-  }
-
-  checkUserPaymentStatus(): Observable<{ needsPayment: boolean; role: string }> {
-    return this.getUserProfile().pipe(
-      map((user) => ({
+      map((user: User) => ({
         needsPayment: (user.role === 'individual member' && !user.hasPaid) || user.role === 'pending',
-        role: user.role,
+        role: user.role
       })),
       catchError(() => of({ needsPayment: true, role: 'pending' }))
     );
+  }
+
+  getUserName(): string {
+    const currentUser = this.currentUserSubject.value;
+    return currentUser?.name || '';
+  }
+
+  getUserEmail(): string {
+    const currentUser = this.currentUserSubject.value;
+    return currentUser?.email || '';
+  }
+
+  public get currentUserValue(): User | null {
+    return this.currentUserSubject.value;
   }
 
   login(): Observable<void> {
@@ -186,6 +134,22 @@ export class AuthService {
           redirect_uri: window.location.origin,
           audience: environment.auth0.audience,
         },
+      })
+    );
+  }
+
+  updateUserProfile(profileData: ProfileUpdateData): Observable<User> {
+    return this.getAccessToken().pipe(
+      switchMap((token: string) => {
+        return this.http.put<User>(`http://localhost:3000/api/profile`, profileData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+      }),
+      tap((user: User) => {
+        this.currentUserSubject.next(user);
       })
     );
   }
@@ -236,15 +200,64 @@ export class AuthService {
     });
   }
 
-  get currentUserValue(): User | null {
-    return this.currentUserSubject.value;
+
+  getUserProfile(): Observable<User> {
+    return this.getAccessToken().pipe(
+      switchMap((token) => {
+        return this.http.get<User>(`http://localhost:3000/api/profile`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      }),
+      map((user) => ({
+        ...user,
+        createdAt: user.createdAt ? new Date(user.createdAt) : undefined,
+        updatedAt: user.updatedAt ? new Date(user.updatedAt) : undefined,
+      })),
+    );
   }
 
-  getUserName(): string {
-    return this.currentUserSubject.value?.name || '';
+  createUser(user: User): Observable<User> {
+    return this.getAccessToken().pipe(
+      switchMap((token: string) => {
+        return this.http.post<User>(`${this.apiUrl}/users`, user, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      })
+    );
   }
 
-  getUserEmail(): string {
-    return this.currentUserSubject.value?.email || '';
+  markPhoneVerified(): Observable<any> {
+    return this.getAccessToken().pipe(
+      switchMap((token: string) => {
+        return this.http.post<any>(`http://localhost:3000/api/mark-phone-verified`, {}, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+      })
+    );
+  }
+
+  updateUserAfterPayment(paymentDetails: any): Observable<User> {
+    return this.getAccessToken().pipe(
+      switchMap((token: string) => {
+        return this.http.post<User>(`${this.apiUrl}/payment/verify`, paymentDetails, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      }),
+      tap((user: User) => {
+        this.currentUserSubject.next(user);
+      })
+    );
+  }
+
+  checkPaymentStatus(): Observable<boolean> {
+    return this.getUserProfile().pipe(
+      map((user: User) => user.hasPaid === true && user.role === 'individual member'),
+      catchError(() => of(false))
+    );
   }
 }
