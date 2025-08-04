@@ -107,6 +107,25 @@ export const verifyPhone = async (req, res) => {
   }
 };
 
+
+export const markPhoneVerified = async (req, res) => {
+  try {
+    const auth0Id = req.auth?.sub;
+    if (!auth0Id) return res.status(401).json({ message: 'Unauthorized' });
+
+    const user = await User.findOne({ where: { auth0Id } });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    user.isPhoneVerified = true;
+    await user.save();
+
+    res.json({ message: 'Phone marked as verified', user });
+  } catch (error) {
+    console.error('Error marking phone verified:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 export const updateUserProfile = async (req, res) => {
   try {
     const auth0Sub = req.auth?.sub || req.auth?.payload?.sub;

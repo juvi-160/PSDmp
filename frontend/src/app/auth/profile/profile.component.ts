@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ProfileService } from "../../core/services/profile.service";
 import { User, ProfileUpdateData } from "../../core/models/user.model";
@@ -15,7 +15,7 @@ import { firebaseConfig } from "../../environments/firebase-config";
   templateUrl: "./profile.component.html",
   styleUrls: ["./profile.component.css"],
 })
-export class ProfileComponent implements OnInit, AfterViewInit {
+export class ProfileComponent implements OnInit {
   profileForm!: FormGroup;
   user: User | null = null;
   loading = false;
@@ -52,8 +52,9 @@ export class ProfileComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.initForm();
     this.loadProfile();
-    this.auth = getAuth();
   }
+
+
 
   initForm(): void {
     this.profileForm = this.formBuilder.group({
@@ -230,10 +231,18 @@ export class ProfileComponent implements OnInit, AfterViewInit {
       rawPhone = "+91" + rawPhone; // Default to India country code
     }
 
-    if (!window.recaptchaVerifier) {
-      this.toast.show("reCAPTCHA not ready. Please wait a moment.", "error");
-      return;
-    }
+    // Initialize Recaptcha
+    window.recaptchaVerifier = new RecaptchaVerifier(
+      this.auth,
+      "recaptcha-container",
+      {
+        size: "normal",
+        callback: () => { },
+        "expired-callback": () => {
+          this.toast.show("reCAPTCHA expired. Please try again.", "error");
+        }
+      }
+    );
 
     signInWithPhoneNumber(this.auth, rawPhone, window.recaptchaVerifier)
       .then((confirmationResult) => {
@@ -246,28 +255,7 @@ export class ProfileComponent implements OnInit, AfterViewInit {
         this.toast.show("Failed to send OTP. " + error.message, "error");
       });
 
-
-  }
-
-  ngAfterViewInit(): void {
-    if (!window.recaptchaVerifier) {
-      window.recaptchaVerifier = new RecaptchaVerifier(
-        "recaptcha-container",   // ✅ string
-        {
-          size: "invisible",
-          callback: () => { },
-          "expired-callback": () => {
-            this.toast.show("reCAPTCHA expired. Please try again.", "error");
-          },
-        },
-        this.auth               // ✅ must be of type `Auth`, not a string
-      );
-
-
-      window.recaptchaVerifier.render().catch((err) => {
-        console.error("Failed to render reCAPTCHA:", err);
-      });
-    }
+      
   }
 
   verifyOTPAndSave(): void {
@@ -302,7 +290,7 @@ export class ProfileComponent implements OnInit, AfterViewInit {
         });
       })
 
-
+      
       .catch((error) => {
         this.verifyingOtp = false;
         console.error("OTP verification failed:", error);
@@ -310,7 +298,7 @@ export class ProfileComponent implements OnInit, AfterViewInit {
       });
   }
 
-
+  
 }
 
 declare global {
