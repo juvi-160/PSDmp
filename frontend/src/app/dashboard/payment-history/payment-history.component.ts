@@ -17,7 +17,7 @@ export class PaymentHistoryComponent implements OnInit {
   subscriptionDetails: any = null;
   subscriptionInvoices: any[] = [];
   subscriptionShortUrl: string = '';
-
+  
   loading = false;
   error = '';
   currentUser: any;
@@ -37,15 +37,16 @@ export class PaymentHistoryComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
       const email = params['email'];
+      const planId = 'plan_Qoz5hfKcbawIHp'; // You can pass this dynamically if needed
       if (email) {
-        this.initComponentLogic(email);
+        this.initComponentLogic(email, planId);
       } else {
         this.handleInvalidId();
       }
     });
   }
 
-  initComponentLogic(userEmail: string): void {
+  initComponentLogic(userEmail: string, planId: string): void {
     this.loading = true;
     this.authService.currentUser.subscribe((user) => {
       if (!user) {
@@ -64,7 +65,7 @@ export class PaymentHistoryComponent implements OnInit {
           this.showPaymentHistory = !isAssociate || hasPaid;
 
           if (data?.subscriptionId) {
-            this.fetchSubscriptionDetails(data.subscriptionId);
+            this.fetchSubscriptionDetails(planId);  // Fetch subscription details using the planId
             this.fetchSubscriptionInvoices(data.subscriptionId);
           }
 
@@ -78,17 +79,33 @@ export class PaymentHistoryComponent implements OnInit {
     });
   }
 
-  fetchSubscriptionDetails(subscriptionId: string): void {
-    this.paymentHistoryService.getSubscriptionById(subscriptionId).subscribe({
-      next: (details: any) => {
-        this.subscriptionDetails = details;
-        this.subscriptionShortUrl = details?.short_url || '';
-        if (this.paymentHistory && this.paymentHistory.subscription) {
-          this.paymentHistory.subscription.startAt = details?.start_at
-            ? new Date(details.start_at * 1000)
-            : null;
+  fetchSubscriptionDetails(planId: string): void {
+    this.paymentHistoryService.getSubscriptionDetails(planId).subscribe({
+      next: (response: any) => {
+        if (response && response.items && response.items.length > 0) {
+          const subscription = response.items[0]; // Get the first subscription item
+
+          this.subscriptionDetails = subscription;
+          this.subscriptionShortUrl = subscription.short_url || 'N/A';
+
+          // Format dates (convert timestamp to Date)
+          if (subscription.start_at) {
+            this.paymentHistory.subscription.startAt = new Date(subscription.start_at * 1000);
+          }
+          if (subscription.end_at) {
+            this.paymentHistory.subscription.endAt = new Date(subscription.end_at * 1000);
+          }
+
+          // Other relevant fields
+          this.paymentHistory.subscription.status = subscription.status || 'N/A';
+          this.paymentHistory.subscription.customAmount = subscription.notes?.customAmount || 'N/A';
+          this.paymentHistory.subscription.paymentType = subscription.notes?.paymentType || 'N/A';
+
+          console.log('Subscription Details:', subscription);
+        } else {
+          this.subscriptionDetails = null;
+          console.error('No subscription found in the response');
         }
-        console.log('Subscription Details:', details);
       },
       error: (error: any) => {
         console.error('Failed to fetch subscription details', error);
