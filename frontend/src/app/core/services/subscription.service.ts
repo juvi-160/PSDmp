@@ -1,9 +1,9 @@
 import { Injectable } from "@angular/core"
-import  { HttpClient } from "@angular/common/http"
-import  { Observable } from "rxjs"
+import { HttpClient } from "@angular/common/http"
+import { Observable } from "rxjs"
 import { switchMap } from "rxjs/operators"
 import { environment } from "../../environments/environment"
-import  { AuthService } from "./auth.service"
+import { AuthService } from "./auth.service"
 
 export interface PresetPlan {
   id: number

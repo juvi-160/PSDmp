@@ -18,6 +18,12 @@ export class PaymentHistoryService {
     );
   }
 
+  getSubscriptionDetails(planId: string): Observable<any> {
+    return this.http.get<any>(`http://localhost:3000/api/subscription/razorpay/plan/${planId}/subscriptions`).pipe(
+      catchError((error) => throwError(() => new Error('Failed to fetch subscription details')))
+    );
+  }
+
   getSubscriptionById(subscriptionId: string): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/subscription/razorpay/subscriptions/${subscriptionId}`);
   }

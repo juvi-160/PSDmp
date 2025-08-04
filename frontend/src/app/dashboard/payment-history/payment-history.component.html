@@ -24,7 +24,6 @@
         <span class="font-semibold text-gray-900">₹{{ paymentHistory.totalAmount || 0 }}</span>
       </div>
 
-      
       <!-- Subscription Info -->
       <div class="flex justify-between">
         <span class="font-medium text-gray-600">Subscription Plan:</span>
@@ -47,13 +46,67 @@
       </div>
     </div>
 
-    <!-- Contribute CTA -->
-    <div *ngIf="paymentHistory.totalPayments === 0" class="mt-6 text-center">
-      <button
-        class="bg-blue-600 hover:bg-blue-700 text-white text-lg px-6 py-3 rounded-lg transition shadow"
-        (click)="router.navigate(['/dashboard/contribute'])">
-        Contribute Now
-      </button>
+    <!-- Subscription Plan Details -->
+    <div *ngIf="subscriptionDetails" class="max-w-3xl mx-auto mt-8">
+      <div class="bg-white shadow-2xl rounded-2xl p-6 border border-gray-100">
+        <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Subscription Details</h2>
+
+        <div class="grid gap-4">
+          <div class="flex justify-between">
+            <span class="font-medium text-gray-600">Subscription Plan:</span>
+            <span class="font-semibold text-gray-900">{{ subscriptionDetails.plan_id || 'N/A' }}</span>
+          </div>
+
+          <div class="flex justify-between">
+            <span class="font-medium text-gray-600">Status:</span>
+            <span class="capitalize text-gray-800">{{ subscriptionDetails.status || 'N/A' }}</span>
+          </div>
+
+          <div class="flex justify-between">
+            <span class="font-medium text-gray-600">Start Date:</span>
+            <span>
+              <ng-container *ngIf="subscriptionDetails.startAt !== 'N/A'; else noStart">
+                {{ subscriptionDetails.startAt | date: 'mediumDate' }}
+              </ng-container>
+              <ng-template #noStart><span class="text-gray-400">N/A</span></ng-template>
+            </span>
+          </div>
+
+          <div class="flex justify-between">
+            <span class="font-medium text-gray-600">End Date:</span>
+            <span>
+              <ng-container *ngIf="subscriptionDetails.endAt !== 'N/A'; else noEnd">
+                {{ subscriptionDetails.endAt | date: 'mediumDate' }}
+              </ng-container>
+              <ng-template #noEnd><span class="text-gray-400">N/A</span></ng-template>
+            </span>
+          </div>
+
+          <div class="flex justify-between">
+            <span class="font-medium text-gray-600">Amount:</span>
+            <span class="font-semibold text-gray-900">₹{{ subscriptionDetails.customAmount || 'N/A' }}</span>
+          </div>
+
+          <div class="flex justify-between">
+            <span class="font-medium text-gray-600">Payment Type:</span>
+            <span class="text-gray-800">{{ subscriptionDetails.paymentType || 'N/A' }}</span>
+          </div>
+
+          <div class="flex justify-between">
+            <span class="font-medium text-gray-600">Subscription Link:</span>
+            <span class="text-blue-600">{{ subscriptionShortUrl || 'N/A' }}</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+</div>
+
+<!-- Contribute CTA -->
+<div *ngIf="paymentHistory.totalPayments === 0" class="mt-6 text-center">
+  <button
+    class="bg-blue-600 hover:bg-blue-700 text-white text-lg px-6 py-3 rounded-lg transition shadow"
+    (click)="router.navigate(['/dashboard/contribute'])">
+    Contribute Now
+  </button>
 </div>
