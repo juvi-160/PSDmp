@@ -1,13 +1,16 @@
-import express from "express"
-import { checkJwt } from "../controllers/authController.js"
-import { getUserProfile, updateUserProfile } from "../controllers/profileController.js"
+import express from "express";
+import { checkJwt } from "../controllers/authController.js";
+import {
+  getUserProfile,
+  updateUserProfile,
+  verifyPhone,
+} from "../controllers/profileController.js";
 
-const router = express.Router()
+const router = express.Router();
 
-// Apply auth middleware to all profile routes
-router.use(checkJwt)
+router.use(checkJwt);  // Auth0 JWT validation for all routes
+router.get("/", getUserProfile);
+router.put("/", updateUserProfile);
+router.post("/verify-phone", verifyPhone);
 
-router.get("/", getUserProfile)
-router.put("/", updateUserProfile)
-
-export default router
+export default router;

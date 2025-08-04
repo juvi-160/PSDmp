@@ -5,7 +5,7 @@ dotenv.config();
 import { auth } from "express-oauth2-jwt-bearer";
 import crypto from "crypto";
 import { Op } from "sequelize";
-import admin from '../utils/firebase.js';
+import { authAdmin } from "../utils/firebase.js"; 
 
 // Middleware
 const checkJwt = auth({
@@ -143,6 +143,27 @@ const verifyPayment = async (req, res) => {
   } catch (error) {
     console.error("Error verifying payment:", error);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const verifyPhoneToken = async (req, res) => {
+  const { idToken } = req.body;
+  const { userId } = req.params;
+  try {
+    const decodedToken = await authAdmin.auth().verifyIdToken(idToken);
+
+    const phoneNumber = decodedToken.phone_number;
+    if (!phoneNumber) {
+      return res.status(400).json({ message: "Phone number not found in token." });
+    }
+
+    // ✅ Optional: Update your database here
+    await User.update({ phone: phoneNumber, phone_verified: true }, { where: { id: userId  } })
+
+    return res.json({ message: "Phone verified successfully", phoneNumber });
+  } catch (err) {
+    console.error("Token verification error:", err);
+    return res.status(401).json({ message: "Invalid or expired token" });
   }
 };
 

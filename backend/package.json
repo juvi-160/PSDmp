@@ -30,6 +30,7 @@
     "mysql2": "^3.14.1",
     "nodemailer": "^7.0.3",
     "razorpay": "^2.9.6",
+    "sendotp": "^1.2.9",
     "sequelize": "^6.37.7"
   },
   "devDependencies": {
