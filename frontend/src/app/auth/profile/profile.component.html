@@ -140,6 +140,7 @@
           </p>
 
           <!-- Firebase reCAPTCHA -->
+          <!-- profile.component.html -->
           <div id="recaptcha-container"></div>
 
           <!-- OTP Handling -->
@@ -153,8 +154,8 @@
 
             <ng-container *ngIf="otpSent && !otpVerified">
               <div class="flex gap-2">
-                <input type="text" placeholder="6-digit OTP" [(ngModel)]="phoneOTP" name="phoneOtp" [ngModelOptions]="{ standalone: true }"
-                  class="flex-1 px-4 py-2 border border-gray-300 rounded-lg">
+                <input type="text" placeholder="6-digit OTP" [(ngModel)]="phoneOTP" name="phoneOtp"
+                  [ngModelOptions]="{ standalone: true }" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg">
                 <button type="button" (click)="verifyOTPAndSave()" [disabled]="!phoneOTP || saving"
                   class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-green-400 disabled:cursor-not-allowed">
                   <span *ngIf="!verifyingOtp">Verify & Save</span>
