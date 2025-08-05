@@ -73,7 +73,6 @@ export class ProfileComponent implements OnInit {
     private toast: ToastService,
     private firebaseService: FirebaseService
   ) {
-    const app = initializeApp(firebaseConfig);
     this.auth = this.firebaseService.getAuth();
   }
 
@@ -296,16 +295,13 @@ export class ProfileComponent implements OnInit {
         }
       );
 
-      // Render the reCAPTCHA widget (only once)
-      window.recaptchaVerifier.render().then((widgetId: any) => {
-        window.recaptchaWidgetId = widgetId;
-      });
-    }
+      if (!window.recaptchaWidgetId) {
+        window.recaptchaVerifier.render().then((widgetId: any) => {
+          window.recaptchaWidgetId = widgetId;
+        });
+      }
 
-    if (window.recaptchaVerifier) {
-      window.recaptchaVerifier.clear();
     }
-
 
     // Send OTP
     signInWithPhoneNumber(this.auth, rawPhone, window.recaptchaVerifier)
