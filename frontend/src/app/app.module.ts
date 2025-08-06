@@ -36,6 +36,8 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatExpansionModule } from '@angular/material/expansion';
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 
 // Components
 import { AppComponent } from './app.component';
@@ -182,6 +184,8 @@ const routes: Routes = [
     FormsModule,
     RouterModule.forRoot(routes),
     BrowserAnimationsModule,
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireAuthModule,
     MatExpansionModule,
     AuthModule.forRoot({
       domain: environment.auth0.domain,

@@ -1,4 +1,4 @@
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth, RecaptchaVerifier } from 'firebase/auth';
 
 // ✅ Your actual Firebase config (from Firebase console)
@@ -13,8 +13,8 @@ export const firebaseConfig = {
 };
 
 // ✅ Initialize only once
-const app = initializeApp(firebaseConfig);
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 const auth = getAuth(app);
+auth.useDeviceLanguage();
 
-export { auth };
-
+export {auth};

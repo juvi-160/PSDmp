@@ -1,39 +1,13 @@
-import { Component, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProfileService } from "../../core/services/profile.service";
 import { User, ProfileUpdateData } from "../../core/models/user.model";
 import { ToastService } from "../../core/services/toast.service";
-import { Injectable } from '@angular/core';
-
-// Firebase
-import { initializeApp, getApps } from "firebase/app";
-import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult, Auth } from "firebase/auth";
-import { firebaseConfig } from "../../environments/firebase-config";
-
-
-@Injectable({ providedIn: 'root' })
-export class FirebaseService {
-  private authInstance: Auth;
-
-  constructor() {
-    if (!getApps().length) {
-      initializeApp(firebaseConfig);
-    }
-    this.authInstance = getAuth();
-  }
-
-  getAuth(): Auth {
-    return this.authInstance;
-  }
-}
-
-
-declare global {
-  interface Window {
-    recaptchaVerifier: any;
-    recaptchaWidgetId: any;
-  }
-}
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { ConfirmationResult, signInWithPhoneNumber } from 'firebase/auth';
+import { Router } from '@angular/router';
+import { FirebaseApp } from '@angular/fire/compat';
+import { Auth, RecaptchaVerifier } from "firebase/auth";
 
 
 @Component({
@@ -42,7 +16,7 @@ declare global {
   templateUrl: "./profile.component.html",
   styleUrls: ["./profile.component.css"],
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, OnDestroy {
   profileForm!: FormGroup;
   user: User | null = null;
   loading = false;
@@ -51,13 +25,13 @@ export class ProfileComponent implements OnInit {
   otpSent = false;
   otpVerified = false;
   phoneOTP = "";
-  confirmationResult!: ConfirmationResult;
+  confirmationResult: ConfirmationResult | null = null;
   verifyingOtp = false;
   areasOfInterest: string[] = [];
   otpCode: string = '';
   recaptchaVerifier!: RecaptchaVerifier;
-
-  private auth: Auth;
+  resendCountdown = 0;
+  private countdownInterval: any;
 
   ageGroups = [
     { value: "Under 18", label: "Under 18 years" },
@@ -71,17 +45,46 @@ export class ProfileComponent implements OnInit {
     private formBuilder: FormBuilder,
     private profileService: ProfileService,
     private toast: ToastService,
-    private firebaseService: FirebaseService
-  ) {
-    this.auth = this.firebaseService.getAuth();
-  }
+    private afAuth: AngularFireAuth,
+    private router: Router,
+    private ngZone: NgZone,
+    private auth: Auth
+  ) { }
 
   ngOnInit(): void {
     this.initForm();
     this.loadProfile();
+    this.initializeRecaptcha();
   }
 
+  ngOnDestroy(): void {
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+    }
+    if (this.recaptchaVerifier) {
+      this.recaptchaVerifier.clear();
+    }
+  }
 
+  initializeRecaptcha() {
+  this.recaptchaVerifier = new RecaptchaVerifier(
+    'recaptcha-container', 
+    {
+      size: 'invisible'
+    },
+    this.afAuth
+  );
+}
+
+  startCountdown(): void {
+    this.resendCountdown = 60;
+    this.countdownInterval = setInterval(() => {
+      this.resendCountdown--;
+      if (this.resendCountdown <= 0) {
+        clearInterval(this.countdownInterval);
+      }
+    }, 1000);
+  }
 
   initForm(): void {
     this.profileForm = this.formBuilder.group({
@@ -164,7 +167,6 @@ export class ProfileComponent implements OnInit {
       agreed_to_contribute: this.profileForm.get("agreedToContribute")?.value || undefined,
     };
 
-
     this.profileService.updateUserProfile(profileData).subscribe({
       next: (updatedUser) => {
         this.user = updatedUser;
@@ -179,6 +181,81 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  sendOTP(): void {
+    const phoneNumber = this.profileForm.get('phone')?.value;
+    if (!phoneNumber) return;
+
+    this.loading = true;
+    this.startCountdown();
+    this.afAuth.signInWithPhoneNumber(phoneNumber, this.recaptchaVerifier)
+      .then((conf: any) => {
+        this.confirmationResult = conf;
+        this.otpSent = true;
+        this.toast.show('OTP sent successfully!', 'success');
+      })
+      .catch(err => {
+        console.error(err);
+        this.resendCountdown = 0;
+        clearInterval(this.countdownInterval);
+        this.toast.show(err.code === 'auth/invalid-phone-number'
+          ? 'Invalid phone number.'
+          : err.code === 'auth/too-many-requests'
+            ? 'Too many requests.'
+            : 'Failed to send OTP.', 'error');
+      })
+      .finally(() => {
+        this.loading = false;
+      });
+  }
+
+
+  phoneNumberValid(phoneNumber: string): boolean {
+    return /^\+[1-9]\d{1,14}$/.test(phoneNumber);
+  }
+
+  onOtpChange(): void {
+    if (this.otpCode.length === 6) {
+      this.verifyOTP();
+    }
+  }
+
+  verifyOTP(): void {
+    if (!this.confirmationResult) {
+      this.toast.show("Please request OTP first", "error");
+      return;
+    }
+
+    if (!this.otpCode || this.otpCode.length !== 6) {
+      this.toast.show("Please enter a valid 6-digit OTP", "error");
+      return;
+    }
+
+    this.verifyingOtp = true;
+
+    this.confirmationResult.confirm(this.otpCode)
+      .then(() => {
+        this.verifyingOtp = false;
+        this.otpVerified = true;
+        this.toast.show("Phone number verified!", "success");
+
+        // Update phone verification status with backend
+        this.profileService.markPhoneVerified().subscribe({
+          next: () => {
+            this.onSubmit(); // Submit the form after verification
+          },
+          error: (err: any) => {
+            console.error("Error updating phone verification:", err);
+            this.toast.show("Profile saved but phone verification status not updated", "error");
+          }
+        });
+      })
+      .catch((error) => {
+        this.verifyingOtp = false;
+        console.error("OTP verification failed:", error);
+        this.toast.show("Invalid OTP. Please try again.", "error");
+      });
+  }
+
   removeInterest(interest: string): void {
     const index = this.areasOfInterest.indexOf(interest);
     if (index >= 0) {
@@ -186,7 +263,6 @@ export class ProfileComponent implements OnInit {
       this.profileForm.get('areaOfInterests')?.setValue([...this.areasOfInterest]);
     }
   }
-
 
   getProfileCompletionPercentage(): number {
     if (!this.profileForm) return 0;
@@ -226,10 +302,9 @@ export class ProfileComponent implements OnInit {
   }
 
   resetForm(): void {
-    this.profileForm.reset(); // Clears the form
-    this.areasOfInterest = []; // Clears chip tags or other custom arrays
+    this.profileForm.reset();
+    this.areasOfInterest = [];
 
-    // Optionally reset form controls manually if needed:
     this.profileForm.patchValue({
       areaOfInterests: [],
       ageGroup: '',
@@ -242,128 +317,5 @@ export class ProfileComponent implements OnInit {
       agreedToTerms: false,
       phone: ''
     });
-  }
-
-  sendOTP(): void {
-    let rawPhone = this.profileForm.get("phone")?.value;
-
-    if (!rawPhone || rawPhone.length < 10) {
-      this.toast.show("Please enter a valid phone number", "error");
-      return;
-    }
-
-    // Convert to E.164 format if not already
-    rawPhone = rawPhone.trim();
-    if (!rawPhone.startsWith("+")) {
-      rawPhone = "+91" + rawPhone; // Default to India country code
-    }
-
-    // // Initialize Recaptcha
-    // window.recaptchaVerifier = new RecaptchaVerifier(
-    //   this.auth,
-    //   "recaptcha-container",
-    //   {
-    //     size: "normal",
-    //     callback: () => { },
-    //     "expired-callback": () => {
-    //       this.toast.show("reCAPTCHA expired. Please try again.", "error");
-    //     }
-    //   }
-    // );
-
-    // Check for DOM existence
-    const recaptchaContainer = document.getElementById("recaptcha-container");
-    if (!recaptchaContainer) {
-      console.error("reCAPTCHA container not found");
-      this.toast.show("reCAPTCHA container missing", "error");
-      return;
-    }
-
-    // Initialize reCAPTCHA only once
-    if (!window.recaptchaVerifier) {
-      window.recaptchaVerifier = new RecaptchaVerifier(
-        this.auth,
-        "recaptcha-container", // You can just use the ID string directly
-        {
-          size: "invisible",
-          callback: (response: any) => {
-            // reCAPTCHA solved
-          },
-          "expired-callback": () => {
-            this.toast.show("reCAPTCHA expired. Please try again.", "error");
-          },
-        }
-      );
-
-      if (!window.recaptchaWidgetId) {
-        window.recaptchaVerifier.render().then((widgetId: any) => {
-          window.recaptchaWidgetId = widgetId;
-        });
-      }
-
-    }
-
-    // Send OTP
-    signInWithPhoneNumber(this.auth, rawPhone, window.recaptchaVerifier)
-      .then((confirmationResult) => {
-        this.confirmationResult = confirmationResult;
-        this.otpSent = true;
-        this.toast.show("OTP sent successfully!", "success");
-      })
-      .catch((error) => {
-        console.error("OTP send error:", error);
-        this.toast.show("Failed to send OTP. " + error.message, "error");
-      });
-
-
-
-  }
-
-  verifyOTPAndSave(): void {
-    if (!this.phoneOTP || this.phoneOTP.length < 6) {
-      this.toast.show("Please enter a valid 6-digit OTP", "error");
-      return;
-    }
-
-    if (this.otpVerified) {
-      this.toast.show("Phone already verified.", "info");
-      return;
-    }
-
-    this.verifyingOtp = true;
-
-    this.confirmationResult
-      .confirm(this.phoneOTP)
-      .then((result) => {
-        this.verifyingOtp = false;
-        this.otpVerified = true;
-        this.toast.show("Phone number verified!", "success");
-
-        // Update phone verification status with backend
-        this.profileService.markPhoneVerified().subscribe({
-          next: () => {
-            this.onSubmit(); // Submit the form after verification
-          },
-          error: (err: any) => {
-            console.error("Error updating phone verification:", err);
-            this.toast.show("Profile saved but phone verification status not updated", "error");
-          }
-        });
-      })
-
-
-      .catch((error) => {
-        this.verifyingOtp = false;
-        console.error("OTP verification failed:", error);
-        this.toast.show("Invalid OTP. Please try again.", "error");
-      });
-  }
-
-
-}
-
-declare global {
-  interface Window {
-    recaptchaVerifier: any;
   }
 }
