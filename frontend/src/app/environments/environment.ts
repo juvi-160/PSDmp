@@ -1,7 +1,7 @@
 // src/environments/environment.ts
 export const environment = {
   production: true,
-  apiUrl: 'http://localhost:3000/api',
+  apiUrl: 'https://api.psfhyd.org/api',
   auth0: {
     domain: 'dev‑dmocg784jvwai2hb.us.auth0.com',
     clientId: 'DTt2AVJqmqoNeYOEArqFvn2CmPtt9eKI',
