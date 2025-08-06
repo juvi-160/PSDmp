@@ -3,11 +3,38 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ProfileService } from "../../core/services/profile.service";
 import { User, ProfileUpdateData } from "../../core/models/user.model";
 import { ToastService } from "../../core/services/toast.service";
+import { Injectable } from '@angular/core';
 
 // Firebase
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps } from "firebase/app";
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult, Auth } from "firebase/auth";
 import { firebaseConfig } from "../../environments/firebase-config";
+
+
+@Injectable({ providedIn: 'root' })
+export class FirebaseService {
+  private authInstance: Auth;
+
+  constructor() {
+    if (!getApps().length) {
+      initializeApp(firebaseConfig);
+    }
+    this.authInstance = getAuth();
+  }
+
+  getAuth(): Auth {
+    return this.authInstance;
+  }
+}
+
+
+declare global {
+  interface Window {
+    recaptchaVerifier: any;
+    recaptchaWidgetId: any;
+  }
+}
+
 
 @Component({
   selector: "app-profile",
@@ -43,10 +70,10 @@ export class ProfileComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private profileService: ProfileService,
-    private toast: ToastService
+    private toast: ToastService,
+    private firebaseService: FirebaseService
   ) {
-    const app = initializeApp(firebaseConfig);
-    this.auth = getAuth(app);
+    this.auth = this.firebaseService.getAuth();
   }
 
   ngOnInit(): void {
@@ -231,19 +258,52 @@ export class ProfileComponent implements OnInit {
       rawPhone = "+91" + rawPhone; // Default to India country code
     }
 
-    // Initialize Recaptcha
-    window.recaptchaVerifier = new RecaptchaVerifier(
-      this.auth,
-      "recaptcha-container",
-      {
-        size: "normal",
-        callback: () => { },
-        "expired-callback": () => {
-          this.toast.show("reCAPTCHA expired. Please try again.", "error");
-        }
-      }
-    );
+    // // Initialize Recaptcha
+    // window.recaptchaVerifier = new RecaptchaVerifier(
+    //   this.auth,
+    //   "recaptcha-container",
+    //   {
+    //     size: "normal",
+    //     callback: () => { },
+    //     "expired-callback": () => {
+    //       this.toast.show("reCAPTCHA expired. Please try again.", "error");
+    //     }
+    //   }
+    // );
 
+    // Check for DOM existence
+    const recaptchaContainer = document.getElementById("recaptcha-container");
+    if (!recaptchaContainer) {
+      console.error("reCAPTCHA container not found");
+      this.toast.show("reCAPTCHA container missing", "error");
+      return;
+    }
+
+    // Initialize reCAPTCHA only once
+    if (!window.recaptchaVerifier) {
+      window.recaptchaVerifier = new RecaptchaVerifier(
+        this.auth,
+        "recaptcha-container", // You can just use the ID string directly
+        {
+          size: "invisible",
+          callback: (response: any) => {
+            // reCAPTCHA solved
+          },
+          "expired-callback": () => {
+            this.toast.show("reCAPTCHA expired. Please try again.", "error");
+          },
+        }
+      );
+
+      if (!window.recaptchaWidgetId) {
+        window.recaptchaVerifier.render().then((widgetId: any) => {
+          window.recaptchaWidgetId = widgetId;
+        });
+      }
+
+    }
+
+    // Send OTP
     signInWithPhoneNumber(this.auth, rawPhone, window.recaptchaVerifier)
       .then((confirmationResult) => {
         this.confirmationResult = confirmationResult;
@@ -255,7 +315,8 @@ export class ProfileComponent implements OnInit {
         this.toast.show("Failed to send OTP. " + error.message, "error");
       });
 
-      
+
+
   }
 
   verifyOTPAndSave(): void {
@@ -290,7 +351,7 @@ export class ProfileComponent implements OnInit {
         });
       })
 
-      
+
       .catch((error) => {
         this.verifyingOtp = false;
         console.error("OTP verification failed:", error);
@@ -298,7 +359,7 @@ export class ProfileComponent implements OnInit {
       });
   }
 
-  
+
 }
 
 declare global {

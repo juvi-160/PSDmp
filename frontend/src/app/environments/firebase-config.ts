@@ -1,20 +1,20 @@
-// src/app/environments/firebase-config.ts
-
 import { initializeApp } from 'firebase/app';
-import { getAnalytics } from 'firebase/analytics';
+import { getAuth, RecaptchaVerifier } from 'firebase/auth';
 
+// ✅ Your actual Firebase config (from Firebase console)
 export const firebaseConfig = {
-  apiKey: "AIzaSyAmRwzDEIWXOBPkB77fNZT5MFPrvIOkZjQ",
-  authDomain: "psf-sms.firebaseapp.com",
-  projectId: "psf-sms",
-  storageBucket: "psf-sms.appspot.com", // ✅ Corrected
-  messagingSenderId: "88557324244",
-  appId: "1:88557324244:web:2accb2d98f8722a5fbf841",
-  measurementId: "G-0Z0ZS86GC8"
+  apiKey: "AIzaSyC6__rQOqNeuW2nMJwiBAgXjw-7Fr6lDb4",
+  authDomain: "psf-membership.firebaseapp.com",
+  projectId: "psf-membership",
+  storageBucket: "psf-membership.appspot.com",
+  messagingSenderId: "447894410735",
+  appId: "1:447894410735:web:b915f6ed0963cb6af1521a",
+  measurementId: "G-6C1FX4YNL3"
 };
 
-// ✅ Initialize and export Firebase app
-export const firebaseApp = initializeApp(firebaseConfig);
+// ✅ Initialize only once
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-// ✅ Optionally export analytics
-export const analytics = getAnalytics(firebaseApp);
+export { auth };
+

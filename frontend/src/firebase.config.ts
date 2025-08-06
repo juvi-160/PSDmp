@@ -1,20 +1,18 @@
-
+// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAuth, RecaptchaVerifier } from "firebase/auth";
+import { getAnalytics } from "firebase/analytics";
 
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAmRwzDEIWXOBPkB77fNZT5MFPrvIOkZjQ",
-  authDomain: "psf-sms.firebaseapp.com",
-  projectId: "psf-sms",
-  storageBucket: "psf-sms.firebasestorage.app",
-  messagingSenderId: "88557324244",
-  appId: "1:88557324244:web:2accb2d98f8722a5fbf841",
-  measurementId: "G-0Z0ZS86GC8"
+export const firebaseConfig = {
+  apiKey: "AIzaSyC6__rQOqNeuW2nMJwiBAgXjw-7Fr6lDb4",
+  authDomain: "psf-membership.firebaseapp.com",
+  projectId: "psf-membership",
+  storageBucket: "psf-membership.firebasestorage.app",
+  messagingSenderId: "447894410735",
+  appId: "1:447894410735:web:b915f6ed0963cb6af1521a",
+  measurementId: "G-6C1FX4YNL3"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-export { app, auth, RecaptchaVerifier };
+const analytics = getAnalytics(app);

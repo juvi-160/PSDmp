@@ -150,7 +150,7 @@ export class PaymentComponent implements OnInit {
     this.loading = true;
     this.authService.currentUser.subscribe({
       next: (user: User | null) => {
-         console.log('API Response:', JSON.stringify(user, null, 2));
+        console.log('API Response:', JSON.stringify(user, null, 2));
         if (!user) {
           this.router.navigate(["/"]);
           return;
@@ -174,9 +174,14 @@ export class PaymentComponent implements OnInit {
         this.profileCompleted = this.user.profileCompleted || false;
 
         // Only redirect if profile is already completed and payment not needed
-        if (this.profileCompleted &&
-          (this.user.role === 'admin' || this.user.role === 'associate member')) {
-          this.router.navigate(["/dashboard"]);
+        if (this.profileCompleted) {
+          if (this.user.role === 'associate member') {
+            // Associate members and admins can proceed to dashboard after profile completion
+            this.router.navigate(["/dashboard"]);
+          } else if (this.user.hasPaid) {
+            // Other members need to have paid to go to dashboard
+            this.router.navigate(["/dashboard"]);
+          }
         }
 
         this.initProfileForm(this.user);
@@ -289,7 +294,13 @@ export class PaymentComponent implements OnInit {
         this.saving = false;
         this.toast.show("Profile updated successfully!", "success");
         this.checkProfileCompletion();
+
+        // Add null check for this.user
+        if (this.user && (this.user.role === 'associate member')) {
+          this.router.navigate(['/dashboard']);
+        }
       },
+
       error: (error: any) => {
         this.saving = false;
         this.toast.show("Failed to update profile. Please try again.", "error");
