@@ -141,7 +141,7 @@ export class AuthService {
   updateUserProfile(profileData: ProfileUpdateData): Observable<User> {
     return this.getAccessToken().pipe(
       switchMap((token: string) => {
-        return this.http.put<User>(`https://api.psfhyd.org/api/profile`, profileData, {
+        return this.http.put<User>(`http://localhost:3000/api/profile`, profileData, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -204,7 +204,7 @@ export class AuthService {
   getUserProfile(): Observable<User> {
     return this.getAccessToken().pipe(
       switchMap((token) => {
-        return this.http.get<User>(`https://api.psfhyd.org/api/profile`, {
+        return this.http.get<User>(`http://localhost:3000/api/profile`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -231,7 +231,7 @@ export class AuthService {
   markPhoneVerified(): Observable<any> {
     return this.getAccessToken().pipe(
       switchMap((token: string) => {
-        return this.http.post<any>(`https://api.psfhyd.org/api/mark-phone-verified`, {}, {
+        return this.http.post<any>(`http://localhost:3000/api/mark-phone-verified`, {}, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",

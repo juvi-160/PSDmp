@@ -38,6 +38,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatExpansionModule } from '@angular/material/expansion';
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
+import { provideAuth, getAuth } from '@angular/fire/auth';
 
 // Components
 import { AppComponent } from './app.component';

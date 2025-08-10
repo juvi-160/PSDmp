@@ -154,202 +154,203 @@
 
         <!-- reCAPTCHA container (hidden) -->
         <div id="recaptcha-container" class="hidden"></div>
+      </div>
 
-        <!-- Personal Details Section -->
-        <div class="mb-8 pb-6 border-b border-gray-200">
-          <h3 class="text-lg font-semibold text-teal-700 mb-4 flex items-center gap-2">
-            <span class="w-2 h-5 bg-teal-700 rounded"></span>
-            Personal Details
-          </h3>
+      <!-- Personal Details Section -->
+      <div class="mb-8 pb-6 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-teal-700 mb-4 flex items-center gap-2">
+          <span class="w-2 h-5 bg-teal-700 rounded"></span>
+          Personal Details
+        </h3>
 
-          <div class="mb-5">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Age Group</label>
-            <select formControlName="ageGroup" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-              <option value="" disabled selected>Select your age group</option>
-              <option *ngFor="let group of ageGroups" [value]="group.value">{{ group.label }}</option>
-            </select>
-          </div>
-
-          <div class="mb-5">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Profession</label>
-            <div class="relative">
-              <input type="text" formControlName="profession" placeholder="What do you do for work?"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-              <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd"
-                    d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z"
-                    clip-rule="evenodd" />
-                  <path
-                    d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z" />
-                </svg>
-              </div>
-            </div>
-            <p *ngIf="profileForm.get('profession')?.hasError('maxlength')" class="mt-1 text-xs text-red-500">
-              Profession cannot exceed 100 characters
-            </p>
-          </div>
-
-          <div class="mb-5">
-            <label class="block text-sm font-medium text-gray-700 mb-1">City</label>
-            <div class="relative">
-              <input type="text" formControlName="city" placeholder="Which city do you live in?"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-              <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd"
-                    d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-                    clip-rule="evenodd" />
-                </svg>
-              </div>
-            </div>
-            <p *ngIf="profileForm.get('city')?.hasError('maxlength')" class="mt-1 text-xs text-red-500">
-              City name cannot exceed 50 characters
-            </p>
-          </div>
-
-          <!-- Company and Position Fields -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="mb-5">
-              <label class="block text-sm font-medium text-gray-700 mb-1">Company</label>
-              <div class="relative">
-                <input type="text" formControlName="company" placeholder="Your company name"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd"
-                      d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z"
-                      clip-rule="evenodd" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            <div class="mb-5">
-              <label class="block text-sm font-medium text-gray-700 mb-1">Position</label>
-              <div class="relative">
-                <input type="text" formControlName="position" placeholder="Your position"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path
-                      d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v1h8v-1zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-1a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v1h-3zM4.75 12.094A5.973 5.973 0 004 15v1H1v-1a3 3 0 013.75-2.906z" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div class="mb-5">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Age Group</label>
+          <select formControlName="ageGroup" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            <option value="" disabled selected>Select your age group</option>
+            <option *ngFor="let group of ageGroups" [value]="group.value">{{ group.label }}</option>
+          </select>
         </div>
 
-        <!-- Areas of Interest -->
-        <div class="mb-8 pb-6 border-b border-gray-200">
-          <h3 class="text-lg font-semibold text-teal-700 mb-4 flex items-center gap-2">
-            <span class="w-2 h-5 bg-teal-700 rounded"></span>
-            Areas of Interest
-          </h3>
-
-          <div class="mb-5">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Add your interests</label>
-            <div class="flex flex-wrap gap-2 p-2 border border-gray-300 rounded-lg min-h-12">
-              <div *ngFor="let interest of areasOfInterest"
-                class="flex items-center bg-teal-100 text-teal-800 px-3 py-1 rounded-full text-sm">
-                {{ interest }}
-                <button type="button" (click)="removeInterest(interest)" class="ml-1 text-teal-600 hover:text-teal-800">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd"
-                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                      clip-rule="evenodd" />
-                  </svg>
-                </button>
-              </div>
-              <input type="text" placeholder="Type and press Enter to add interests..."
-                (keydown.enter)="addInterest($event)"
-                class="flex-1 min-w-[200px] px-2 py-1 border-0 focus:ring-0 focus:outline-none">
-            </div>
-            <p class="mt-1 text-xs text-gray-500">Add topics you're passionate about (e.g., Technology, Healthcare,
-              Education)</p>
-          </div>
-        </div>
-
-        <!-- About You Section -->
-        <div class="mb-8 pb-6 border-b border-gray-200">
-          <h3 class="text-lg font-semibold text-teal-700 mb-4 flex items-center gap-2">
-            <span class="w-2 h-5 bg-teal-700 rounded"></span>
-            About You
-          </h3>
-
-          <div class="mb-5">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Why PSF?</label>
-            <textarea formControlName="aboutYou" rows="4"
-              placeholder="Tell us why you joined PSF and what you hope to achieve..."
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg"></textarea>
-            <div class="flex justify-between mt-1">
-              <p *ngIf="profileForm.get('aboutYou')?.hasError('maxlength')" class="text-xs text-red-500">
-                Description cannot exceed 500 characters
-              </p>
-              <p class="text-xs text-gray-500">
-                {{ profileForm.get('aboutYou')?.value?.length || 0 }}/500
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Agreement Section -->
-        <div class="mb-6">
-          <h3 class="text-lg font-semibold text-teal-700 mb-4 flex items-center gap-2">
-            <span class="w-2 h-5 bg-teal-700 rounded"></span>
-            Agreements
-          </h3>
-
-          <div class="space-y-4">
-            <div class="flex items-start">
-              <div class="flex items-center h-5">
-                <input id="agreedToTerms" formControlName="agreedToTerms" type="checkbox"
-                  class="focus:ring-teal-500 h-4 w-4 text-teal-600 border-gray-300 rounded">
-              </div>
-              <div class="ml-3 text-sm">
-                <label for="agreedToTerms" class="font-medium text-gray-700">I agree to the Terms and Conditions</label>
-                <p class="text-gray-500">By checking this box, you agree to our terms of service and privacy policy.</p>
-              </div>
-            </div>
-
-            <div class="flex items-start">
-              <div class="flex items-center h-5">
-                <input id="agreedToContribute" formControlName="agreedToContribute" type="checkbox"
-                  class="focus:ring-teal-500 h-4 w-4 text-teal-600 border-gray-300 rounded">
-              </div>
-              <div class="ml-3 text-sm">
-                <label for="agreedToContribute" class="font-medium text-gray-700">I agree to contribute to PSF
-                  initiatives</label>
-                <p class="text-gray-500">By checking this box, you agree to participate in PSF activities and
-                  initiatives.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Form Actions -->
-        <div class="flex flex-col sm:flex-row justify-end gap-4 mt-8">
-          <button type="button" (click)="loadProfile()" [disabled]="saving"
-            class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50">
-            Reset
-          </button>
-          <button type="submit" [disabled]="profileForm.invalid || saving"
-            class="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:bg-teal-400 disabled:cursor-not-allowed">
-            <span *ngIf="!saving">Save Profile</span>
-            <span *ngIf="saving" class="flex items-center justify-center">
-              <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
-                viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                </path>
+        <div class="mb-5">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Profession</label>
+          <div class="relative">
+            <input type="text" formControlName="profession" placeholder="What do you do for work?"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd"
+                  d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z"
+                  clip-rule="evenodd" />
+                <path
+                  d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z" />
               </svg>
-              Saving...
-            </span>
-          </button>
+            </div>
+          </div>
+          <p *ngIf="profileForm.get('profession')?.hasError('maxlength')" class="mt-1 text-xs text-red-500">
+            Profession cannot exceed 100 characters
+          </p>
         </div>
+
+        <div class="mb-5">
+          <label class="block text-sm font-medium text-gray-700 mb-1">City</label>
+          <div class="relative">
+            <input type="text" formControlName="city" placeholder="Which city do you live in?"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd"
+                  d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                  clip-rule="evenodd" />
+              </svg>
+            </div>
+          </div>
+          <p *ngIf="profileForm.get('city')?.hasError('maxlength')" class="mt-1 text-xs text-red-500">
+            City name cannot exceed 50 characters
+          </p>
+        </div>
+
+        <!-- Company and Position Fields -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="mb-5">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Company</label>
+            <div class="relative">
+              <input type="text" formControlName="company" placeholder="Your company name"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+              <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd"
+                    d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z"
+                    clip-rule="evenodd" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-5">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Position</label>
+            <div class="relative">
+              <input type="text" formControlName="position" placeholder="Your position"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+              <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path
+                    d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v1h8v-1zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-1a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v1h-3zM4.75 12.094A5.973 5.973 0 004 15v1H1v-1a3 3 0 013.75-2.906z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Areas of Interest -->
+      <div class="mb-8 pb-6 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-teal-700 mb-4 flex items-center gap-2">
+          <span class="w-2 h-5 bg-teal-700 rounded"></span>
+          Areas of Interest
+        </h3>
+
+        <div class="mb-5">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Add your interests</label>
+          <div class="flex flex-wrap gap-2 p-2 border border-gray-300 rounded-lg min-h-12">
+            <div *ngFor="let interest of areasOfInterest"
+              class="flex items-center bg-teal-100 text-teal-800 px-3 py-1 rounded-full text-sm">
+              {{ interest }}
+              <button type="button" (click)="removeInterest(interest)" class="ml-1 text-teal-600 hover:text-teal-800">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd"
+                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                    clip-rule="evenodd" />
+                </svg>
+              </button>
+            </div>
+            <input type="text" placeholder="Type and press Enter to add interests..."
+              (keydown.enter)="addInterest($event)"
+              class="flex-1 min-w-[200px] px-2 py-1 border-0 focus:ring-0 focus:outline-none">
+          </div>
+          <p class="mt-1 text-xs text-gray-500">Add topics you're passionate about (e.g., Technology, Healthcare,
+            Education)</p>
+        </div>
+      </div>
+
+      <!-- About You Section -->
+      <div class="mb-8 pb-6 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-teal-700 mb-4 flex items-center gap-2">
+          <span class="w-2 h-5 bg-teal-700 rounded"></span>
+          About You
+        </h3>
+
+        <div class="mb-5">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Why PSF?</label>
+          <textarea formControlName="aboutYou" rows="4"
+            placeholder="Tell us why you joined PSF and what you hope to achieve..."
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg"></textarea>
+          <div class="flex justify-between mt-1">
+            <p *ngIf="profileForm.get('aboutYou')?.hasError('maxlength')" class="text-xs text-red-500">
+              Description cannot exceed 500 characters
+            </p>
+            <p class="text-xs text-gray-500">
+              {{ profileForm.get('aboutYou')?.value?.length || 0 }}/500
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Agreement Section -->
+      <div class="mb-6">
+        <h3 class="text-lg font-semibold text-teal-700 mb-4 flex items-center gap-2">
+          <span class="w-2 h-5 bg-teal-700 rounded"></span>
+          Agreements
+        </h3>
+
+        <div class="space-y-4">
+          <div class="flex items-start">
+            <div class="flex items-center h-5">
+              <input id="agreedToTerms" formControlName="agreedToTerms" type="checkbox"
+                class="focus:ring-teal-500 h-4 w-4 text-teal-600 border-gray-300 rounded">
+            </div>
+            <div class="ml-3 text-sm">
+              <label for="agreedToTerms" class="font-medium text-gray-700">I agree to the Terms and Conditions</label>
+              <p class="text-gray-500">By checking this box, you agree to our terms of service and privacy policy.</p>
+            </div>
+          </div>
+
+          <div class="flex items-start">
+            <div class="flex items-center h-5">
+              <input id="agreedToContribute" formControlName="agreedToContribute" type="checkbox"
+                class="focus:ring-teal-500 h-4 w-4 text-teal-600 border-gray-300 rounded">
+            </div>
+            <div class="ml-3 text-sm">
+              <label for="agreedToContribute" class="font-medium text-gray-700">I agree to contribute to PSF
+                initiatives</label>
+              <p class="text-gray-500">By checking this box, you agree to participate in PSF activities and
+                initiatives.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="flex flex-col sm:flex-row justify-end gap-4 mt-8">
+        <button type="button" (click)="loadProfile()" [disabled]="saving"
+          class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50">
+          Reset
+        </button>
+        <button type="submit" [disabled]="profileForm.invalid || saving"
+          class="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:bg-teal-400 disabled:cursor-not-allowed">
+          <span *ngIf="!saving">Save Profile</span>
+          <span *ngIf="saving" class="flex items-center justify-center">
+            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+              viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+              </path>
+            </svg>
+            Saving...
+          </span>
+        </button>
+      </div>
     </form>
   </div>
 </div>

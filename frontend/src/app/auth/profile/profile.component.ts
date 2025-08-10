@@ -1,14 +1,15 @@
-import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProfileService } from "../../core/services/profile.service";
 import { User, ProfileUpdateData } from "../../core/models/user.model";
 import { ToastService } from "../../core/services/toast.service";
-import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { ConfirmationResult, signInWithPhoneNumber } from 'firebase/auth';
 import { Router } from '@angular/router';
-import { FirebaseApp } from '@angular/fire/compat';
-import { Auth, RecaptchaVerifier } from "firebase/auth";
+import { NgZone } from '@angular/core';
 
+import { Auth, RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from 'firebase/auth';
+import { inject as angularInject } from '@angular/core';
+import { FirebaseApp } from '@angular/fire/app';
+import { getAuth } from '@angular/fire/auth';
 
 @Component({
   selector: "app-profile",
@@ -33,6 +34,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
   resendCountdown = 0;
   private countdownInterval: any;
 
+  // ✅ Correct inject for modular Auth
+  auth: Auth = getAuth(angularInject(FirebaseApp));
+
   ageGroups = [
     { value: "Under 18", label: "Under 18 years" },
     { value: "18-25", label: "18-25 years" },
@@ -45,44 +49,37 @@ export class ProfileComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private profileService: ProfileService,
     private toast: ToastService,
-    private afAuth: AngularFireAuth,
     private router: Router,
     private ngZone: NgZone,
-    private auth: Auth
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.initForm();
     this.loadProfile();
-    this.initializeRecaptcha();
+
+    // ✅ Correct RecaptchaVerifier usage
+    this.recaptchaVerifier = new RecaptchaVerifier(
+      this.auth,
+      'recaptcha-container',
+      {
+        size: 'invisible',
+        callback: (response: any) => {
+          console.log("reCAPTCHA resolved", response);
+        },
+      },
+    );
   }
 
   ngOnDestroy(): void {
-    if (this.countdownInterval) {
-      clearInterval(this.countdownInterval);
-    }
-    if (this.recaptchaVerifier) {
-      this.recaptchaVerifier.clear();
-    }
+    if (this.countdownInterval) clearInterval(this.countdownInterval);
+    if (this.recaptchaVerifier) this.recaptchaVerifier.clear();
   }
-
-  initializeRecaptcha() {
-  this.recaptchaVerifier = new RecaptchaVerifier(
-    'recaptcha-container', 
-    {
-      size: 'invisible'
-    },
-    this.afAuth
-  );
-}
 
   startCountdown(): void {
     this.resendCountdown = 60;
     this.countdownInterval = setInterval(() => {
       this.resendCountdown--;
-      if (this.resendCountdown <= 0) {
-        clearInterval(this.countdownInterval);
-      }
+      if (this.resendCountdown <= 0) clearInterval(this.countdownInterval);
     }, 1000);
   }
 
@@ -110,16 +107,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.profileService.getUserProfile().subscribe({
       next: (user) => {
         this.user = user;
-        if (typeof user.area_of_interests === 'string') {
-          try {
-            this.areasOfInterest = JSON.parse(user.area_of_interests);
-          } catch (e) {
-            console.error('Failed to parse areas_of_interests:', e);
-            this.areasOfInterest = [];
-          }
-        } else {
-          this.areasOfInterest = user.area_of_interests || [];
-        }
+        this.areasOfInterest = typeof user.area_of_interests === 'string'
+          ? JSON.parse(user.area_of_interests || '[]')
+          : user.area_of_interests || [];
 
         this.otpVerified = user.isPhoneVerified || false;
 
@@ -132,7 +122,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
           city: user.city || "",
           company: user.company || "",
           position: user.position || "",
-          areaOfInterests: user.area_of_interests || [],
+          areaOfInterests: this.areasOfInterest,
           aboutYou: user.about_you || "",
           agreedToTerms: user.agreed_to_terms || false,
           agreedToContribute: user.agreed_to_contribute || false,
@@ -140,11 +130,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
         this.loading = false;
       },
-      error: (error) => {
+      error: () => {
         this.error = "Failed to load profile. Please try again.";
         this.loading = false;
-        console.error("Error loading profile:", error);
-      },
+      }
     });
   }
 
@@ -161,7 +150,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       city: this.profileForm.get("city")?.value || undefined,
       company: this.profileForm.get("company")?.value || undefined,
       position: this.profileForm.get("position")?.value || undefined,
-      area_of_interests: Array.isArray(areaOfInterestsValue) && areaOfInterestsValue.length > 0 ? areaOfInterestsValue : undefined,
+      area_of_interests: Array.isArray(areaOfInterestsValue) ? areaOfInterestsValue : undefined,
       about_you: this.profileForm.get("aboutYou")?.value || undefined,
       agreed_to_terms: this.profileForm.get("agreedToTerms")?.value || undefined,
       agreed_to_contribute: this.profileForm.get("agreedToContribute")?.value || undefined,
@@ -173,9 +162,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.saving = false;
         this.toast.show("Profile updated successfully!", "success");
       },
-      error: (error) => {
+      error: () => {
         this.saving = false;
-        console.error("Error updating profile:", error);
         this.toast.show("Failed to update profile. Please try again.", "error");
       },
     });
@@ -187,9 +175,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     this.loading = true;
     this.startCountdown();
-    this.afAuth.signInWithPhoneNumber(phoneNumber, this.recaptchaVerifier)
-      .then((conf: any) => {
-        this.confirmationResult = conf;
+
+    signInWithPhoneNumber(this.auth, phoneNumber, this.recaptchaVerifier)
+      .then((confirmation) => {
+        this.confirmationResult = confirmation;
         this.otpSent = true;
         this.toast.show('OTP sent successfully!', 'success');
       })
@@ -206,17 +195,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
       .finally(() => {
         this.loading = false;
       });
-  }
-
-
-  phoneNumberValid(phoneNumber: string): boolean {
-    return /^\+[1-9]\d{1,14}$/.test(phoneNumber);
-  }
-
-  onOtpChange(): void {
-    if (this.otpCode.length === 6) {
-      this.verifyOTP();
-    }
   }
 
   verifyOTP(): void {
@@ -238,11 +216,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.otpVerified = true;
         this.toast.show("Phone number verified!", "success");
 
-        // Update phone verification status with backend
         this.profileService.markPhoneVerified().subscribe({
-          next: () => {
-            this.onSubmit(); // Submit the form after verification
-          },
+          next: () => this.onSubmit(),
           error: (err: any) => {
             console.error("Error updating phone verification:", err);
             this.toast.show("Profile saved but phone verification status not updated", "error");
@@ -256,6 +231,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
       });
   }
 
+  phoneNumberValid(phoneNumber: string): boolean {
+    return /^\+[1-9]\d{1,14}$/.test(phoneNumber);
+  }
+
+  onOtpChange(): void {
+    if (this.otpCode.length === 6) this.verifyOTP();
+  }
+
   removeInterest(interest: string): void {
     const index = this.areasOfInterest.indexOf(interest);
     if (index >= 0) {
@@ -265,8 +248,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   getProfileCompletionPercentage(): number {
-    if (!this.profileForm) return 0;
-
     const fields = [
       this.profileForm.get("phone")?.value,
       this.profileForm.get("ageGroup")?.value,
@@ -278,16 +259,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
       this.areasOfInterest.length > 0 ? "yes" : "",
       this.profileForm.get("agreedToTerms")?.value ? "yes" : "",
     ];
-
     const completedFields = fields.filter((field) => !!field && field.toString().trim().length > 0).length;
     return Math.round((completedFields / fields.length) * 100);
-  }
-
-  formatRoleName(role: string | undefined): string {
-    if (!role) return '';
-    return role.split(' ').map(word =>
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
   }
 
   addInterest(event: Event): void {
@@ -317,5 +290,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
       agreedToTerms: false,
       phone: ''
     });
+  }
+
+  formatRoleName(role: string | undefined): string {
+    if (!role) return '';
+    return role.split(' ').map(word =>
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
   }
 }
