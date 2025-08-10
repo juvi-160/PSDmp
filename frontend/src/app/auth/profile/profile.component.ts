@@ -3,8 +3,17 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProfileService } from "../../core/services/profile.service";
 import { User, ProfileUpdateData } from "../../core/models/user.model";
 import { ToastService } from "../../core/services/toast.service";
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+// import { Auth, RecaptchaVerifier, ConfirmationResult, signInWithPhoneNumber } from 'firebase/auth';
 import { Router } from '@angular/router';
-import { NgZone } from '@angular/core';
+import { FirebaseApp } from '@angular/fire/compat';
+import {
+  Auth,
+  RecaptchaVerifier,
+  signInWithPhoneNumber,
+} from '@angular/fire/auth';
+import type { ConfirmationResult } from 'firebase/auth';
+
 
 import { Auth, RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from 'firebase/auth';
 import { inject as angularInject } from '@angular/core';
@@ -17,6 +26,7 @@ import { getAuth } from '@angular/fire/auth';
   templateUrl: "./profile.component.html",
   styleUrls: ["./profile.component.css"],
 })
+
 export class ProfileComponent implements OnInit, OnDestroy {
   profileForm!: FormGroup;
   user: User | null = null;
@@ -30,7 +40,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
   verifyingOtp = false;
   areasOfInterest: string[] = [];
   otpCode: string = '';
+
   recaptchaVerifier!: RecaptchaVerifier;
+
   resendCountdown = 0;
   private countdownInterval: any;
 
@@ -71,8 +83,19 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.countdownInterval) clearInterval(this.countdownInterval);
-    if (this.recaptchaVerifier) this.recaptchaVerifier.clear();
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+    }
+    if (this.recaptchaVerifier) {
+      this.recaptchaVerifier.clear();
+    }
+  }
+
+  initializeRecaptcha() {
+    this.recaptchaVerifier = new RecaptchaVerifier(this.auth,
+      'recaptcha-container',
+      { size: 'invisible' }
+    );
   }
 
   startCountdown(): void {
