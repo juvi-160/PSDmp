@@ -169,15 +169,12 @@ const routes: Routes = [
     TicketManagementComponent,
     EventRsvpsComponent,
     TicketDetailsComponent,
-
     MembershipSelectionComponent,
     MemberComponent,
     InviteComponent,
-    MemberComponent,
     PaymentHistoryComponent,
     ContributeComponent,
     ToastComponent,
-    TicketDetailsComponent,
     FeedbackComponent,
   ],
   imports: [
@@ -226,7 +223,8 @@ const routes: Routes = [
     MatRadioModule,
     MatAutocompleteModule,
     MatSlideToggleModule,
-    MatTooltipModule
+    MatTooltipModule,
+    
   ],
   providers: [
     provideHttpClient(),
