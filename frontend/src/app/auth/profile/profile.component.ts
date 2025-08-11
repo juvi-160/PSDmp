@@ -4,16 +4,7 @@ import { ProfileService } from "../../core/services/profile.service";
 import { User, ProfileUpdateData } from "../../core/models/user.model";
 import { ToastService } from "../../core/services/toast.service";
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-// import { Auth, RecaptchaVerifier, ConfirmationResult, signInWithPhoneNumber } from 'firebase/auth';
 import { Router } from '@angular/router';
-import { FirebaseApp } from '@angular/fire/compat';
-import {
-  Auth,
-  RecaptchaVerifier,
-  signInWithPhoneNumber,
-} from '@angular/fire/auth';
-import type { ConfirmationResult } from 'firebase/auth';
-
 
 import { Auth, RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from 'firebase/auth';
 import { inject as angularInject } from '@angular/core';
@@ -47,7 +38,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   private countdownInterval: any;
 
   // ✅ Correct inject for modular Auth
-  auth: Auth = getAuth(angularInject(FirebaseApp));
+  //auth: Auth = getAuth(angularInject(FirebaseApp));
 
   ageGroups = [
     { value: "Under 18", label: "Under 18 years" },
@@ -62,7 +53,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
     private profileService: ProfileService,
     private toast: ToastService,
     private router: Router,
-    private ngZone: NgZone,
+    private auth: Auth,
+    // private ngZone: NgZone,
   ) {}
 
   ngOnInit(): void {

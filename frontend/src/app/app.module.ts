@@ -36,12 +36,13 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatExpansionModule } from '@angular/material/expansion';
-import { AngularFireModule } from '@angular/fire/compat';
-import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { provideAuth, getAuth } from '@angular/fire/auth';
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
+import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 
 // Components
 import { AppComponent } from './app.component';
+import { AppRoutingModule } from './app-routing.module';
 import { RegisterComponent } from './auth/register/register.component';
 import { HomeComponent } from './auth/home/home.component';
 import { LoginComponent } from './auth/login/login.component';
@@ -185,8 +186,7 @@ const routes: Routes = [
     FormsModule,
     RouterModule.forRoot(routes),
     BrowserAnimationsModule,
-    AngularFireModule.initializeApp(environment.firebase),
-    AngularFireAuthModule,
+    AppRoutingModule,
     MatExpansionModule,
     AuthModule.forRoot({
       domain: environment.auth0.domain,
@@ -229,8 +229,11 @@ const routes: Routes = [
   ],
   providers: [
     provideHttpClient(),
-    AdminGuard
+    AdminGuard,
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+  provideAuth(() => getAuth()),
+  provideFirestore(() => getFirestore())
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }
