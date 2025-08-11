@@ -6,14 +6,13 @@ import { ToastService } from "../../core/services/toast.service";
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
 
-import { Auth, RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from 'firebase/auth';
+import { Auth, RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from '@angular/fire/auth';
 import { inject as angularInject } from '@angular/core';
 import { FirebaseApp } from '@angular/fire/app';
 import { getAuth } from '@angular/fire/auth';
 
 @Component({
   selector: "app-profile",
-  standalone: false,
   templateUrl: "./profile.component.html",
   styleUrls: ["./profile.component.css"],
 })
