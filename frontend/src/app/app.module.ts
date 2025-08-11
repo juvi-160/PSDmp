@@ -222,14 +222,12 @@ const routes: Routes = [
     MatRadioModule,
     MatAutocompleteModule,
     MatSlideToggleModule,
-    MatTooltipModule
+    MatTooltipModule,
+    
   ],
   providers: [
     provideHttpClient(),
     AdminGuard,
-    provideFirebaseApp(() => initializeApp(environment.firebase)),
-  provideAuth(() => getAuth()),
-  provideFirestore(() => getFirestore())
   ],
   bootstrap: [AppComponent]
 })
