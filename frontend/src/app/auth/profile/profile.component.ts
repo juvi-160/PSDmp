@@ -16,6 +16,7 @@ import { getAuth } from '@angular/fire/auth';
   standalone: false,
   templateUrl: "./profile.component.html",
   styleUrls: ["./profile.component.css"],
+  standalone: false
 })
 
 export class ProfileComponent implements OnInit, OnDestroy {
