@@ -168,15 +168,12 @@ const routes: Routes = [
     TicketManagementComponent,
     EventRsvpsComponent,
     TicketDetailsComponent,
-
     MembershipSelectionComponent,
     MemberComponent,
     InviteComponent,
-    MemberComponent,
     PaymentHistoryComponent,
     ContributeComponent,
     ToastComponent,
-    TicketDetailsComponent,
     FeedbackComponent,
   ],
   imports: [
