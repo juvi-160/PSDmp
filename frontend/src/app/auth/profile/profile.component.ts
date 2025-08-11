@@ -3,13 +3,15 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProfileService } from "../../core/services/profile.service";
 import { User, ProfileUpdateData } from "../../core/models/user.model";
 import { ToastService } from "../../core/services/toast.service";
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+// import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
 
-import { Auth, RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from '@angular/fire/auth';
-import { inject as angularInject } from '@angular/core';
-import { FirebaseApp } from '@angular/fire/app';
-import { getAuth } from '@angular/fire/auth';
+// import { Auth, RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from '@angular/fire/auth';
+import { RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from 'firebase/auth';
+import { Auth } from '@angular/fire/auth';
+// import { inject as angularInject } from '@angular/core';
+// import { FirebaseApp } from '@angular/fire/app';
+// import { getAuth } from '@angular/fire/auth';
 
 @Component({
   selector: "app-profile",
@@ -19,6 +21,8 @@ import { getAuth } from '@angular/fire/auth';
 })
 
 export class ProfileComponent implements OnInit, OnDestroy {
+  private auth = inject(Auth);
+
   profileForm!: FormGroup;
   user: User | null = null;
   loading = false;
@@ -53,25 +57,30 @@ export class ProfileComponent implements OnInit, OnDestroy {
     private profileService: ProfileService,
     private toast: ToastService,
     private router: Router,
-    private auth: Auth,
+    // private auth: Auth,
     // private ngZone: NgZone,
   ) {}
+  
 
   ngOnInit(): void {
     this.initForm();
     this.loadProfile();
 
     // ✅ Correct RecaptchaVerifier usage
-    this.recaptchaVerifier = new RecaptchaVerifier(
-      this.auth,
-      'recaptcha-container',
-      {
-        size: 'invisible',
-        callback: (response: any) => {
-          console.log("reCAPTCHA resolved", response);
-        },
-      },
-    );
+    // this.recaptchaVerifier = new RecaptchaVerifier(
+    //   this.auth,
+    //   'recaptcha-container',
+    //   {
+    //     size: 'invisible',
+    //     callback: (response: any) => {
+    //       console.log("reCAPTCHA resolved", response);
+    //     },
+    //   },
+    // );
+  }
+
+  async ngAfterViewInit() {
+    await this.ensureRecaptcha();
   }
 
   ngOnDestroy(): void {
@@ -81,6 +90,29 @@ export class ProfileComponent implements OnInit, OnDestroy {
     if (this.recaptchaVerifier) {
       this.recaptchaVerifier.clear();
     }
+  }
+
+  private async ensureRecaptcha() {
+    if (this.recaptchaVerifier) return;
+
+    // Try to find the element
+    let el = document.getElementById('recaptcha-container');
+
+    // If not found (e.g., gated by *ngIf), create one on <body>
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'recaptcha-container';
+      el.style.display = 'none';
+      document.body.appendChild(el);
+    }
+
+    this.recaptchaVerifier = new RecaptchaVerifier(
+      this.auth,
+      el, // you can pass the HTMLElement instead of the ID
+      { size: 'invisible', 'expired-callback': () => this.recaptchaVerifier?.clear() }
+    );
+
+    await this.recaptchaVerifier.render();
   }
 
   initializeRecaptcha() {

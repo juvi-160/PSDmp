@@ -39,6 +39,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { provideAuth, getAuth } from '@angular/fire/auth';
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
+import { FIREBASE_OPTIONS } from '@angular/fire/compat';
 
 // Components
 import { AppComponent } from './app.component';
@@ -231,8 +232,9 @@ const routes: Routes = [
     provideHttpClient(),
     AdminGuard,
     provideFirebaseApp(() => initializeApp(environment.firebase)),
-  provideAuth(() => getAuth()),
-  provideFirestore(() => getFirestore())
+    provideAuth(() => getAuth()),
+    provideFirestore(() => getFirestore()),
+    // { provide: FIREBASE_OPTIONS, useValue: environment.firebase }
   ],
   bootstrap: [AppComponent]
 })
