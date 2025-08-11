@@ -13,6 +13,7 @@ import { getAuth } from '@angular/fire/auth';
 
 @Component({
   selector: "app-profile",
+  standalone: false,
   templateUrl: "./profile.component.html",
   styleUrls: ["./profile.component.css"],
 })
