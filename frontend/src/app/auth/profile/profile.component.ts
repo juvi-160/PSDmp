@@ -41,6 +41,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
   resendCountdown = 0;
   private countdownInterval: any;
 
+  private captchaWidgetId: number | null = null;
+
   // ✅ Correct inject for modular Auth
   //auth: Auth = getAuth(angularInject(FirebaseApp));
 
@@ -59,8 +61,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
     private router: Router,
     // private auth: Auth,
     // private ngZone: NgZone,
-  ) {}
-  
+  ) { }
+
 
   ngOnInit(): void {
     this.initForm();
@@ -93,12 +95,17 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   private async ensureRecaptcha() {
-    if (this.recaptchaVerifier) return;
+    // If a verifier exists, clear it first
+    if (this.recaptchaVerifier) {
+      try {
+        await this.recaptchaVerifier.clear();
+      } catch (e) {
+        // ignore if already cleared
+      }
+      this.recaptchaVerifier = undefined as any;
+    }
 
-    // Try to find the element
     let el = document.getElementById('recaptcha-container');
-
-    // If not found (e.g., gated by *ngIf), create one on <body>
     if (!el) {
       el = document.createElement('div');
       el.id = 'recaptcha-container';
@@ -108,7 +115,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     this.recaptchaVerifier = new RecaptchaVerifier(
       this.auth,
-      el, // you can pass the HTMLElement instead of the ID
+      el,
       { size: 'invisible', 'expired-callback': () => this.recaptchaVerifier?.clear() }
     );
 
@@ -216,12 +223,16 @@ export class ProfileComponent implements OnInit, OnDestroy {
     });
   }
 
-  sendOTP(): void {
+  async sendOTP(): Promise<void> {
     const phoneNumber = this.profileForm.get('phone')?.value;
     if (!phoneNumber) return;
 
     this.loading = true;
     this.startCountdown();
+
+    // const widgetId = await this.recaptchaVerifier!.render();
+    // const token = (window as any).grecaptcha?.getResponse(widgetId);
+    // console.log('reCAPTCHA token length:', token?.length);
 
     signInWithPhoneNumber(this.auth, phoneNumber, this.recaptchaVerifier)
       .then((confirmation) => {
@@ -233,16 +244,20 @@ export class ProfileComponent implements OnInit, OnDestroy {
         console.error(err);
         this.resendCountdown = 0;
         clearInterval(this.countdownInterval);
-        this.toast.show(err.code === 'auth/invalid-phone-number'
-          ? 'Invalid phone number.'
-          : err.code === 'auth/too-many-requests'
-            ? 'Too many requests.'
-            : 'Failed to send OTP.', 'error');
+        this.toast.show(
+          err.code === 'auth/invalid-phone-number'
+            ? 'Invalid phone number.'
+            : err.code === 'auth/too-many-requests'
+              ? 'Too many requests.'
+              : 'Failed to send OTP.',
+          'error'
+        );
       })
       .finally(() => {
         this.loading = false;
       });
   }
+
 
   verifyOTP(): void {
     if (!this.confirmationResult) {
