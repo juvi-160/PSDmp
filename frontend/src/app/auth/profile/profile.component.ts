@@ -36,7 +36,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
   areasOfInterest: string[] = [];
   otpCode: string = '';
 
-  recaptchaVerifier!: RecaptchaVerifier;
+  // recaptchaVerifier!: RecaptchaVerifier;
+  private recaptchaVerifier!: RecaptchaVerifier;
+  private recaptchaWidgetId: number | null = null;
 
   resendCountdown = 0;
   private countdownInterval: any;
@@ -67,6 +69,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initForm();
     this.loadProfile();
+    // this.recaptchaVerifier.clear()
 
     // ✅ Correct RecaptchaVerifier usage
     // this.recaptchaVerifier = new RecaptchaVerifier(
@@ -85,6 +88,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
     await this.ensureRecaptcha();
   }
 
+  // one-time init (e.g., ngAfterViewInit)
+  async initRecaptchaOnce() {
+    if (this.recaptchaVerifier) return;
+    const el = document.getElementById('recaptcha-container')!;
+    this.recaptchaVerifier = new RecaptchaVerifier(this.auth, el, { size: 'invisible' });
+    this.recaptchaWidgetId = await this.recaptchaVerifier.render();
+  }
+
   ngOnDestroy(): void {
     if (this.countdownInterval) {
       clearInterval(this.countdownInterval);
@@ -96,30 +107,19 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   private async ensureRecaptcha() {
     // If a verifier exists, clear it first
-    if (this.recaptchaVerifier) {
-      try {
-        await this.recaptchaVerifier.clear();
-      } catch (e) {
-        // ignore if already cleared
+    this.recaptchaVerifier = new RecaptchaVerifier(this.auth,
+      'recaptcha-container',
+      {
+        size: 'invisible', // or 'normal'
+        callback: (response: any) => {
+          console.log('reCAPTCHA solved:', response);
+        },
+        'expired-callback': () => {
+          console.log('reCAPTCHA expired. Please try again.');
+        }
       }
-      this.recaptchaVerifier = undefined as any;
-    }
-
-    let el = document.getElementById('recaptcha-container');
-    if (!el) {
-      el = document.createElement('div');
-      el.id = 'recaptcha-container';
-      el.style.display = 'none';
-      document.body.appendChild(el);
-    }
-
-    this.recaptchaVerifier = new RecaptchaVerifier(
-      this.auth,
-      el,
-      { size: 'invisible', 'expired-callback': () => this.recaptchaVerifier?.clear() }
     );
 
-    await this.recaptchaVerifier.render();
   }
 
   initializeRecaptcha() {
@@ -224,38 +224,46 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   async sendOTP(): Promise<void> {
-    const phoneNumber = this.profileForm.get('phone')?.value;
-    if (!phoneNumber) return;
 
-    this.loading = true;
-    this.startCountdown();
+    if (!this.recaptchaVerifier) {
+      console.error("reCAPTCHA verifier not initialized");
+      return;
+    }
+    try {
+      const widgetId = await this.recaptchaVerifier.render(); // only call once!
+      const phoneNumber = this.profileForm.get('phone')?.value;
+      if (!phoneNumber) return;
 
-    // const widgetId = await this.recaptchaVerifier!.render();
-    // const token = (window as any).grecaptcha?.getResponse(widgetId);
-    // console.log('reCAPTCHA token length:', token?.length);
+      const confirmationResult = await signInWithPhoneNumber(this.auth, phoneNumber, this.recaptchaVerifier);
+      this.confirmationResult = confirmationResult;
+      this.toast.show("OTP sent successfully", "success");
+    } catch (error) {
+      this.toast.show("reCAPTCHA failed. Please try again.", "error");
+      console.error(error);
+    }
 
-    signInWithPhoneNumber(this.auth, phoneNumber, this.recaptchaVerifier)
-      .then((confirmation) => {
-        this.confirmationResult = confirmation;
-        this.otpSent = true;
-        this.toast.show('OTP sent successfully!', 'success');
-      })
-      .catch(err => {
-        console.error(err);
-        this.resendCountdown = 0;
-        clearInterval(this.countdownInterval);
-        this.toast.show(
-          err.code === 'auth/invalid-phone-number'
-            ? 'Invalid phone number.'
-            : err.code === 'auth/too-many-requests'
-              ? 'Too many requests.'
-              : 'Failed to send OTP.',
-          'error'
-        );
-      })
-      .finally(() => {
-        this.loading = false;
-      });
+    // signInWithPhoneNumber(this.auth, phoneNumber, this.recaptchaVerifier)
+    //   .then((confirmation) => {
+    //     this.confirmationResult = confirmation;
+    //     this.otpSent = true;
+    //     this.toast.show('OTP sent successfully!', 'success');
+    //   })
+    //   .catch(err => {
+    //     console.error(err);
+    //     this.resendCountdown = 0;
+    //     clearInterval(this.countdownInterval);
+    //     this.toast.show(
+    //       err.code === 'auth/invalid-phone-number'
+    //         ? 'Invalid phone number.'
+    //         : err.code === 'auth/too-many-requests'
+    //           ? 'Too many requests.'
+    //           : 'Failed to send OTP.',
+    //       'error'
+    //     );
+    //   })
+    //   .finally(() => {
+    //     this.loading = false;
+    //   });
   }
 
 
