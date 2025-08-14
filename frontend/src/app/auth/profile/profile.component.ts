@@ -1,17 +1,11 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Auth, RecaptchaVerifier, signInWithPhoneNumber } from '@angular/fire/auth';
 import { ProfileService } from "../../core/services/profile.service";
 import { User, ProfileUpdateData } from "../../core/models/user.model";
 import { ToastService } from "../../core/services/toast.service";
-// import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
-
-// import { Auth, RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from '@angular/fire/auth';
-import { RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from 'firebase/auth';
-import { Auth } from '@angular/fire/auth';
-// import { inject as angularInject } from '@angular/core';
-// import { FirebaseApp } from '@angular/fire/app';
-// import { getAuth } from '@angular/fire/auth';
+import { FirebaseError } from 'firebase/app';
 
 @Component({
   selector: "app-profile",
@@ -19,35 +13,34 @@ import { Auth } from '@angular/fire/auth';
   templateUrl: "./profile.component.html",
   styleUrls: ["./profile.component.css"],
 })
-
-export class ProfileComponent implements OnInit, OnDestroy {
+export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   private auth = inject(Auth);
+  private router = inject(Router);
 
+  // Form and User Data
   profileForm!: FormGroup;
   user: User | null = null;
+  areasOfInterest: string[] = [];
+  
+  // UI States
   loading = false;
   saving = false;
   error = "";
+  
+  // Phone Verification
   otpSent = false;
   otpVerified = false;
-  phoneOTP = "";
-  confirmationResult: ConfirmationResult | null = null;
+  otpCode = '';
+  confirmationResult: any = null;
   verifyingOtp = false;
-  areasOfInterest: string[] = [];
-  otpCode: string = '';
-
-  // recaptchaVerifier!: RecaptchaVerifier;
-  private recaptchaVerifier!: RecaptchaVerifier;
-  private recaptchaWidgetId: number | null = null;
-
   resendCountdown = 0;
   private countdownInterval: any;
 
-  private captchaWidgetId: number | null = null;
+  // reCAPTCHA
+  private recaptchaVerifier?: RecaptchaVerifier;
+  private recaptchaContainerId = 'recaptcha-container-' + Math.random().toString(36).substring(2);
 
-  // ✅ Correct inject for modular Auth
-  //auth: Auth = getAuth(angularInject(FirebaseApp));
-
+  // Form Options
   ageGroups = [
     { value: "Under 18", label: "Under 18 years" },
     { value: "18-25", label: "18-25 years" },
@@ -59,81 +52,84 @@ export class ProfileComponent implements OnInit, OnDestroy {
   constructor(
     private formBuilder: FormBuilder,
     private profileService: ProfileService,
-    private toast: ToastService,
-    private router: Router,
-    // private auth: Auth,
-    // private ngZone: NgZone,
+    private toast: ToastService
   ) { }
-
 
   ngOnInit(): void {
     this.initForm();
     this.loadProfile();
-    // this.recaptchaVerifier.clear()
-
-    // ✅ Correct RecaptchaVerifier usage
-    // this.recaptchaVerifier = new RecaptchaVerifier(
-    //   this.auth,
-    //   'recaptcha-container',
-    //   {
-    //     size: 'invisible',
-    //     callback: (response: any) => {
-    //       console.log("reCAPTCHA resolved", response);
-    //     },
-    //   },
-    // );
   }
 
-  async ngAfterViewInit() {
-    await this.ensureRecaptcha();
-  }
-
-  // one-time init (e.g., ngAfterViewInit)
-  async initRecaptchaOnce() {
-    if (this.recaptchaVerifier) return;
-    const el = document.getElementById('recaptcha-container')!;
-    this.recaptchaVerifier = new RecaptchaVerifier(this.auth, el, { size: 'invisible' });
-    this.recaptchaWidgetId = await this.recaptchaVerifier.render();
+  async ngAfterViewInit(): Promise<void> {
+    await this.initializeRecaptcha();
   }
 
   ngOnDestroy(): void {
+    this.cleanupRecaptcha();
     if (this.countdownInterval) {
       clearInterval(this.countdownInterval);
     }
-    if (this.recaptchaVerifier) {
-      this.recaptchaVerifier.clear();
+  }
+
+  private async initializeRecaptcha(): Promise<void> {
+    this.cleanupRecaptcha();
+
+    // Create container if it doesn't exist
+    let container = document.getElementById(this.recaptchaContainerId);
+    if (!container) {
+      container = document.createElement('div');
+      container.id = this.recaptchaContainerId;
+      container.style.display = 'none';
+      document.body.appendChild(container);
+    }
+
+    try {
+      this.recaptchaVerifier = new RecaptchaVerifier(
+        this.auth,
+        this.recaptchaContainerId,
+        {
+          size: 'invisible',
+          callback: () => console.log("reCAPTCHA solved"),
+          'expired-callback': () => {
+            console.log("reCAPTCHA expired");
+            this.cleanupRecaptcha();
+          }
+        },
+      );
+
+      await this.recaptchaVerifier.render();
+    } catch (error) {
+      console.error('reCAPTCHA initialization error:', error);
+      this.toast.show('Failed to initialize security verification. Please refresh the page.', 'error');
     }
   }
 
-  private async ensureRecaptcha() {
-    // If a verifier exists, clear it first
-    this.recaptchaVerifier = new RecaptchaVerifier(this.auth,
-      'recaptcha-container',
-      {
-        size: 'invisible', // or 'normal'
-        callback: (response: any) => {
-          console.log('reCAPTCHA solved:', response);
-        },
-        'expired-callback': () => {
-          console.log('reCAPTCHA expired. Please try again.');
-        }
+  private cleanupRecaptcha(): void {
+    if (this.recaptchaVerifier) {
+      try {
+        this.recaptchaVerifier.clear();
+      } catch (error) {
+        console.warn('Error clearing reCAPTCHA:', error);
       }
-    );
+      this.recaptchaVerifier = undefined;
+    }
 
+    const container = document.getElementById(this.recaptchaContainerId);
+    if (container) {
+      container.remove();
+    }
   }
 
-  initializeRecaptcha() {
-    this.recaptchaVerifier = new RecaptchaVerifier(this.auth,
-      'recaptcha-container',
-      { size: 'invisible' }
-    );
-  }
-
-  startCountdown(): void {
+  private startCountdown(): void {
     this.resendCountdown = 60;
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+    }
     this.countdownInterval = setInterval(() => {
       this.resendCountdown--;
-      if (this.resendCountdown <= 0) clearInterval(this.countdownInterval);
+      if (this.resendCountdown <= 0) {
+        clearInterval(this.countdownInterval);
+      }
     }, 1000);
   }
 
@@ -191,11 +187,93 @@ export class ProfileComponent implements OnInit, OnDestroy {
     });
   }
 
-  onSubmit(): void {
-    if (this.profileForm.invalid) return;
-    this.saving = true;
+  async sendOTP(): Promise<void> {
+    const phoneNumber = this.profileForm.get('phone')?.value;
+    if (!phoneNumber) {
+      this.toast.show('Please enter a valid phone number', 'error');
+      return;
+    }
 
-    const areaOfInterestsValue = this.profileForm.get("areaOfInterests")?.value;
+    if (!this.phoneNumberValid(phoneNumber)) {
+      this.toast.show('Please enter phone number in international format (+countrycodenumber)', 'error');
+      return;
+    }
+
+    if (!this.recaptchaVerifier) {
+      await this.initializeRecaptcha();
+      if (!this.recaptchaVerifier) {
+        this.toast.show('Security verification failed. Please refresh the page.', 'error');
+        return;
+      }
+    }
+
+    this.loading = true;
+    try {
+      this.confirmationResult = await signInWithPhoneNumber(
+        this.auth,
+        phoneNumber,
+        this.recaptchaVerifier!
+      );
+      this.otpSent = true;
+      this.startCountdown();
+      this.toast.show('Verification code sent successfully!', 'success');
+    } catch (error: any) {
+      console.error('OTP send error:', error);
+      let errorMessage = 'Failed to send verification code';
+      
+      if (error.code === 'auth/invalid-phone-number') {
+        errorMessage = 'Invalid phone number format';
+      } else if (error.code === 'auth/too-many-requests') {
+        errorMessage = 'Too many attempts. Please try again later';
+      }
+      
+      this.toast.show(errorMessage, 'error');
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  verifyOTP(): void {
+    if (!this.confirmationResult) {
+      this.toast.show('Please request verification code first', 'error');
+      return;
+    }
+
+    if (!this.otpCode || this.otpCode.length !== 6) {
+      this.toast.show('Please enter the 6-digit verification code', 'error');
+      return;
+    }
+
+    this.verifyingOtp = true;
+    this.confirmationResult.confirm(this.otpCode)
+      .then(() => {
+        this.verifyingOtp = false;
+        this.otpVerified = true;
+        this.toast.show('Phone number verified successfully!', 'success');
+
+        // Update verification status in backend
+        this.profileService.markPhoneVerified().subscribe({
+          next: () => this.onSubmit(),
+          error: (err) => {
+            console.error('Error updating verification status:', err);
+            this.toast.show('Profile saved but verification status not updated');
+          }
+        });
+      })
+      .catch((error : FirebaseError) => {
+        this.verifyingOtp = false;
+        console.error('OTP verification failed:', error);
+        this.toast.show('Invalid verification code. Please try again.');
+      });
+  }
+
+  onSubmit(): void {
+    if (this.profileForm.invalid) {
+      this.toast.show('Please complete all required fields', 'error');
+      return;
+    }
+
+    this.saving = true;
 
     const profileData: ProfileUpdateData = {
       phone: this.profileForm.get("phone")?.value || undefined,
@@ -204,7 +282,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       city: this.profileForm.get("city")?.value || undefined,
       company: this.profileForm.get("company")?.value || undefined,
       position: this.profileForm.get("position")?.value || undefined,
-      area_of_interests: Array.isArray(areaOfInterestsValue) ? areaOfInterestsValue : undefined,
+      area_of_interests: this.areasOfInterest,
       about_you: this.profileForm.get("aboutYou")?.value || undefined,
       agreed_to_terms: this.profileForm.get("agreedToTerms")?.value || undefined,
       agreed_to_contribute: this.profileForm.get("agreedToContribute")?.value || undefined,
@@ -214,91 +292,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
       next: (updatedUser) => {
         this.user = updatedUser;
         this.saving = false;
-        this.toast.show("Profile updated successfully!", "success");
+        this.toast.show('Profile updated successfully!', 'success');
       },
-      error: () => {
+      error: (error) => {
         this.saving = false;
-        this.toast.show("Failed to update profile. Please try again.", "error");
+        console.error('Profile update error:', error);
+        this.toast.show('Failed to update profile. Please try again.', 'error');
       },
     });
-  }
-
-  async sendOTP(): Promise<void> {
-
-    if (!this.recaptchaVerifier) {
-      console.error("reCAPTCHA verifier not initialized");
-      return;
-    }
-    try {
-      const widgetId = await this.recaptchaVerifier.render(); // only call once!
-      const phoneNumber = this.profileForm.get('phone')?.value;
-      if (!phoneNumber) return;
-
-      const confirmationResult = await signInWithPhoneNumber(this.auth, phoneNumber, this.recaptchaVerifier);
-      this.confirmationResult = confirmationResult;
-      this.toast.show("OTP sent successfully", "success");
-    } catch (error) {
-      this.toast.show("reCAPTCHA failed. Please try again.", "error");
-      console.error(error);
-    }
-
-    // signInWithPhoneNumber(this.auth, phoneNumber, this.recaptchaVerifier)
-    //   .then((confirmation) => {
-    //     this.confirmationResult = confirmation;
-    //     this.otpSent = true;
-    //     this.toast.show('OTP sent successfully!', 'success');
-    //   })
-    //   .catch(err => {
-    //     console.error(err);
-    //     this.resendCountdown = 0;
-    //     clearInterval(this.countdownInterval);
-    //     this.toast.show(
-    //       err.code === 'auth/invalid-phone-number'
-    //         ? 'Invalid phone number.'
-    //         : err.code === 'auth/too-many-requests'
-    //           ? 'Too many requests.'
-    //           : 'Failed to send OTP.',
-    //       'error'
-    //     );
-    //   })
-    //   .finally(() => {
-    //     this.loading = false;
-    //   });
-  }
-
-
-  verifyOTP(): void {
-    if (!this.confirmationResult) {
-      this.toast.show("Please request OTP first", "error");
-      return;
-    }
-
-    if (!this.otpCode || this.otpCode.length !== 6) {
-      this.toast.show("Please enter a valid 6-digit OTP", "error");
-      return;
-    }
-
-    this.verifyingOtp = true;
-
-    this.confirmationResult.confirm(this.otpCode)
-      .then(() => {
-        this.verifyingOtp = false;
-        this.otpVerified = true;
-        this.toast.show("Phone number verified!", "success");
-
-        this.profileService.markPhoneVerified().subscribe({
-          next: () => this.onSubmit(),
-          error: (err: any) => {
-            console.error("Error updating phone verification:", err);
-            this.toast.show("Profile saved but phone verification status not updated", "error");
-          }
-        });
-      })
-      .catch((error) => {
-        this.verifyingOtp = false;
-        console.error("OTP verification failed:", error);
-        this.toast.show("Invalid OTP. Please try again.", "error");
-      });
   }
 
   phoneNumberValid(phoneNumber: string): boolean {
@@ -306,7 +307,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   onOtpChange(): void {
-    if (this.otpCode.length === 6) this.verifyOTP();
+    if (this.otpCode.length === 6) {
+      this.verifyOTP();
+    }
   }
 
   removeInterest(interest: string): void {
@@ -315,6 +318,17 @@ export class ProfileComponent implements OnInit, OnDestroy {
       this.areasOfInterest.splice(index, 1);
       this.profileForm.get('areaOfInterests')?.setValue([...this.areasOfInterest]);
     }
+  }
+
+  addInterest(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const value = input.value.trim();
+    if (value && !this.areasOfInterest.includes(value)) {
+      this.areasOfInterest.push(value);
+      this.profileForm.get('areaOfInterests')?.setValue([...this.areasOfInterest]);
+      input.value = '';
+    }
+    event.preventDefault();
   }
 
   getProfileCompletionPercentage(): number {
@@ -333,33 +347,23 @@ export class ProfileComponent implements OnInit, OnDestroy {
     return Math.round((completedFields / fields.length) * 100);
   }
 
-  addInterest(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const value = input.value.trim();
-    if (value && !this.areasOfInterest.includes(value)) {
-      this.areasOfInterest.push(value);
-      this.profileForm.get('areaOfInterests')?.setValue([...this.areasOfInterest]);
-      input.value = '';
-    }
-    event.preventDefault();
-  }
-
   resetForm(): void {
-    this.profileForm.reset();
-    this.areasOfInterest = [];
-
-    this.profileForm.patchValue({
-      areaOfInterests: [],
-      ageGroup: '',
-      profession: '',
-      city: '',
-      whyPsf: '',
-      company: '',
-      position: '',
-      agreedToContribute: false,
-      agreedToTerms: false,
-      phone: ''
-    });
+    if (this.user) {
+      this.profileForm.patchValue({
+        phone: this.user.phone || "",
+        ageGroup: this.user.ageGroup || "",
+        profession: this.user.profession || "",
+        city: this.user.city || "",
+        company: this.user.company || "",
+        position: this.user.position || "",
+        aboutYou: this.user.about_you || "",
+        agreedToTerms: this.user.agreed_to_terms || false,
+        agreedToContribute: this.user.agreed_to_contribute || false,
+      });
+      this.areasOfInterest = typeof this.user.area_of_interests === 'string'
+        ? JSON.parse(this.user.area_of_interests || '[]')
+        : this.user.area_of_interests || [];
+    }
   }
 
   formatRoleName(role: string | undefined): string {

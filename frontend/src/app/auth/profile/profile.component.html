@@ -1,40 +1,44 @@
-<div class="w-full max-w-3xl mx-auto p-4 font-sans">
+<div class="w-full max-w-4xl mx-auto p-4 font-sans">
   <!-- Profile Header -->
-  <div
-    class="flex flex-col sm:flex-row items-center sm:items-start gap-4 mb-8 p-6 bg-gradient-to-r from-teal-700 to-teal-900 text-white rounded-xl shadow-lg">
-    <div class="flex-shrink-0 w-20 h-20 rounded-full bg-white/20 flex items-center justify-center text-2xl font-bold">
+  <div class="flex flex-col sm:flex-row items-center gap-6 mb-8 p-6 bg-gradient-to-r from-teal-700 to-teal-900 text-white rounded-2xl shadow-lg">
+    <div class="flex-shrink-0 w-24 h-24 rounded-full bg-white/20 flex items-center justify-center text-3xl font-bold">
       {{ user?.name?.charAt(0) || 'U' }}
     </div>
-    <div>
-      <h2 class="text-2xl font-bold">{{ user?.name }}</h2>
-      <p class="inline-block px-3 py-1 mt-2 rounded-full text-sm font-medium bg-white/20 backdrop-blur-sm">
-        {{ formatRoleName(user?.role) }}
-      </p>
-      <div *ngIf="user?.hasPaid" class="mt-2 flex items-center text-sm">
-        <span
-          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-          <svg class="-ml-0.5 mr-1.5 h-2 w-2 text-green-400" fill="currentColor" viewBox="0 0 8 8">
-            <circle cx="4" cy="4" r="3" />
+    <div class="flex-1">
+      <h1 class="text-3xl font-bold">{{ user?.name }}</h1>
+      <div class="flex flex-wrap items-center gap-2 mt-3">
+        <span class="px-3 py-1 rounded-full text-sm font-medium bg-white/20 backdrop-blur-sm">
+          {{ formatRoleName(user?.role) }}
+        </span>
+        <span *ngIf="user?.isEmailVerified" class="flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100/20 backdrop-blur-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
           </svg>
-          Active Member
+          Verified Email
+        </span>
+        <span *ngIf="otpVerified" class="flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100/20 backdrop-blur-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+          </svg>
+          Verified Phone
+        </span>
+        <span *ngIf="user?.hasPaid" class="flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100/20 backdrop-blur-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
+            <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd" />
+          </svg>
+          Premium Member
         </span>
       </div>
     </div>
   </div>
 
-  <!-- reCAPTCHA container (hidden) -->
-  <div id="recaptcha-container" class="hidden"></div>
-
-
   <!-- Profile Completion Progress -->
-  <div *ngIf="user && !user.profileCompleted"
-    class="mb-8 p-5 bg-amber-50 border-l-4 border-amber-500 rounded-lg shadow-sm">
+  <div *ngIf="user && getProfileCompletionPercentage() < 100" class="mb-8 p-5 bg-amber-50 border-l-4 border-amber-500 rounded-lg shadow-sm">
     <div class="flex justify-between items-center mb-3">
       <h3 class="text-amber-700 font-semibold flex items-center gap-2">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd"
-            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z"
-            clip-rule="evenodd" />
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
         </svg>
         Complete Your Profile
       </h3>
@@ -44,27 +48,24 @@
       <div class="bg-amber-600 h-2.5 rounded-full" [style.width]="getProfileCompletionPercentage() + '%'"></div>
     </div>
     <p class="text-sm text-amber-800">
-      Complete your profile to get the most out of your PSF membership!
+      Complete your profile to get the most out of your membership!
     </p>
   </div>
 
   <!-- Loading Spinner -->
-  <div class="flex justify-center items-center py-10" *ngIf="loading">
-    <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-teal-600"></div>
+  <div class="flex justify-center items-center py-16" *ngIf="loading">
+    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-600"></div>
   </div>
 
   <!-- Error Message -->
-  <div class="text-center py-10" *ngIf="error && !loading">
+  <div class="text-center py-16" *ngIf="error && !loading">
     <div class="inline-flex items-center p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd"
-          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-          clip-rule="evenodd" />
+        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
       </svg>
       <span class="font-medium">{{ error }}</span>
     </div>
-    <button (click)="loadProfile()"
-      class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">
+    <button (click)="loadProfile()" class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors">
       Retry
     </button>
   </div>
@@ -73,104 +74,96 @@
   <div *ngIf="!loading && !error" class="bg-white rounded-xl shadow-md overflow-hidden">
     <!-- Form Header -->
     <div class="bg-white border-b p-6">
-      <h2 class="text-xl font-bold text-gray-800">Profile Information</h2>
-      <p class="text-red-500 text-sm mt-1">Update your personal information and preferences</p>
+      <h2 class="text-2xl font-bold text-gray-800">Profile Information</h2>
+      <p class="text-gray-600 mt-1">Update your personal information and preferences</p>
     </div>
 
     <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="p-6">
       <!-- Basic Information Section -->
       <div class="mb-8 pb-6 border-b border-gray-200">
         <h3 class="text-lg font-semibold text-teal-700 mb-4 flex items-center gap-2">
-          <span class="w-2 h-5 bg-teal-700 rounded"></span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+          </svg>
           Basic Information
         </h3>
 
-        <div class="mb-5">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-          <div class="relative">
-            <input type="text" formControlName="name" readonly
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600">
-            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20"
-                fill="currentColor">
-                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
-              </svg>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+            <div class="relative">
+              <input type="text" formControlName="name" readonly
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600">
+              <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                </svg>
+              </div>
             </div>
+            <p class="mt-1 text-xs text-gray-500">Name cannot be changed</p>
           </div>
-          <p class="mt-1 text-xs text-red-500">Name cannot be changed</p>
-        </div>
 
-        <div class="mb-5">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-          <div class="relative">
-            <input type="email" formControlName="email" readonly
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600">
-            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20"
-                fill="currentColor">
-                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-              </svg>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+            <div class="relative">
+              <input type="email" formControlName="email" readonly
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600">
+              <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                  <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                </svg>
+              </div>
             </div>
+            <p class="mt-1 text-xs text-gray-500">Email cannot be changed</p>
           </div>
-          <p class="mt-1 text-xs text-red-500">Email cannot be changed</p>
-          <p *ngIf="user?.isEmailVerified" class="mt-1 text-xs text-green-600 flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd"
-                d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                clip-rule="evenodd" />
-            </svg>
-            Email verified
-          </p>
-        </div>
 
-        <div class="mb-5">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-          <div class="relative">
-            <input type="tel" formControlName="phone" placeholder="+91XXXXXXXXXX"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg"
-              [class.border-red-500]="profileForm.get('phone')?.invalid && profileForm.get('phone')?.touched">
-            <div *ngIf="otpVerified" class="absolute inset-y-0 right-0 flex items-center pr-3">
-              <span class="text-green-600 text-xs font-medium bg-green-100 px-2 py-1 rounded-full">
-                Verified
-              </span>
-            </div>
-          </div>
-          <p *ngIf="profileForm.get('phone')?.invalid && profileForm.get('phone')?.touched"
-            class="mt-1 text-xs text-red-500">
-            Please enter a valid phone number with country code
-          </p>
-
-          <!-- OTP Send/Verify Section -->
-          <div *ngIf="!otpVerified" class="mt-3 flex flex-col sm:flex-row gap-2">
-            <button type="button" (click)="sendOTP()"
-              [disabled]="profileForm.get('phone')?.invalid || resendCountdown > 0"
-              class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:bg-teal-300 disabled:cursor-not-allowed">
-              {{ resendCountdown > 0 ? ('Resend OTP in ' + resendCountdown) : 'Send OTP' }}
-            </button>
-
-            <div *ngIf="otpSent" class="flex gap-2">
-              <input type="text" [(ngModel)]="otpCode" maxlength="6" placeholder="Enter OTP"
-                (ngModelChange)="onOtpChange()"
-                class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
-              <button type="button" (click)="verifyOTP()" [disabled]="verifyingOtp || otpCode.length !== 6"
-                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed">
-                {{ verifyingOtp ? 'Verifying...' : 'Verify' }}
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+            <div class="flex gap-2">
+              <input type="tel" formControlName="phone" placeholder="+1234567890"
+                class="flex-1 px-4 py-2 border border-gray-300 rounded-lg"
+                [class.border-green-500]="otpVerified">
+              <button type="button" (click)="sendOTP()" [disabled]="loading || otpSent || !profileForm.get('phone')?.valid"
+                class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
+                {{ loading ? 'Sending...' : (otpVerified ? 'Verified' : (otpSent ? 'Resend' : 'Verify')) }}
               </button>
             </div>
+            <p *ngIf="profileForm.get('phone')?.hasError('pattern')" class="mt-1 text-xs text-red-500">
+              Please enter a valid phone number (e.g., +1234567890)
+            </p>
+            <p *ngIf="resendCountdown > 0" class="mt-1 text-xs text-gray-500">
+              Resend code in {{ resendCountdown }} seconds
+            </p>
+          </div>
+
+          <div *ngIf="otpSent && !otpVerified">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Verification Code</label>
+            <div class="flex gap-2">
+              <input type="text" [(ngModel)]="otpCode" [ngModelOptions]="{standalone: true}" maxlength="6" placeholder="123456"
+                class="flex-1 px-4 py-2 border border-gray-300 rounded-lg">
+              <button type="button" (click)="verifyOTP()" [disabled]="verifyingOtp || !otpCode || otpCode.length < 6"
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
+                {{ verifyingOtp ? 'Verifying...' : 'Confirm' }}
+              </button>
+            </div>
+            <p class="mt-1 text-xs text-gray-500">Enter the 6-digit code sent to your phone</p>
           </div>
         </div>
+      </div>
 
+      <!-- Personal Details Section -->
+      <div class="mb-8 pb-6 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-teal-700 mb-4 flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd" />
+            <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z" />
+          </svg>
+          Personal Details
+        </h3>
 
-
-        <!-- Personal Details Section -->
-        <div class="mb-8 pb-6 border-b border-gray-200">
-          <h3 class="text-lg font-semibold text-teal-700 mb-4 flex items-center gap-2">
-            <span class="w-2 h-5 bg-teal-700 rounded"></span>
-            Personal Details
-          </h3>
-
-          <div class="mb-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Age Group</label>
             <select formControlName="ageGroup" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
               <option value="" disabled selected>Select your age group</option>
@@ -178,190 +171,146 @@
             </select>
           </div>
 
-          <div class="mb-5">
+          <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Profession</label>
-            <div class="relative">
-              <input type="text" formControlName="profession" placeholder="What do you do for work?"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-              <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20"
-                  fill="currentColor">
-                  <path fill-rule="evenodd"
-                    d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z"
-                    clip-rule="evenodd" />
-                  <path
-                    d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z" />
-                </svg>
-              </div>
-            </div>
+            <input type="text" formControlName="profession" placeholder="What do you do for work?"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg">
             <p *ngIf="profileForm.get('profession')?.hasError('maxlength')" class="mt-1 text-xs text-red-500">
               Profession cannot exceed 100 characters
             </p>
           </div>
 
-          <div class="mb-5">
+          <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">City</label>
-            <div class="relative">
-              <input type="text" formControlName="city" placeholder="Which city do you live in?"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-              <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20"
-                  fill="currentColor">
-                  <path fill-rule="evenodd"
-                    d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-                    clip-rule="evenodd" />
-                </svg>
-              </div>
-            </div>
+            <input type="text" formControlName="city" placeholder="Which city do you live in?"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg">
             <p *ngIf="profileForm.get('city')?.hasError('maxlength')" class="mt-1 text-xs text-red-500">
               City name cannot exceed 50 characters
             </p>
           </div>
 
-          <!-- Company and Position Fields -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="mb-5">
-              <label class="block text-sm font-medium text-gray-700 mb-1">Company</label>
-              <div class="relative">
-                <input type="text" formControlName="company" placeholder="Your company name"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20"
-                    fill="currentColor">
-                    <path fill-rule="evenodd"
-                      d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z"
-                      clip-rule="evenodd" />
-                  </svg>
-                </div>
-              </div>
-            </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Company</label>
+            <input type="text" formControlName="company" placeholder="Your company name"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+          </div>
 
-            <div class="mb-5">
-              <label class="block text-sm font-medium text-gray-700 mb-1">Position</label>
-              <div class="relative">
-                <input type="text" formControlName="position" placeholder="Your position"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20"
-                    fill="currentColor">
-                    <path
-                      d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v1h8v-1zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-1a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v1h-3zM4.75 12.094A5.973 5.973 0 004 15v1H1v-1a3 3 0 013.75-2.906z" />
-                  </svg>
-                </div>
-              </div>
-            </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Position</label>
+            <input type="text" formControlName="position" placeholder="Your position"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg">
           </div>
         </div>
+      </div>
 
-        <!-- Areas of Interest -->
-        <div class="mb-8 pb-6 border-b border-gray-200">
-          <h3 class="text-lg font-semibold text-teal-700 mb-4 flex items-center gap-2">
-            <span class="w-2 h-5 bg-teal-700 rounded"></span>
-            Areas of Interest
-          </h3>
+      <!-- Areas of Interest -->
+      <div class="mb-8 pb-6 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-teal-700 mb-4 flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
+          </svg>
+          Areas of Interest
+        </h3>
 
-          <div class="mb-5">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Add your interests</label>
-            <div class="flex flex-wrap gap-2 p-2 border border-gray-300 rounded-lg min-h-12">
-              <div *ngFor="let interest of areasOfInterest"
-                class="flex items-center bg-teal-100 text-teal-800 px-3 py-1 rounded-full text-sm">
-                {{ interest }}
-                <button type="button" (click)="removeInterest(interest)" class="ml-1 text-teal-600 hover:text-teal-800">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd"
-                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                      clip-rule="evenodd" />
-                  </svg>
-                </button>
-              </div>
-              <input type="text" placeholder="Type and press Enter to add interests..."
-                (keydown.enter)="addInterest($event)"
-                class="flex-1 min-w-[200px] px-2 py-1 border-0 focus:ring-0 focus:outline-none">
+        <div class="mb-5">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Your Interests</label>
+          <div class="flex flex-wrap gap-2 p-3 border border-gray-300 rounded-lg min-h-12 bg-gray-50">
+            <div *ngFor="let interest of areasOfInterest"
+              class="flex items-center bg-teal-100 text-teal-800 px-3 py-1 rounded-full text-sm">
+              {{ interest }}
+              <button type="button" (click)="removeInterest(interest)" class="ml-1 text-teal-600 hover:text-teal-800">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+              </button>
             </div>
-            <p class="mt-1 text-xs text-gray-500">Add topics you're passionate about (e.g., Technology, Healthcare,
-              Education)</p>
+            <input type="text" placeholder="Type and press Enter to add"
+              (keydown.enter)="addInterest($event)"
+              class="flex-1 min-w-[150px] px-3 py-1 border-0 bg-transparent focus:ring-0 focus:outline-none">
+          </div>
+          <p class="mt-1 text-xs text-gray-500">Add topics you're passionate about (e.g., Technology, Healthcare, Education)</p>
+        </div>
+      </div>
+
+      <!-- About You Section -->
+      <div class="mb-8 pb-6 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-teal-700 mb-4 flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
+          </svg>
+          About You
+        </h3>
+
+        <div class="mb-5">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Tell Us About Yourself</label>
+          <textarea formControlName="aboutYou" rows="4"
+            placeholder="Share something about yourself, your interests, or why you joined..."
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg"></textarea>
+          <div class="flex justify-between mt-1">
+            <p *ngIf="profileForm.get('aboutYou')?.hasError('maxlength')" class="text-xs text-red-500">
+              Cannot exceed 500 characters
+            </p>
+            <p class="text-xs text-gray-500">
+              {{ profileForm.get('aboutYou')?.value?.length || 0 }}/500
+            </p>
           </div>
         </div>
+      </div>
 
-        <!-- About You Section -->
-        <div class="mb-8 pb-6 border-b border-gray-200">
-          <h3 class="text-lg font-semibold text-teal-700 mb-4 flex items-center gap-2">
-            <span class="w-2 h-5 bg-teal-700 rounded"></span>
-            About You
-          </h3>
+      <!-- Agreement Section -->
+      <div class="mb-6">
+        <h3 class="text-lg font-semibold text-teal-700 mb-4 flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+          </svg>
+          Agreements
+        </h3>
 
-          <div class="mb-5">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Why PSF?</label>
-            <textarea formControlName="aboutYou" rows="4"
-              placeholder="Tell us why you joined PSF and what you hope to achieve..."
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg"></textarea>
-            <div class="flex justify-between mt-1">
-              <p *ngIf="profileForm.get('aboutYou')?.hasError('maxlength')" class="text-xs text-red-500">
-                Description cannot exceed 500 characters
+        <div class="space-y-4">
+          <div class="flex items-start">
+            <div class="flex items-center h-5 mt-1">
+              <input id="agreedToTerms" formControlName="agreedToTerms" type="checkbox"
+                class="focus:ring-teal-500 h-4 w-4 text-teal-600 border-gray-300 rounded">
+            </div>
+            <div class="ml-3 text-sm">
+              <label for="agreedToTerms" class="font-medium text-gray-700">Terms and Conditions</label>
+              <p class="text-gray-500">I agree to the terms of service and privacy policy</p>
+              <p *ngIf="profileForm.get('agreedToTerms')?.hasError('requiredTrue')" class="mt-1 text-xs text-red-500">
+                You must agree to the terms
               </p>
-              <p class="text-xs text-gray-500">
-                {{ profileForm.get('aboutYou')?.value?.length || 0 }}/500
-              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start">
+            <div class="flex items-center h-5 mt-1">
+              <input id="agreedToContribute" formControlName="agreedToContribute" type="checkbox"
+                class="focus:ring-teal-500 h-4 w-4 text-teal-600 border-gray-300 rounded">
+            </div>
+            <div class="ml-3 text-sm">
+              <label for="agreedToContribute" class="font-medium text-gray-700">Community Participation</label>
+              <p class="text-gray-500">I agree to participate in community activities and initiatives</p>
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Agreement Section -->
-        <div class="mb-6">
-          <h3 class="text-lg font-semibold text-teal-700 mb-4 flex items-center gap-2">
-            <span class="w-2 h-5 bg-teal-700 rounded"></span>
-            Agreements
-          </h3>
-
-          <div class="space-y-4">
-            <div class="flex items-start">
-              <div class="flex items-center h-5">
-                <input id="agreedToTerms" formControlName="agreedToTerms" type="checkbox"
-                  class="focus:ring-teal-500 h-4 w-4 text-teal-600 border-gray-300 rounded">
-              </div>
-              <div class="ml-3 text-sm">
-                <label for="agreedToTerms" class="font-medium text-gray-700">I agree to the Terms and Conditions</label>
-                <p class="text-gray-500">By checking this box, you agree to our terms of service and privacy policy.</p>
-              </div>
-            </div>
-
-            <div class="flex items-start">
-              <div class="flex items-center h-5">
-                <input id="agreedToContribute" formControlName="agreedToContribute" type="checkbox"
-                  class="focus:ring-teal-500 h-4 w-4 text-teal-600 border-gray-300 rounded">
-              </div>
-              <div class="ml-3 text-sm">
-                <label for="agreedToContribute" class="font-medium text-gray-700">I agree to contribute to PSF
-                  initiatives</label>
-                <p class="text-gray-500">By checking this box, you agree to participate in PSF activities and
-                  initiatives.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Form Actions -->
-        <div class="flex flex-col sm:flex-row justify-end gap-4 mt-8">
-          <button type="button" (click)="loadProfile()" [disabled]="saving"
-            class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50">
-            Reset
-          </button>
-          <button type="submit" [disabled]="profileForm.invalid || saving"
-            class="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:bg-teal-400 disabled:cursor-not-allowed">
-            <span *ngIf="!saving">Save Profile</span>
-            <span *ngIf="saving" class="flex items-center justify-center">
-              <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
-                viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                </path>
-              </svg>
-              Saving...
-            </span>
-          </button>
-        </div>
+      <!-- Form Actions -->
+      <div class="flex flex-col sm:flex-row justify-end gap-4 mt-8">
+        <button type="button" (click)="resetForm()" [disabled]="saving"
+          class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors">
+          Reset
+        </button>
+        <button type="submit" [disabled]="profileForm.invalid || saving"
+          class="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:bg-teal-400 disabled:cursor-not-allowed transition-colors">
+          <span *ngIf="!saving">Save Profile</span>
+          <span *ngIf="saving" class="flex items-center justify-center">
+            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Saving...
+          </span>
+        </button>
       </div>
     </form>
   </div>
