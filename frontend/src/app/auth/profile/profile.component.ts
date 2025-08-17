@@ -15,18 +15,17 @@ import { FirebaseError } from 'firebase/app';
 })
 export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   private auth = inject(Auth);
-  private router = inject(Router);
 
   // Form and User Data
   profileForm!: FormGroup;
   user: User | null = null;
   areasOfInterest: string[] = [];
-  
+
   // UI States
   loading = false;
   saving = false;
   error = "";
-  
+
   // Phone Verification
   otpSent = false;
   otpVerified = false;
@@ -52,7 +51,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private formBuilder: FormBuilder,
     private profileService: ProfileService,
-    private toast: ToastService
+    private toast: ToastService,
+    private router: Router 
   ) { }
 
   ngOnInit(): void {
@@ -220,13 +220,13 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     } catch (error: any) {
       console.error('OTP send error:', error);
       let errorMessage = 'Failed to send verification code';
-      
+
       if (error.code === 'auth/invalid-phone-number') {
         errorMessage = 'Invalid phone number format';
       } else if (error.code === 'auth/too-many-requests') {
         errorMessage = 'Too many attempts. Please try again later';
       }
-      
+
       this.toast.show(errorMessage, 'error');
     } finally {
       this.loading = false;
@@ -260,7 +260,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         });
       })
-      .catch((error : FirebaseError) => {
+      .catch((error: FirebaseError) => {
         this.verifyingOtp = false;
         console.error('OTP verification failed:', error);
         this.toast.show('Invalid verification code. Please try again.');
@@ -310,6 +310,14 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.otpCode.length === 6) {
       this.verifyOTP();
     }
+  }
+
+  resendOTP(): void {
+    if (this.resendCountdown > 0) {
+      this.toast.show(`Please wait ${this.resendCountdown} seconds before resending`, 'info');
+      return;
+    }
+    this.sendOTP();
   }
 
   removeInterest(interest: string): void {
@@ -371,5 +379,9 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     return role.split(' ').map(word =>
       word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
+  }
+
+  navigateToDashboard(): void {
+    this.router.navigate(['/dashboard']);
   }
 }

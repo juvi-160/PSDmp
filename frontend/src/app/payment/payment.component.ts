@@ -1,17 +1,18 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy, AfterViewInit, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { FormBuilder, FormGroup, Validators, FormControl } from "@angular/forms";
+import { Auth, RecaptchaVerifier, signInWithPhoneNumber } from '@angular/fire/auth';
 import { SubscriptionService, PresetPlan, DynamicPlan, SubscriptionWithPayment } from "../core/services/subscription.service";
 import { AuthService } from "../core/services/auth.service";
 import { environment } from "../environments/environment";
 import { ToastService } from "../core/services/toast.service";
+
 import { ProfileUpdateData } from "../core/models/user.model";
 declare var Razorpay: any;
 
 // Firebase
-import { initializeApp } from "firebase/app";
-import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult, Auth } from "firebase/auth";
-import { firebaseConfig } from "../environments/firebase-config";
+import { FirebaseError } from 'firebase/app';
+
 
 interface PaymentDetailsBase {
   orderId: string;
@@ -76,21 +77,28 @@ interface User {
   templateUrl: './payment.component.html',
   styleUrls: ['./payment.component.css']
 })
-export class PaymentComponent implements OnInit {
+export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
+  private auth = inject(Auth);
+
   // Form and user state
   profileForm: FormGroup;
   user: User | null = null;
+  areasOfInterest: string[] = [];
+
+  //ui states
   loading = false;
   saving = false;
   error = "";
 
-  // Phone verification
+
+  // Phone Verification
   otpSent = false;
   otpVerified = false;
-  phoneOTP = "";
+  otpCode = '';
+  confirmationResult: any = null;
   verifyingOtp = false;
-  confirmationResult!: ConfirmationResult;
-  private auth: Auth;
+  resendCountdown = 0;
+  private countdownInterval: any;
 
   // Payment state
   selectedAmount = 0;
@@ -103,9 +111,13 @@ export class PaymentComponent implements OnInit {
   paymentProcessing = false;
 
   // Profile data
-  areasOfInterest: string[] = [];
   profileCompleted = false;
   profileCompletionPercentage = 0;
+
+  // reCAPTCHA
+  private recaptchaVerifier?: RecaptchaVerifier;
+  private recaptchaContainerId = 'recaptcha-container-' + Math.random().toString(36).substring(2);
+
 
   ageGroups = [
     { value: "18-25", label: "18-25 years" },
@@ -119,17 +131,16 @@ export class PaymentComponent implements OnInit {
   constructor(
     private subscriptionService: SubscriptionService,
     private authService: AuthService,
-    public router: Router,
+    private router: Router ,// Inject Router
     private toast: ToastService,
     private fb: FormBuilder
   ) {
-    const app = initializeApp(firebaseConfig);
-    this.auth = getAuth(app);
     this.profileForm = this.fb.group({
       name: [{ value: '', disabled: true }],
       email: [{ value: '', disabled: true }],
       phone: ['', [Validators.pattern(/^\+?[0-9]{10,15}$/)]],
       ageGroup: [''],
+      otpCode: [''], // Add this line
       profession: ['', [Validators.required, Validators.maxLength(100)]],
       city: ['', [Validators.required, Validators.maxLength(50)]],
       company: [''],
@@ -145,6 +156,81 @@ export class PaymentComponent implements OnInit {
     this.loadPresetPlans();
     this.loadRazorpayScript();
   }
+
+  async ngAfterViewInit(): Promise<void> {
+    await this.initializeRecaptcha();
+  }
+
+  ngOnDestroy(): void {
+    this.cleanupRecaptcha();
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+    }
+  }
+
+  private async initializeRecaptcha(): Promise<void> {
+    this.cleanupRecaptcha();
+
+    // Create container if it doesn't exist
+    let container = document.getElementById(this.recaptchaContainerId);
+    if (!container) {
+      container = document.createElement('div');
+      container.id = this.recaptchaContainerId;
+      container.style.display = 'none';
+      document.body.appendChild(container);
+    }
+
+    try {
+      this.recaptchaVerifier = new RecaptchaVerifier(
+        this.auth,
+        this.recaptchaContainerId,
+        {
+          size: 'invisible',
+          callback: () => console.log("reCAPTCHA solved"),
+          'expired-callback': () => {
+            console.log("reCAPTCHA expired");
+            this.cleanupRecaptcha();
+          }
+        },
+      );
+
+      await this.recaptchaVerifier.render();
+    } catch (error) {
+      console.error('reCAPTCHA initialization error:', error);
+      this.toast.show('Failed to initialize security verification. Please refresh the page.', 'error');
+    }
+  }
+
+  private cleanupRecaptcha(): void {
+    if (this.recaptchaVerifier) {
+      try {
+        this.recaptchaVerifier.clear();
+      } catch (error) {
+        console.warn('Error clearing reCAPTCHA:', error);
+      }
+      this.recaptchaVerifier = undefined;
+    }
+
+    const container = document.getElementById(this.recaptchaContainerId);
+    if (container) {
+      container.remove();
+    }
+  }
+
+  private startCountdown(): void {
+    this.resendCountdown = 60;
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+    }
+    this.countdownInterval = setInterval(() => {
+      this.resendCountdown--;
+      if (this.resendCountdown <= 0) {
+        clearInterval(this.countdownInterval);
+      }
+    }, 1000);
+  }
+
+
 
   loadUserProfile(): void {
     this.loading = true;
@@ -224,6 +310,156 @@ export class PaymentComponent implements OnInit {
     });
   }
 
+  async sendOTP(): Promise<void> {
+    const phoneNumber = this.profileForm.get('phone')?.value;
+    if (!phoneNumber) {
+      this.toast.show('Please enter a valid phone number', 'error');
+      return;
+    }
+
+    if (!this.phoneNumberValid(phoneNumber)) {
+      this.toast.show('Please enter phone number in international format (+countrycodenumber)', 'error');
+      return;
+    }
+
+    if (!this.recaptchaVerifier) {
+      await this.initializeRecaptcha();
+      if (!this.recaptchaVerifier) {
+        this.toast.show('Security verification failed. Please refresh the page.', 'error');
+        return;
+      }
+    }
+
+    this.loading = true;
+    try {
+      this.confirmationResult = await signInWithPhoneNumber(
+        this.auth,
+        phoneNumber,
+        this.recaptchaVerifier!
+      );
+      this.otpSent = true;
+      this.startCountdown();
+      this.toast.show('Verification code sent successfully!', 'success');
+    } catch (error: any) {
+      console.error('OTP send error:', error);
+      let errorMessage = 'Failed to send verification code';
+
+      if (error.code === 'auth/invalid-phone-number') {
+        errorMessage = 'Invalid phone number format';
+      } else if (error.code === 'auth/too-many-requests') {
+        errorMessage = 'Too many attempts. Please try again later';
+      }
+
+      this.toast.show(errorMessage, 'error');
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  verifyOTP(): void {
+    if (!this.confirmationResult) {
+      this.toast.show('Please request verification code first', 'error');
+      return;
+    }
+
+    if (!this.otpCode || this.otpCode.length !== 6) {
+      this.toast.show('Please enter the 6-digit verification code', 'error');
+      return;
+    }
+
+    this.verifyingOtp = true;
+    this.confirmationResult.confirm(this.otpCode)
+      .then(() => {
+        this.verifyingOtp = false;
+        this.otpVerified = true;
+        this.toast.show('Phone number verified successfully!', 'success');
+
+        // Update verification status in backend
+        this.authService.markPhoneVerified().subscribe({
+          next: () => this.onSubmit(),
+          error: (error) => {
+            console.error('Error updating verification status:', error);
+            this.toast.show('Profile saved but verification status not updated');
+          }
+        });
+      })
+      .catch((error: FirebaseError) => {
+        this.verifyingOtp = false;
+        console.error('OTP verification failed:', error);
+        this.toast.show('Invalid verification code. Please try again.');
+      });
+  }
+
+  onSubmit(): void {
+    if (this.profileForm.invalid) {
+      this.toast.show('Please complete all required fields', 'error');
+      return;
+    }
+
+    this.saving = true;
+
+    const profileData: ProfileUpdateData = {
+      phone: this.profileForm.get("phone")?.value || undefined,
+      ageGroup: this.profileForm.get("ageGroup")?.value || undefined,
+      profession: this.profileForm.get("profession")?.value || undefined,
+      city: this.profileForm.get("city")?.value || undefined,
+      company: this.profileForm.get("company")?.value || undefined,
+      position: this.profileForm.get("position")?.value || undefined,
+      area_of_interests: this.areasOfInterest,
+      about_you: this.profileForm.get("aboutYou")?.value || undefined,
+      agreed_to_terms: this.profileForm.get("agreedToTerms")?.value || undefined,
+      agreed_to_contribute: this.profileForm.get("agreedToContribute")?.value || undefined,
+    };
+
+    this.authService.updateUserProfile(profileData).subscribe({
+      next: (updatedUser) => {
+        this.user = updatedUser;
+        this.saving = false;
+        this.toast.show('Profile updated successfully!', 'success');
+      },
+      error: (error) => {
+        this.saving = false;
+        console.error('Profile update error:', error);
+        this.toast.show('Failed to update profile. Please try again.', 'error');
+      },
+    });
+  }
+
+  phoneNumberValid(phoneNumber: string): boolean {
+    return /^\+[1-9]\d{1,14}$/.test(phoneNumber);
+  }
+
+  onOtpChange(): void {
+    if (this.otpCode.length === 6) {
+      this.verifyOTP();
+    }
+  }
+
+  onResendOtp(): void {
+    if (this.resendCountdown > 0) {
+      this.toast.show(`Please wait ${this.resendCountdown} seconds before resending OTP`, 'info');
+      return;
+    }
+    this.sendOTP();
+  }
+
+  getProfileCompletionPercentage(): number {
+    const fields = [
+      this.profileForm.get("phone")?.value,
+      this.profileForm.get("ageGroup")?.value,
+      this.profileForm.get("profession")?.value,
+      this.profileForm.get("city")?.value,
+      this.profileForm.get("company")?.value,
+      this.profileForm.get("position")?.value,
+      this.profileForm.get("aboutYou")?.value,
+      this.areasOfInterest.length > 0 ? "yes" : "",
+      this.profileForm.get("agreedToTerms")?.value ? "yes" : "",
+    ];
+    const completedFields = fields.filter((field) => !!field && field.toString().trim().length > 0).length;
+    return Math.round((completedFields / fields.length) * 100);
+  }
+
+  
   // In the PaymentComponent class:
 
   checkProfileCompletion(): void {
@@ -308,80 +544,6 @@ export class PaymentComponent implements OnInit {
     });
   }
 
-  // Phone verification methods
-  sendOTP(): void {
-    let rawPhone = this.profileForm.get("phone")?.value;
-
-    if (!rawPhone || rawPhone.length < 10) {
-      this.toast.show("Please enter a valid phone number", "error");
-      return;
-    }
-
-    rawPhone = rawPhone.trim();
-    if (!rawPhone.startsWith("+")) {
-      rawPhone = "+91" + rawPhone;
-    }
-
-    window.recaptchaVerifier = new RecaptchaVerifier(
-      this.auth,
-      "recaptcha-container",
-      {
-        size: "normal",
-        callback: () => { },
-        "expired-callback": () => {
-          this.toast.show("reCAPTCHA expired. Please try again.", "error");
-        }
-      }
-    );
-
-    signInWithPhoneNumber(this.auth, rawPhone, window.recaptchaVerifier)
-      .then((confirmationResult) => {
-        this.confirmationResult = confirmationResult;
-        this.otpSent = true;
-        this.toast.show("OTP sent successfully!", "success");
-      })
-      .catch((error) => {
-        console.error("OTP send error:", error);
-        this.toast.show("Failed to send OTP. " + error.message, "error");
-      });
-  }
-
-  verifyOTPAndSave(): void {
-    if (!this.phoneOTP || this.phoneOTP.length < 6) {
-      this.toast.show("Please enter a valid 6-digit OTP", "error");
-      return;
-    }
-
-    if (this.otpVerified) {
-      this.toast.show("Phone already verified.", "info");
-      return;
-    }
-
-    this.verifyingOtp = true;
-
-    this.confirmationResult
-      .confirm(this.phoneOTP)
-      .then((result) => {
-        this.verifyingOtp = false;
-        this.otpVerified = true;
-        this.toast.show("Phone number verified!", "success");
-
-        this.authService.markPhoneVerified().subscribe({
-          next: () => {
-            this.saveProfile();
-          },
-          error: (err: any) => {
-            console.error("Error updating phone verification:", err);
-            this.toast.show("Profile saved but phone verification status not updated", "error");
-          }
-        });
-      })
-      .catch((error) => {
-        this.verifyingOtp = false;
-        console.error("OTP verification failed:", error);
-        this.toast.show("Invalid OTP. Please try again.", "error");
-      });
-  }
 
   // Payment methods
   loadPresetPlans(): void {
@@ -601,6 +763,10 @@ export class PaymentComponent implements OnInit {
     return role.split(' ').map(word =>
       word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
+  }
+
+  navigateToDashboard(): void {
+    this.router.navigate(['/dashboard']);
   }
 }
 

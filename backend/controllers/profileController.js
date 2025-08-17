@@ -110,19 +110,37 @@ export const verifyPhone = async (req, res) => {
 
 export const markPhoneVerified = async (req, res) => {
   try {
-    const auth0Id = req.auth?.sub;
-    if (!auth0Id) return res.status(401).json({ message: 'Unauthorized' });
+    const auth0Sub = req.auth?.sub || req.auth?.payload?.sub;
+    if (!auth0Sub) return res.status(401).json({ message: 'Unauthorized' });
 
-    const user = await User.findOne({ where: { auth0Id } });
+    const user = await User.findOne({ where: { auth0_id: auth0Sub } });
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    user.isPhoneVerified = true;
-    await user.save();
+    await user.update({
+      is_phone_verified: true,
+      // Optionally update profile_completed if needed
+      // profile_completed: Boolean(
+      //   user.phone &&
+      //   user.age_group &&
+      //   user.profession &&
+      //   user.city &&
+      //   (user.area_of_interests?.length > 0) &&
+      //   user.about_you &&
+      //   user.company &&
+      //   user.position &&
+      //   user.agreed_to_contribute &&
+      //   user.agreed_to_terms
+      // )
+    });
 
-    res.json({ message: 'Phone marked as verified', user });
+    res.json({
+      message: 'Phone marked as verified',
+      isPhoneVerified: true,
+      profileCompleted: user.profile_completed
+    });
   } catch (error) {
     console.error('Error marking phone verified:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
