@@ -131,7 +131,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private subscriptionService: SubscriptionService,
     private authService: AuthService,
-    private router: Router ,// Inject Router
+    private router: Router,// Inject Router
     private toast: ToastService,
     private fb: FormBuilder
   ) {
@@ -251,27 +251,28 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
           isEmailVerified: !!user.isEmailVerified,
           isPhoneVerified: !!user.isPhoneVerified,
           hasPaid: !!user.hasPaid,
-          profileCompleted: !!user.profileCompleted, // Ensure this is set from API response
+          profileCompleted: !!user.profileCompleted,
           createdAt: user.createdAt,
           updatedAt: user.updatedAt,
         };
 
-        // Use the profileCompleted status from the API
         this.profileCompleted = this.user.profileCompleted || false;
 
-        // Only redirect if profile is already completed and payment not needed
+        // Handle redirection based on user role and status
         if (this.profileCompleted) {
           if (this.user.role === 'associate member') {
-            // Associate members and admins can proceed to dashboard after profile completion
+            // Associate members can proceed to dashboard after profile completion
             this.router.navigate(["/dashboard"]);
+            return;
           } else if (this.user.hasPaid) {
             // Other members need to have paid to go to dashboard
             this.router.navigate(["/dashboard"]);
+            return;
           }
         }
 
         this.initProfileForm(this.user);
-        this.checkProfileCompletion(); // Still run this to calculate percentage
+        this.checkProfileCompletion();
         this.loading = false;
       },
       error: (error) => {
@@ -459,7 +460,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     return Math.round((completedFields / fields.length) * 100);
   }
 
-  
+
   // In the PaymentComponent class:
 
   checkProfileCompletion(): void {
@@ -520,9 +521,8 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       about_you: this.profileForm.get('aboutYou')?.value || undefined,
       agreed_to_terms: this.profileForm.get('agreedToTerms')?.value || undefined,
       agreed_to_contribute: this.profileForm.get('agreedToContribute')?.value || undefined,
-      profileCompleted: true // Add this to mark profile as completed
+      profileCompleted: true
     };
-
 
     this.authService.updateUserProfile(profileData).subscribe({
       next: (updatedUser: User) => {
@@ -531,12 +531,18 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
         this.toast.show("Profile updated successfully!", "success");
         this.checkProfileCompletion();
 
-        // Add null check for this.user
-        if (this.user && (this.user.role === 'associate member')) {
-          this.router.navigate(['/dashboard']);
+        // Redirect based on user role
+        if (this.user) {
+          if (this.user.role === 'associate member') {
+            // Associate members can go to dashboard after profile completion
+            this.router.navigate(['/dashboard']);
+          } else if (this.user.role === 'admin') {
+            // Admins can go to dashboard (assuming they don't need to pay)
+            this.router.navigate(['/dashboard']);
+          }
+          // Individual members stay on page to make payment
         }
       },
-
       error: (error: any) => {
         this.saving = false;
         this.toast.show("Failed to update profile. Please try again.", "error");
@@ -727,6 +733,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       next: () => {
         this.paymentProcessing = false;
         this.toast.show("Payment successful! Welcome to PSF (1-month membership).", "success");
+        // For all roles except associate member, payment is required
         this.router.navigate(["/dashboard"]);
       },
       error: (error: any) => {
@@ -749,6 +756,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       next: () => {
         this.paymentProcessing = false;
         this.toast.show(`Payment successful! AutoPay setup complete. Next charge: ${this.getNextChargeDate()}`, "success");
+        // For all roles except associate member, payment is required
         this.router.navigate(["/dashboard"]);
       },
       error: (error: any) => {
@@ -763,6 +771,18 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     return role.split(' ').map(word =>
       word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
+  }
+
+  navigateBasedOnUserStatus(): void {
+    if (!this.user) return;
+
+    if (this.user.profileCompleted) {
+      if (this.user.role === 'associate member' || this.user.role === 'admin') {
+        this.router.navigate(['/dashboard']);
+      } else if (this.user.hasPaid) {
+        this.router.navigate(['/dashboard']);
+      }
+    }
   }
 
   navigateToDashboard(): void {
