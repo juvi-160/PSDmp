@@ -32,9 +32,11 @@ import { PaymentGuard } from './core/guards/payment.guard';
 import { AdminGuard } from './core/guards/admin.guard';
 import { PaymentHistoryComponent } from './dashboard/payment-history/payment-history.component';
 import { ContributeComponent } from './dashboard/contribute/contribute.component';
-import { FeedbackComponent} from './admin/admin-dashboard/feedback/feedback.component';
+import { FeedbackComponent } from './admin/admin-dashboard/feedback/feedback.component';
 import { TicketDetailsComponent } from './admin/admin-dashboard/ticket-management/ticket-details/ticket-details.component';
 
+// NEW: profile-completion guard
+import { ProfileCompletionGuard } from './core/guards/profile-completion.guard';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -46,13 +48,19 @@ const routes: Routes = [
   { path: 'terms', component: TermsConditionsComponent },
   { path: 'refund-policy', component: RefundCancellationComponent },
   { path: 'contact', component: ContactUsComponent },
-  { path: 'profile', component: ProfileComponent },
+
+  // Put profile behind AuthGuard (so only logged-in users can complete it)
+  { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
+
   { path: 'faqs', component: FaqsComponent },
   { path: 'payment', component: PaymentComponent, canActivate: [AuthGuard, PaymentGuard] },
+
   {
     path: 'dashboard',
     component: DashboardComponent,
-    canActivate: [AuthGuard],
+    // Enforce auth + profile completion here
+    canActivate: [AuthGuard, ProfileCompletionGuard],
+    canActivateChild: [ProfileCompletionGuard],
     children: [
       { path: '', component: DashboardHomeComponent },
       { path: 'event', component: EventsComponent },
@@ -62,28 +70,9 @@ const routes: Routes = [
       { path: 'profile', component: ProfileComponent },
       { path: 'payment-history/:email', component: PaymentHistoryComponent },
       { path: 'contribute', component: ContributeComponent },
-
-      // {
-      //   matcher: (segments: UrlSegment[]) => {
-      //     if (
-      //       segments.length === 4 &&
-      //       segments[0].path === 'dashboard' &&
-      //       segments[1].path === 'payment-history' &&
-      //       segments[2].path === 'users'
-      //     ) {
-      //       return {
-      //         consumed: segments,
-      //         posParams: {
-      //           userId: segments[3],
-      //         },
-      //       };
-      //     }
-      //     return null;
-      //   },
-      //   component: PaymentHistoryComponent,
-      // },
     ],
   },
+
   {
     path: 'admin',
     component: AdminDashboardComponent,
@@ -99,9 +88,10 @@ const routes: Routes = [
       { path: 'tickets', component: TicketManagementComponent },
       { path: 'tickets/:id', component: TicketDetailsComponent },
       { path: 'invite', component: InviteComponent },
-      { path: "feedback", component: FeedbackComponent },
+      { path: 'feedback', component: FeedbackComponent },
     ],
   },
+
   { path: '', redirectTo: 'home', pathMatch: 'full' },
 ];
 

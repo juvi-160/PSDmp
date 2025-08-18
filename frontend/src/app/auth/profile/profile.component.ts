@@ -14,6 +14,8 @@ import { FirebaseError } from 'firebase/app';
   styleUrls: ["./profile.component.css"],
 })
 export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
+  // default to saved value, fallback to 0
+  completion = Number(localStorage.getItem('profileCompletion') || '0');
   private auth = inject(Auth);
 
   // Form and User Data
@@ -62,6 +64,13 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async ngAfterViewInit(): Promise<void> {
     await this.initializeRecaptcha();
+  }
+
+  // Optional helper if you want a button to instantly mark complete
+  completeProfile() {
+    this.completion = 100;
+    localStorage.setItem('profileCompletion', '100');
+    this.router.navigate(['/dashboard']);
   }
 
   ngOnDestroy(): void {
@@ -160,7 +169,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         this.areasOfInterest = typeof user.area_of_interests === 'string'
           ? JSON.parse(user.area_of_interests || '[]')
           : user.area_of_interests || [];
-
         this.otpVerified = user.isPhoneVerified || false;
 
         this.profileForm.patchValue({
@@ -293,6 +301,19 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         this.user = updatedUser;
         this.saving = false;
         this.toast.show('Profile updated successfully!', 'success');
+
+        // --- NEW: compute & persist completion % locally ---
+        const pct = this.getProfileCompletionPercentage();
+        localStorage.setItem('profileCompletion', String(pct));
+        this.completion = pct;
+
+        if (pct === 100) {
+          // Now you can access dashboard (guard will pass)
+          this.router.navigate(['/dashboard']);
+        } else {
+          // Keep them here; guard will block any dashboard access
+          this.toast.show(`Profile is ${pct}% complete. Finish all fields to access the dashboard.`, 'info');
+        }
       },
       error: (error) => {
         this.saving = false;
@@ -350,7 +371,9 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       this.profileForm.get("aboutYou")?.value,
       this.areasOfInterest.length > 0 ? "yes" : "",
       this.profileForm.get("agreedToTerms")?.value ? "yes" : "",
+      this.profileForm.get("agreedToContribute")?.value ? "yes" : "",
     ];
+
     const completedFields = fields.filter((field) => !!field && field.toString().trim().length > 0).length;
     return Math.round((completedFields / fields.length) * 100);
   }
@@ -368,6 +391,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         agreedToTerms: this.user.agreed_to_terms || false,
         agreedToContribute: this.user.agreed_to_contribute || false,
       });
+
       this.areasOfInterest = typeof this.user.area_of_interests === 'string'
         ? JSON.parse(this.user.area_of_interests || '[]')
         : this.user.area_of_interests || [];
