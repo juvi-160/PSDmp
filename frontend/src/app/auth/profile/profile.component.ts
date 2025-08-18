@@ -15,7 +15,7 @@ import { FirebaseError } from 'firebase/app';
 })
 export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   private auth = inject(Auth);
-
+  
   // Form and User Data
   profileForm!: FormGroup;
   user: User | null = null;
@@ -160,7 +160,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         this.areasOfInterest = typeof user.area_of_interests === 'string'
           ? JSON.parse(user.area_of_interests || '[]')
           : user.area_of_interests || [];
-
         this.otpVerified = user.isPhoneVerified || false;
 
         this.profileForm.patchValue({
@@ -305,8 +304,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   phoneNumberValid(phoneNumber: string): boolean {
     return /^\+[1-9]\d{1,14}$/.test(phoneNumber);
   }
-
-  onOtpChange(): void {
+    onOtpChange(): void {
     if (this.otpCode.length === 6) {
       this.verifyOTP();
     }
@@ -350,8 +348,11 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       this.profileForm.get("aboutYou")?.value,
       this.areasOfInterest.length > 0 ? "yes" : "",
       this.profileForm.get("agreedToTerms")?.value ? "yes" : "",
+      this.profileForm.get("agreedToContribute")?.value ? "yes" : "",
     ];
+
     const completedFields = fields.filter((field) => !!field && field.toString().trim().length > 0).length;
+    console.log(completedFields, fields.length);  // Add this line to log all values
     return Math.round((completedFields / fields.length) * 100);
   }
 
@@ -368,6 +369,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         agreedToTerms: this.user.agreed_to_terms || false,
         agreedToContribute: this.user.agreed_to_contribute || false,
       });
+
       this.areasOfInterest = typeof this.user.area_of_interests === 'string'
         ? JSON.parse(this.user.area_of_interests || '[]')
         : this.user.area_of_interests || [];
@@ -380,8 +382,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
   }
-
-  navigateToDashboard(): void {
+    navigateToDashboard(): void {
     this.router.navigate(['/dashboard']);
   }
 }
