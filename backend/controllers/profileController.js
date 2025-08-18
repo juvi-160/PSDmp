@@ -8,6 +8,52 @@ function isPhonePresent(p) {
   return typeof p === "string" && p.trim().length >= 10;
 }
 
+// Add this helper function at the top of your file
+function calculateProfileCompleted(user) {
+  // Handle stringified array_of_interests
+  let interests = user.area_of_interests;
+  if (typeof interests === 'string') {
+    try {
+      interests = JSON.parse(interests);
+    } catch (e) {
+      interests = [];
+    }
+  }
+
+  const baseComplete = Boolean(
+    user.phone &&
+    user.age_group &&
+    user.profession &&
+    user.city &&
+    (interests?.length > 0) &&  // Now checks parsed array
+    user.about_you &&
+    user.agreed_to_terms
+  );
+
+  if (user.role === 'associate member') {
+    return baseComplete && Boolean(user.company && user.position);
+  }
+  
+  return baseComplete;
+}
+
+// Add this debugging helper
+function logProfileCompletion(user) {
+  console.log('Profile completion check:', {
+    role: user.role,
+    phone: !!user.phone,
+    age_group: !!user.age_group,
+    profession: !!user.profession,
+    city: !!user.city,
+    interests: user.area_of_interests?.length > 0,
+    about_you: !!user.about_you,
+    terms: !!user.agreed_to_terms,
+    company: !!user.company,
+    position: !!user.position,
+    completed: calculateProfileCompleted(user)
+  });
+}
+
 export const getUserProfile = async (req, res) => {
   const auth0Sub = req.auth?.sub || req.auth?.payload?.sub;
   if (!auth0Sub) {
@@ -18,6 +64,16 @@ export const getUserProfile = async (req, res) => {
   const currentUser = await User.findOne({ where: { auth0_id: String(auth0Sub).trim() } });
   if (!currentUser) {
     return res.status(404).json({ message: "User not found" });
+  }
+
+  // Parse area_of_interests if it's a string
+  let area_of_interests = currentUser.area_of_interests;
+  if (typeof area_of_interests === 'string') {
+    try {
+      area_of_interests = JSON.parse(area_of_interests);
+    } catch (e) {
+      area_of_interests = [];
+    }
   }
 
   res.status(200).json({
@@ -33,10 +89,13 @@ export const getUserProfile = async (req, res) => {
     ageGroup: currentUser.age_group,
     profession: currentUser.profession,
     city: currentUser.city,
-    area_of_interests: currentUser.area_of_interests || [],
     about_you: currentUser.about_you,
     profilePicture: currentUser.profile_picture,
-    profileCompleted: Boolean(currentUser.profile_completed),
+    area_of_interests: area_of_interests || [],
+    profileCompleted: calculateProfileCompleted({
+      ...currentUser.toJSON(),
+      area_of_interests
+    }),
     company: currentUser.company,
     position: currentUser.position,
     agreed_to_contribute: Boolean(currentUser.agreed_to_contribute),
@@ -76,21 +135,14 @@ export const verifyPhone = async (req, res) => {
     const phoneChanged = firebasePhone !== currentUser.phone;
 
     await currentUser.update({
-      phone: phoneChanged,
+      phone: firebasePhone, // Fixed this line
       is_phone_verified: true,
-      profile_completed: Boolean(
-        firebasePhone &&
-        currentUser.age_group &&
-        currentUser.profession &&
-        currentUser.city &&
-        (currentUser.area_of_interests?.length > 0) &&
-        currentUser.about_you &&
-        currentUser.company &&
-        currentUser.position &&
-        currentUser.agreed_to_contribute &&
-        currentUser.agreed_to_terms
-      )
+      profile_completed: calculateProfileCompleted({
+        ...currentUser,
+        phone: firebasePhone
+      })
     });
+
 
     await currentUser.reload();
 
@@ -118,19 +170,7 @@ export const markPhoneVerified = async (req, res) => {
 
     await user.update({
       is_phone_verified: true,
-      // Optionally update profile_completed if needed
-      // profile_completed: Boolean(
-      //   user.phone &&
-      //   user.age_group &&
-      //   user.profession &&
-      //   user.city &&
-      //   (user.area_of_interests?.length > 0) &&
-      //   user.about_you &&
-      //   user.company &&
-      //   user.position &&
-      //   user.agreed_to_contribute &&
-      //   user.agreed_to_terms
-      // )
+      profile_completed: calculateProfileCompleted(user)
     });
 
     res.json({
@@ -193,24 +233,14 @@ export const updateUserProfile = async (req, res) => {
       is_phone_verified: phoneChanged ? false : currentUser.is_phone_verified,
     };
 
-    // Re-calc profileCompleted
-    const profileCompleted = Boolean(
-      updatedValues.phone &&
-      updatedValues.age_group &&
-      updatedValues.profession &&
-      updatedValues.city &&
-      (updatedValues.area_of_interests?.length > 0) &&
-      updatedValues.about_you &&
-      updatedValues.company &&
-      updatedValues.position &&
-      updatedValues.agreed_to_contribute &&
-      updatedValues.agreed_to_terms
-    );
-    updatedValues.profile_completed = profileCompleted;
+    // Use the standardized completion check
+    updatedValues.profile_completed = calculateProfileCompleted({
+      ...currentUser,
+      ...updatedValues
+    });
+    logProfileCompletion({ ...currentUser, ...updatedValues });
 
-    // Bulk update — only specified columns will be touched :contentReference[oaicite:2]{index=2}
     await currentUser.update(updatedValues);
-
     await currentUser.reload();
 
     res.status(200).json({

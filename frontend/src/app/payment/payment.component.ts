@@ -527,7 +527,6 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       about_you: this.profileForm.get('aboutYou')?.value || undefined,
       agreed_to_terms: this.profileForm.get('agreedToTerms')?.value || undefined,
       agreed_to_contribute: this.profileForm.get('agreedToContribute')?.value || undefined,
-      profileCompleted: true
     };
 
     this.authService.updateUserProfile(profileData).subscribe({
@@ -535,19 +534,8 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
         this.user = updatedUser;
         this.saving = false;
         this.toast.show("Profile updated successfully!", "success");
-        this.checkProfileCompletion();
-
-        // Redirect based on user role
-        if (this.user) {
-          if (this.user.role === 'associate member') {
-            // Associate members can go to dashboard after profile completion
-            this.router.navigate(['/dashboard']);
-          } else if (this.user.role === 'admin') {
-            // Admins can go to dashboard (assuming they don't need to pay)
-            this.router.navigate(['/dashboard']);
-          }
-          // Individual members stay on page to make payment
-        }
+        // Let AuthService handle all redirections
+        this.authService.handleUserRedirection(updatedUser);
       },
       error: (error: any) => {
         this.saving = false;

@@ -92,16 +92,39 @@ export class AuthService {
     });
   }
 
-  private handleUserRedirection(user: User): void {
-    if (user.role === 'admin') {
-      this.router.navigate(['/admin']);
-    } else if (user.role === 'associate member') {
-      this.router.navigate(['/dashboard']);
-    } else if (user.role === 'individual member') {
-      user.hasPaid ? this.router.navigate(['/dashboard']) : this.router.navigate(['/payment']);
-    } else if (user.role === 'pending') {
+  public handleUserRedirection(user: User): void {
+    console.log('Handling redirection for:', {
+      role: user.role,
+      profileCompleted: user.profileCompleted,
+      hasPaid: user.hasPaid
+    });
+
+    // Pending users always go to payment
+    if (user.role === 'pending') {
       this.router.navigate(['/payment']);
+      return;
     }
+
+    // Admin goes straight to dashboard (assuming they don't need payment)
+    if (user.role === 'admin' && !user.hasPaid) {
+      this.router.navigate(['/payment']);
+      return;
+    }
+
+    // Check profile completion first for all non-admin users
+    if (!user.profileCompleted) {
+      this.router.navigate(['/payment']);
+      return;
+    }
+
+    // For individual members, check payment status
+    if (user.role === 'individual member'  && !user.hasPaid) {
+      this.router.navigate(['/payment']);
+      return;
+    }
+
+    // For associate members or completed individual members, go to dashboard
+    this.router.navigate(['/dashboard']);
   }
 
   checkUserPaymentStatus(): Observable<{ needsPayment: boolean, role: string, profileCompleted: boolean }> {
@@ -142,7 +165,7 @@ export class AuthService {
   updateUserProfile(profileData: ProfileUpdateData): Observable<User> {
     return this.getAccessToken().pipe(
       switchMap((token: string) => {
-        return this.http.put<User>(`https://api.psfhyd.org/api/profile`, profileData, {
+        return this.http.put<User>(`http://localhost:3000/api/profile`, profileData, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -205,7 +228,7 @@ export class AuthService {
   getUserProfile(): Observable<User> {
     return this.getAccessToken().pipe(
       switchMap((token) => {
-        return this.http.get<User>(`https://api.psfhyd.org/api/profile`, {
+        return this.http.get<User>(`http://localhost:3000/api/profile`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -232,7 +255,7 @@ export class AuthService {
   markPhoneVerified(): Observable<any> {
     return this.getAccessToken().pipe(
       switchMap((token: string) => {
-        return this.http.post<any>(`https://api.psfhyd.org/api/mark-phone-verified`, {}, {
+        return this.http.post<any>(`http://localhost:3000/api/mark-phone-verified`, {}, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",

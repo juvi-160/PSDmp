@@ -23,7 +23,7 @@ export class PaymentGuard implements CanActivate {
         }
         
         // Admins can go to dashboard
-        if (role === 'admin') {
+        if (role === 'admin'&& profileCompleted && !needsPayment) {
           this.router.navigate(['/dashboard']);
           return false;
         }
