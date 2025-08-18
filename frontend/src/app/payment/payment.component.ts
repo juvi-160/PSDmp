@@ -357,6 +357,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+
   verifyOTP(): void {
     if (!this.confirmationResult) {
       this.toast.show('Please request verification code first', 'error');
@@ -377,17 +378,20 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
 
         // Update verification status in backend
         this.authService.markPhoneVerified().subscribe({
-          next: () => this.onSubmit(),
+          next: () => {
+            // Don't call onSubmit() here - let user submit the form manually
+            // Just update the verification status
+          },
           error: (error) => {
             console.error('Error updating verification status:', error);
-            this.toast.show('Profile saved but verification status not updated');
+            this.toast.show('Verification status not updated', 'error');
           }
         });
       })
       .catch((error: FirebaseError) => {
         this.verifyingOtp = false;
         console.error('OTP verification failed:', error);
-        this.toast.show('Invalid verification code. Please try again.');
+        this.toast.show('Invalid verification code. Please try again.', 'error');
       });
   }
 
@@ -430,18 +434,20 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     return /^\+[1-9]\d{1,14}$/.test(phoneNumber);
   }
 
+  // Update the resend method name and implementation
+  resendOTP(): void {
+    if (this.resendCountdown > 0) {
+      this.toast.show(`Please wait ${this.resendCountdown} seconds before resending`, 'info');
+      return;
+    }
+    this.sendOTP();
+  }
+
+  // Keep the existing onOtpChange method
   onOtpChange(): void {
     if (this.otpCode.length === 6) {
       this.verifyOTP();
     }
-  }
-
-  onResendOtp(): void {
-    if (this.resendCountdown > 0) {
-      this.toast.show(`Please wait ${this.resendCountdown} seconds before resending OTP`, 'info');
-      return;
-    }
-    this.sendOTP();
   }
 
   getProfileCompletionPercentage(): number {
