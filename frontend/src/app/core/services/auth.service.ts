@@ -19,6 +19,7 @@ export interface User {
   hasPaid?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
+  profileCompleted?: boolean; // Add this line
 }
 
 interface ProfileUpdateData {
@@ -103,16 +104,16 @@ export class AuthService {
     }
   }
 
-  checkUserPaymentStatus(): Observable<{ needsPayment: boolean, role: string }> {
+  checkUserPaymentStatus(): Observable<{ needsPayment: boolean, role: string, profileCompleted: boolean }> {
     return this.getUserProfile().pipe(
       map((user: User) => ({
         needsPayment: (user.role === 'individual member' && !user.hasPaid) || user.role === 'pending',
-        role: user.role
+        role: user.role,
+        profileCompleted: user.profileCompleted || false
       })),
-      catchError(() => of({ needsPayment: true, role: 'pending' }))
+      catchError(() => of({ needsPayment: true, role: 'pending', profileCompleted: false }))
     );
   }
-
   getUserName(): string {
     const currentUser = this.currentUserSubject.value;
     return currentUser?.name || '';

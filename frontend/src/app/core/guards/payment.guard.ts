@@ -15,12 +15,26 @@ export class PaymentGuard implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return this.authService.checkUserPaymentStatus().pipe(
-      map((status) => {
-        if (
-            (status.role === 'individual member' && !status.needsPayment)) {
+      map(({ needsPayment, role, profileCompleted }) => {
+        // Associate members can go to dashboard if profile is complete
+        if (role === 'associate member' && profileCompleted) {
           this.router.navigate(['/dashboard']);
           return false;
         }
+        
+        // Admins can go to dashboard
+        if (role === 'admin') {
+          this.router.navigate(['/dashboard']);
+          return false;
+        }
+        
+        // Individual members need complete profile AND payment
+        if (role === 'individual member' && profileCompleted && !needsPayment) {
+          this.router.navigate(['/dashboard']);
+          return false;
+        }
+        
+        // All other cases stay on payment page
         return true;
       }),
       catchError(() => {
