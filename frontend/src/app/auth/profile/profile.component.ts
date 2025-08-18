@@ -14,8 +14,10 @@ import { FirebaseError } from 'firebase/app';
   styleUrls: ["./profile.component.css"],
 })
 export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
+  // default to saved value, fallback to 0
+  completion = Number(localStorage.getItem('profileCompletion') || '0');
   private auth = inject(Auth);
-  
+
   // Form and User Data
   profileForm!: FormGroup;
   user: User | null = null;
@@ -62,6 +64,13 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async ngAfterViewInit(): Promise<void> {
     await this.initializeRecaptcha();
+  }
+
+  // Optional helper if you want a button to instantly mark complete
+  completeProfile() {
+    this.completion = 100;
+    localStorage.setItem('profileCompletion', '100');
+    this.router.navigate(['/dashboard']);
   }
 
   ngOnDestroy(): void {
@@ -292,6 +301,19 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         this.user = updatedUser;
         this.saving = false;
         this.toast.show('Profile updated successfully!', 'success');
+
+        // --- NEW: compute & persist completion % locally ---
+        const pct = this.getProfileCompletionPercentage();
+        localStorage.setItem('profileCompletion', String(pct));
+        this.completion = pct;
+
+        if (pct === 100) {
+          // Now you can access dashboard (guard will pass)
+          this.router.navigate(['/dashboard']);
+        } else {
+          // Keep them here; guard will block any dashboard access
+          this.toast.show(`Profile is ${pct}% complete. Finish all fields to access the dashboard.`, 'info');
+        }
       },
       error: (error) => {
         this.saving = false;
@@ -304,7 +326,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   phoneNumberValid(phoneNumber: string): boolean {
     return /^\+[1-9]\d{1,14}$/.test(phoneNumber);
   }
-    onOtpChange(): void {
+
+  onOtpChange(): void {
     if (this.otpCode.length === 6) {
       this.verifyOTP();
     }
@@ -352,7 +375,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     ];
 
     const completedFields = fields.filter((field) => !!field && field.toString().trim().length > 0).length;
-    console.log(completedFields, fields.length);  // Add this line to log all values
     return Math.round((completedFields / fields.length) * 100);
   }
 
@@ -382,7 +404,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
   }
-    navigateToDashboard(): void {
+
+  navigateToDashboard(): void {
     this.router.navigate(['/dashboard']);
   }
 }

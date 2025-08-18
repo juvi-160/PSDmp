@@ -21,13 +21,15 @@ export class HomeComponent implements OnInit {
       .pipe(take(1))
       .subscribe((isLoggedIn) => {
         console.log('User logged in status:', isLoggedIn);
-        // No navigation or payment check here; handled in AuthService
       });
   }
 
   login(): void {
     this.loading = true;
     this.authService.login().subscribe({
+      next: () => {
+        this.handleRedirect();
+      },
       error: (error) => {
         console.error('Login error:', error);
         this.loading = false;
@@ -38,6 +40,9 @@ export class HomeComponent implements OnInit {
   signup(): void {
     this.loading = true;
     this.authService.signup().subscribe({
+      next: () => {
+        this.handleRedirect();
+      },
       error: (error) => {
         console.error('Signup error:', error);
         this.loading = false;
@@ -48,10 +53,29 @@ export class HomeComponent implements OnInit {
   loginWithGoogle(): void {
     this.loading = true;
     this.authService.loginWithGoogle().subscribe({
+      next: () => {
+        this.handleRedirect();
+      },
       error: (error) => {
         console.error('Google login error:', error);
         this.loading = false;
       },
     });
+  }
+
+  /** ✅ Decide where to send the user after login/signup */
+  private handleRedirect(): void {
+    this.loading = false;
+
+    // 🔹 Example: profileCompletion is stored in localStorage (pure frontend mock)
+    const completion = Number(localStorage.getItem('profileCompletion')) || 0;
+
+    if (completion < 100) {
+      console.log('Redirecting to profile setup…');
+      this.router.navigate(['/profile']);
+    } else {
+      console.log('Redirecting to dashboard…');
+      this.router.navigate(['/dashboard']);
+    }
   }
 }
