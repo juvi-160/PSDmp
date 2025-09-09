@@ -1,7 +1,0 @@
-node_modules
-
-dist
-.env
-
-utils/*.json
-utils/psf-sms-firebase-adminsdk-fbsvc-92d55d129c.json
